@@ -1,0 +1,35 @@
+---
+title: Transazioni
+description: Registra, importa, filtra e gestisci le transazioni finanziarie
+---
+
+## Panoramica
+
+Le transazioni sono l'entità dati principale — ogni entrata, uscita e trasferimento è una transazione collegata a un conto e opzionalmente a una categoria.
+
+## Funzionalità
+
+- **Crea/modifica/elimina** con importo, data, descrizione, categoria, tipo e note
+- **Importazione CSV** — Carica esportazioni bancarie con mappatura automatica delle colonne
+- **Filtri avanzati** — Per intervallo date, intervallo importo, categoria, conto, tipo, tag, non categorizzate e presenza di note
+- **Filtri basati su URL** — I drill-down dalla dashboard linkano a `/transactions?categoryId=X`
+- **Azioni in blocco** — Seleziona più transazioni per operazioni batch
+- **Righe scorrevoli** — Supporto gesti su mobile per azioni rapide
+- **Auto-categorizzazione** — Suggerimento categoria basato su regole durante l'inserimento della descrizione
+
+## Tipi di Transazione
+
+- `income` — Denaro in entrata
+- `expense` — Denaro in uscita
+- `transfer` — Denaro che si sposta tra conti
+
+## Hook
+
+```typescript
+import {
+  useTransactions,
+  useCreateTransaction,
+  useUpdateTransaction,
+  useDeleteTransaction,
+} from "@/hooks/use-transactions"
+```

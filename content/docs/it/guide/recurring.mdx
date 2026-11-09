@@ -1,0 +1,65 @@
+---
+title: Transazioni Ricorrenti
+description: Automatizza entrate e uscite ripetitive.
+---
+
+Le transazioni ricorrenti rappresentano eventi finanziari regolari — l'affitto mensile, lo stipendio bisettimanale, gli abbonamenti annuali o le rate dei prestiti. Alter Ego genera automaticamente le transazioni in base alle regole che definisci.
+
+## Creare una Regola Ricorrente
+
+1. Vai alla pagina **Ricorrenti** dalla barra laterale.
+2. Tocca **Aggiungi Ricorrente**.
+3. Compila i dettagli:
+   - **Descrizione** — a cosa serve questo pagamento (es. "Netflix", "Affitto", "Stipendio").
+   - **Importo** — l'importo della transazione.
+   - **Tipo** — uscita, entrata o trasferimento.
+   - **Conto** — quale conto è coinvolto in questa transazione.
+   - **Categoria** — la categoria di spesa o entrata.
+   - **Frequenza** — quanto spesso si ripete: giornaliera, settimanale, bisettimanale, mensile o annuale.
+   - **Data di inizio** — quando inizia la ricorrenza.
+   - **Data di fine** (opzionale) — quando deve smettere di ripetersi.
+4. Tocca **Salva**.
+
+## Come Funziona la Generazione Automatica
+
+Ogni volta che apri l'app, Alter Ego controlla le tue regole ricorrenti e genera le transazioni dovute. Ad esempio, se hai una regola mensile che parte dal 1° gennaio e apri l'app il 5 marzo, genererà le transazioni per gennaio, febbraio e marzo se non sono già state create.
+
+Le transazioni generate appaiono nella lista delle transazioni come qualsiasi altra transazione. Puoi modificarle o eliminarle singolarmente senza influire sulla regola ricorrente.
+
+## Pausa e Ripresa
+
+Se una transazione ricorrente è temporaneamente sospesa (es. un abbonamento in pausa), puoi mettere in pausa la regola invece di eliminarla:
+
+- Tocca il pulsante **Pausa** sulla scheda ricorrente.
+- La regola smette di generare nuove transazioni finché non la riprendi.
+- Tocca **Riprendi** quando vuoi farla ripartire.
+
+Le regole in pausa appaiono nella sezione "In Pausa" della pagina Ricorrenti.
+
+## Rate dei Prestiti
+
+Per prestiti e mutui, le transazioni ricorrenti supportano l'ammortamento:
+
+- Le regole che hanno **metadati del prestito** (tasso d'interesse e durata, per esempio da un'importazione precedente) vengono suddivise così.
+- Ogni pagamento generato viene automaticamente suddiviso in quota **capitale** e quota **interessi** in base a un piano di ammortamento.
+- I dettagli del prestito appaiono come badge sulla scheda ricorrente (es. "4,5% / 30 anni").
+
+Le regole con metadati del prestito sono elencate nella scheda **Loans**.
+
+## Sezioni nella Pagina Ricorrenti
+
+La pagina Ricorrenti organizza le tue regole in sezioni:
+
+- **Attive** — regole che stanno attualmente generando transazioni.
+- **Loans** — regole attive con metadati del prestito allegati.
+- **In Pausa** — regole che hai temporaneamente fermato.
+
+## Modifica ed Eliminazione
+
+Tocca il menu a tre punti su qualsiasi scheda ricorrente per modificare o eliminare la regola. Modificare una regola influisce solo sulle transazioni future — le transazioni passate restano invariate.
+
+## Suggerimenti
+
+- **Configura prima tutti i costi fissi** — affitto, utenze, abbonamenti, rate dei prestiti. Questo ti dà un quadro accurato delle tue spese impegnate.
+- **Usa le date di fine per impegni temporanei** — se un abbonamento dura 12 mesi, imposta una data di fine così si ferma automaticamente.
+- **Rivedi le transazioni generate** — le transazioni auto-generate usano l'importo della regola. Se una bolletta varia di mese in mese, potresti dover aggiustare le singole transazioni dopo che vengono generate.

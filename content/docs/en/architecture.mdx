@@ -1,0 +1,66 @@
+---
+title: Architecture
+description: Project structure, adapter pattern, and key conventions
+---
+
+## Project Structure
+
+```
+src/
+├── app/              # Next.js App Router pages
+│   ├── (auth)/       # Login & register (unauthenticated)
+│   └── (app)/        # Dashboard, accounts, transactions (authenticated)
+├── components/
+│   ├── ui/           # shadcn/ui primitives
+│   ├── charts/       # SVG chart components
+│   ├── reports/      # Report-specific charts and filters
+│   └── ...           # Feature components
+├── hooks/            # React hooks (use-accounts, use-transactions, etc.)
+├── lib/
+│   ├── backend/      # Backend adapter (types, mock, firebase)
+│   ├── currency.ts   # Currency formatting
+│   ├── dates.ts      # Date range helpers
+│   ├── categories.ts # Default category seeds
+│   ├── amortization.ts# Loan amortization schedule
+│   └── utils.ts      # cn() helper
+├── stores/           # Zustand stores
+└── types/            # TypeScript types and Zod schemas
+```
+
+## Backend Adapter Pattern
+
+All data access goes through a unified adapter interface. Feature code never imports Firebase directly.
+
+```typescript
+import { getBackend } from "@/lib/backend"
+
+const backend = getBackend()
+await backend.db.getAccounts(userId)
+```
+
+The adapter is selected at runtime by the `NEXT_PUBLIC_BACKEND` environment variable:
+- `mock` — In-memory store, seeds demo data automatically
+- `firebase` — Firestore via Firebase SDK
+
+See the [Backend Overview](/docs/backend/overview) for implementation details.
+
+## State Management
+
+- **Server state**: TanStack Query with custom hooks (`useAccounts`, `useTransactions`, etc.)
+- **Client state**: Zustand (`useSettingsStore`) for settings like currency, locale, theme, and AI mode
+- **Forms**: React Hook Form + Zod validation schemas
+
+## AI Integration
+
+AI is optional — the app is fully functional without it. Users control AI via `aiMode` in settings:
+- `off` — No AI features
+- `local` — Local model inference
+- `cloud` — Cloud-based AI
+
+AI features are always gated behind the mode check and never block core functionality.
+
+## Styling
+
+- Tailwind CSS v4 with the `cn()` utility for conditional classes
+- shadcn/ui component primitives (do not modify directly)
+- Charts are pure SVG — no external chart library

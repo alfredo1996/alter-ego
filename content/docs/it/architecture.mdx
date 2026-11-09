@@ -1,0 +1,66 @@
+---
+title: Architettura
+description: Struttura del progetto, pattern adapter e convenzioni principali
+---
+
+## Struttura del Progetto
+
+```
+src/
+├── app/              # Pagine Next.js App Router
+│   ├── (auth)/       # Login e registrazione (non autenticati)
+│   └── (app)/        # Dashboard, conti, transazioni (autenticati)
+├── components/
+│   ├── ui/           # Primitivi shadcn/ui
+│   ├── charts/       # Componenti grafici SVG
+│   ├── reports/      # Grafici e filtri per i report
+│   └── ...           # Componenti per funzionalità
+├── hooks/            # React hooks (use-accounts, use-transactions, ecc.)
+├── lib/
+│   ├── backend/      # Adapter backend (types, mock, firebase)
+│   ├── currency.ts   # Formattazione valuta
+│   ├── dates.ts      # Helper per intervalli di date
+│   ├── categories.ts # Categorie predefinite
+│   ├── amortization.ts# Piano di ammortamento dei prestiti
+│   └── utils.ts      # Helper cn()
+├── stores/           # Store Zustand
+└── types/            # Tipi TypeScript e schemi Zod
+```
+
+## Pattern Adapter per il Backend
+
+Tutto l'accesso ai dati passa attraverso un'interfaccia adapter unificata. Il codice delle funzionalità non importa mai Firebase direttamente.
+
+```typescript
+import { getBackend } from "@/lib/backend"
+
+const backend = getBackend()
+await backend.db.getAccounts(userId)
+```
+
+L'adapter viene selezionato a runtime dalla variabile d'ambiente `NEXT_PUBLIC_BACKEND`:
+- `mock` — Store in memoria, genera dati demo automaticamente
+- `firebase` — Firestore tramite Firebase SDK
+
+Vedi la [Panoramica Backend](/it/docs/backend/overview) per i dettagli implementativi.
+
+## Gestione dello Stato
+
+- **Stato del server**: TanStack Query con hook personalizzati (`useAccounts`, `useTransactions`, ecc.)
+- **Stato del client**: Zustand (`useSettingsStore`) per impostazioni come valuta, locale, tema e modalità AI
+- **Form**: React Hook Form + schemi di validazione Zod
+
+## Integrazione AI
+
+L'AI è opzionale — l'app è completamente funzionale senza di essa. Gli utenti controllano l'AI tramite `aiMode` nelle impostazioni:
+- `off` — Nessuna funzionalità AI
+- `local` — Inferenza con modello locale
+- `cloud` — AI basata su cloud
+
+Le funzionalità AI sono sempre subordinate al controllo della modalità e non bloccano mai le funzionalità principali.
+
+## Stile
+
+- Tailwind CSS v4 con l'utility `cn()` per classi condizionali
+- Primitivi di componenti shadcn/ui (da non modificare direttamente)
+- I grafici sono SVG puri — nessuna libreria esterna per i grafici

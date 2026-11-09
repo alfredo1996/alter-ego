@@ -1,0 +1,25 @@
+---
+title: Budget
+description: Imposta limiti di spesa e monitora l'utilizzo del budget
+---
+
+## Panoramica
+
+I budget ti permettono di impostare limiti di spesa mensili per categoria e monitorare quanto sei vicino a superarli.
+
+## Funzionalità
+
+- **Crea/modifica/elimina** budget con categoria, limite mensile e periodo
+- **Indicatori di stato** — OK (verde), Attenzione (ambra, 75%+), Pericolo (rosso, 90%+)
+- **Widget dashboard** — "Budget a Rischio" mostra i budget in ambra/rosso
+- **Avvisi giornalieri** — Notifica toast al caricamento della dashboard quando i budget sono a rischio (una volta al giorno)
+- **Budget del Periodo** — Barre di avanzamento nei Report
+
+## Stato del Budget
+
+```typescript
+function getBudgetStatus(percentage: number): "ok" | "warning" | "danger"
+// 0-74% → "ok"
+// 75-89% → "warning"
+// 90%+ → "danger"
+```

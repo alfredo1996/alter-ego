@@ -1,0 +1,52 @@
+---
+title: Configurazione Firebase
+description: Configura Firebase per la produzione
+---
+
+## Configurazione Progetto
+
+1. Crea un progetto nella [Console Firebase](https://console.firebase.google.com)
+2. Abilita **Firestore Database** in modalità produzione
+3. Abilita **Authentication** con il provider email/password
+4. Registra una **Web app** e copia i valori di configurazione
+
+## Regole di Sicurezza
+
+Distribuisci le regole di sicurezza Firestore che corrispondono al modello dati:
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Categorie predefinite — leggibili da tutti gli utenti autenticati
+    match /categories/{categoryId} {
+      allow read: if request.auth != null;
+    }
+
+    // Dati utente — accessibili solo dal proprietario
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null
+                         && request.auth.uid == userId;
+    }
+  }
+}
+```
+
+## Categorie Predefinite
+
+Genera le categorie predefinite nella collezione root `/categories`. Puoi usare il Firebase Admin SDK o importare da un file JSON nella Console Firebase.
+
+## Emulatore
+
+Per lo sviluppo locale con Firebase:
+
+```bash
+firebase emulators:start --only auth,firestore
+```
+
+Imposta le variabili d'ambiente dell'emulatore in `apps/web/.env.local`:
+
+```ini
+NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST=localhost:9099
+NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST=localhost:8080
+```

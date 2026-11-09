@@ -1,0 +1,93 @@
+---
+title: Test
+description: Strategia e pattern di testing
+---
+
+## Test Unitari (Vitest)
+
+**354+ test unitari** coprono utility, logica di business e l'adapter del backend mock.
+
+```bash
+# Modalità watch
+pnpm test
+
+# Esecuzione singola
+pnpm test --run
+
+# Con copertura
+pnpm test --run --coverage
+```
+
+### File di Test
+
+I test risiedono nelle directory `__tests__/` accanto al codice che testano:
+
+```
+src/lib/__tests__/
+  ├── dates.test.ts
+  ├── export.test.ts
+  ├── merchants.test.ts
+  ├── net-worth.test.ts
+  ├── amortization.test.ts
+  └── ...
+src/lib/backend/__tests__/
+  ├── adapter-contract.ts  # Test contrattuali condivisi
+  ├── mock.test.ts
+  ├── mock.adapter.test.ts
+  └── firebase.adapter.test.ts
+```
+
+### Backend Mock nei Test
+
+Resetta sempre lo stato tra i test:
+
+```typescript
+import { getBackend } from "@/lib/backend"
+
+beforeEach(() => {
+  const backend = getBackend()
+  ;(backend as any).__resetMockState()
+})
+```
+
+### Test Contrattuali
+
+La suite di test contrattuali dell'adapter (`adapter-contract.ts`) definisce 97 test condivisi che qualsiasi adapter backend deve superare. Vengono eseguiti contro l'adapter mock a ogni `pnpm test`, e contro Firebase sull'emulatore con `pnpm test:firebase:docker`.
+
+## Test E2E (Playwright)
+
+I test E2E coprono i flussi utente critici usando il backend mock. **18 file spec** su tutte le funzionalità principali.
+
+```bash
+pnpm test:e2e
+```
+
+### Spec dei Test
+
+```
+e2e/
+  ├── auth.spec.ts              # Login, registrazione
+  ├── dashboard.spec.ts         # Widget dashboard, drill-down
+  ├── accounts.spec.ts          # CRUD conti
+  ├── account-detail.spec.ts    # Dettaglio conto, grafico saldo
+  ├── transactions.spec.ts      # CRUD transazioni, filtri
+  ├── categories.spec.ts        # Gestione categorie
+  ├── budgets.spec.ts           # CRUD budget, avvisi
+  ├── savings-goals.spec.ts     # CRUD obiettivi, aggiunta fondi
+  ├── recurring.spec.ts         # CRUD regole ricorrenti
+  ├── reports.spec.ts           # Grafici, selettore periodo
+  ├── mm-import.spec.ts         # Flusso di import da Money Manager
+  ├── navigation.spec.ts        # Barra laterale, nav mobile
+  ├── settings.spec.ts          # Sezioni impostazioni
+  ├── sign-out.spec.ts          # Flusso disconnessione, route protette
+  ├── mobile.spec.ts            # Layout su telefono: menu, dialog, select
+  ├── loading-states.spec.ts    # Nessuno stato vuoto prima dei dati
+  ├── oauth-consent.spec.ts     # Schermata di consenso OAuth
+  └── security-headers.spec.ts  # CSP e header di sicurezza
+```
+
+### Pattern
+
+- I test vengono eseguiti contro il backend mock per velocità e isolamento
+- Usano selettori `aria-label` e basati su ruolo per l'accessibilità
+- Le interazioni solo desktop (menu hover, dropdown) vengono testate nel viewport desktop

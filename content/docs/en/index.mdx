@@ -1,0 +1,57 @@
+---
+title: Getting Started
+description: Set up and run Alter Ego locally
+---
+
+## Overview
+
+Alter Ego is a personal finance app built with Next.js 16, TypeScript, and Tailwind CSS v4. It uses a backend adapter pattern that lets you swap between the in-memory Mock backend and Firebase without changing feature code.
+
+## Prerequisites
+
+- **Node.js** 24+ (see `.nvmrc`)
+- **pnpm** 10+
+- (Optional) **Docker** to run the Firebase emulator locally
+
+## Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/alfredo1996/alter-ego.git
+cd alter-ego
+
+# Install dependencies
+pnpm install
+
+# Start dev server (uses mock backend by default)
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) — the mock backend seeds demo data automatically.
+
+## Environment Variables
+
+Create an `apps/web/.env.local` file:
+
+```ini
+# Backend: "mock" | "firebase"
+NEXT_PUBLIC_BACKEND=mock
+
+# Firebase (only needed when NEXT_PUBLIC_BACKEND=firebase)
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+```
+
+## Scripts
+
+| Command | Description |
+|---|---|
+| `pnpm dev` | Start dev server (Turbopack) |
+| `pnpm build` | Production build |
+| `pnpm lint` | Run ESLint |
+| `pnpm test` | Run Vitest in watch mode |
+| `pnpm test --run` | Run Vitest once |
+| `pnpm test:e2e` | Run Playwright E2E tests |

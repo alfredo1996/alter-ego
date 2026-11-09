@@ -1,0 +1,52 @@
+---
+title: Panoramica Backend
+description: Il pattern adapter che alimenta il livello dati di Alter Ego
+---
+
+## Pattern Adapter
+
+Alter Ego usa un pattern adapter per tutte le operazioni backend. Il codice delle funzionalità non importa mai Firebase direttamente — tutto passa attraverso l'interfaccia `BackendAdapter`.
+
+```typescript
+// Importa sempre da @/lib/backend
+import { getBackend } from "@/lib/backend"
+
+const backend = getBackend()
+const accounts = await backend.db.getAccounts(userId)
+```
+
+## Interfaccia
+
+L'adapter ha tre sotto-interfacce:
+
+```typescript
+interface BackendAdapter {
+  auth: AuthAdapter    // Accesso, disconnessione, onAuthStateChanged
+  db: DatabaseAdapter  // Tutte le operazioni CRUD
+  ai: AIAdapter        // Funzionalità AI (opzionale)
+}
+```
+
+### DatabaseAdapter
+
+L'interfaccia `DatabaseAdapter` copre tutte le operazioni sui dati:
+
+- **Conti** — CRUD + aggiornamento saldi
+- **Transazioni** — CRUD + filtri + importazione CSV
+- **Categorie** — Lettura (predefinite + personalizzate utente)
+- **Budget** — CRUD
+- **Obiettivi di Risparmio** — CRUD + aggiunta fondi
+- **Transazioni Ricorrenti** — CRUD + `generateDue`
+- **Tag** — CRUD + tagging transazioni
+- **Regole di Categorizzazione** — CRUD + `applyCategorization`
+- **Patrimonio Netto** — `takeSnapshot` + `getNetWorthHistory`
+- **Dashboard / Report** — Query di dati aggregati
+
+## Selezione del Backend
+
+Imposta `NEXT_PUBLIC_BACKEND` in `apps/web/.env.local`:
+
+| Valore | Backend | Caso d'uso |
+|---|---|---|
+| `mock` | Store in memoria | Sviluppo, test |
+| `firebase` | Firestore + Firebase Auth | Produzione (Google Cloud) |

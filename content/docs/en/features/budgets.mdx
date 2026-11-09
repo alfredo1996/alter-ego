@@ -1,0 +1,25 @@
+---
+title: Budgets
+description: Set spending limits and track budget utilization
+---
+
+## Overview
+
+Budgets let you set monthly spending limits per category and track how close you are to exceeding them.
+
+## Features
+
+- **Create/edit/delete** budgets with category, monthly limit, and period
+- **Status indicators** — OK (green), Warning (amber, 75%+), Danger (red, 90%+)
+- **Dashboard widget** — "Budgets at Risk" shows amber/red budgets
+- **Daily alerts** — Toast notification on dashboard load when budgets are at risk (once per day)
+- **Budgets This Period** — Progress bars in Reports
+
+## Budget Status
+
+```typescript
+function getBudgetStatus(percentage: number): "ok" | "warning" | "danger"
+// 0-74% → "ok"
+// 75-89% → "warning"
+// 90%+ → "danger"
+```

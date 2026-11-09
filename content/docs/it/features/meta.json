@@ -1,0 +1,11 @@
+{
+  "title": "Funzionalità",
+  "pages": [
+    "accounts",
+    "transactions",
+    "budgets",
+    "goals",
+    "recurring",
+    "reports"
+  ]
+}

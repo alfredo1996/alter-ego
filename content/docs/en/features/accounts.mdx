@@ -1,0 +1,35 @@
+---
+title: Accounts
+description: Manage bank accounts, credit cards, and other financial accounts
+---
+
+## Overview
+
+Accounts represent your financial holdings — checking, savings, credit cards, cash, investments, loans, and other account types.
+
+## Account Types
+
+| Type | Classification | Examples |
+|---|---|---|
+| `checking` | Asset | Bank checking account |
+| `savings` | Asset | Savings account |
+| `cash` | Asset | Cash on hand |
+| `investment` | Asset | Brokerage, retirement |
+| `other` | Asset | Miscellaneous assets |
+| `credit_card` | Liability | Credit cards |
+| `loan` | Liability | Mortgages, auto loans |
+
+## Features
+
+- **Create/edit/delete** accounts with name, type, balance, and currency
+- **Account detail page** at `/accounts/[id]` with balance-over-time chart and recent transactions
+- **Net worth calculation** — Assets minus liabilities
+- **Dashboard drill-down** — Click an account card to view its detail page
+
+## Hooks
+
+```typescript
+import { useAccounts, useCreateAccount, useUpdateAccount, useDeleteAccount } from "@/hooks/use-accounts"
+```
+
+All mutation hooks automatically invalidate the `["accounts"]` and `["dashboard"]` query caches.

@@ -1,0 +1,11 @@
+{
+  "title": "Features",
+  "pages": [
+    "accounts",
+    "transactions",
+    "budgets",
+    "goals",
+    "recurring",
+    "reports"
+  ]
+}

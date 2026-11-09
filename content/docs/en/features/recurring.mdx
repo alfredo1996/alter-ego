@@ -1,0 +1,28 @@
+---
+title: Recurring Transactions
+description: Automate repeating income and expenses
+---
+
+## Overview
+
+Recurring transactions automatically generate due transactions based on a schedule (daily, weekly, monthly, yearly).
+
+## Features
+
+- **Create/edit/delete** recurring rules with amount, category, frequency, and optional end date
+- **Active/Paused toggle** — Pause a recurring rule without deleting it
+- **Loan payments** — Recurring rules can carry loan metadata (rate, term) for amortized principal/interest splits
+- **Auto-generation** — Due transactions are generated on dashboard load via `generateDue`
+
+## Loan Payment Support
+
+When a recurring transaction has `loanMeta`, each generated transaction automatically splits into principal and interest based on the amortization schedule:
+
+```typescript
+interface LoanRecurringMeta {
+  loanAmount: number
+  annualRate: number
+  termMonths: number
+  startDate: string
+}
+```

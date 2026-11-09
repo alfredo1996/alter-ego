@@ -1,0 +1,13 @@
+{
+  "title": "User Guide",
+  "pages": [
+    "dashboard",
+    "accounts",
+    "transactions",
+    "budgets",
+    "goals",
+    "recurring",
+    "reports",
+    "settings"
+  ]
+}

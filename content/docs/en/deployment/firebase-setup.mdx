@@ -1,0 +1,52 @@
+---
+title: Firebase Setup
+description: Configure Firebase for production
+---
+
+## Project Setup
+
+1. Create a project in [Firebase Console](https://console.firebase.google.com)
+2. Enable **Firestore Database** in production mode
+3. Enable **Authentication** with email/password provider
+4. Register a **Web app** and copy the config values
+
+## Security Rules
+
+Deploy Firestore security rules that match the data model:
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default categories — readable by all authenticated users
+    match /categories/{categoryId} {
+      allow read: if request.auth != null;
+    }
+
+    // User data — only accessible by the owner
+    match /users/{userId}/{document=**} {
+      allow read, write: if request.auth != null
+                         && request.auth.uid == userId;
+    }
+  }
+}
+```
+
+## Default Categories
+
+Seed default categories to the root `/categories` collection. You can use the Firebase Admin SDK or import from a JSON file in the Firebase Console.
+
+## Emulator
+
+For local development with Firebase:
+
+```bash
+firebase emulators:start --only auth,firestore
+```
+
+Set the emulator environment variables in `apps/web/.env.local`:
+
+```ini
+NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST=localhost:9099
+NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST=localhost:8080
+```

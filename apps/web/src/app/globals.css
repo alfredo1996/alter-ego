@@ -1,0 +1,6 @@
+@import "tailwindcss";
+/* Tokens, theme and base layer live in the UI kit. */
+@import "@alter-ego/ui/tokens.css";
+/* Tailwind scans the app on its own; the kit sits outside it. */
+@source "../../../../packages/ui/src";
+

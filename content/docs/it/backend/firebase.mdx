@@ -1,0 +1,46 @@
+---
+title: Backend Firebase
+description: Backend Firestore con Firebase Authentication
+---
+
+## Panoramica
+
+Il backend Firebase usa Firestore per l'archiviazione dati e Firebase Authentication per la gestione utenti.
+
+## Modello Dati
+
+Firestore usa una struttura basata su sotto-collezioni:
+
+```
+/categories (root — categorie predefinite)
+/users/{userId}/
+  ├── categories/
+  ├── accounts/
+  ├── transactions/
+  ├── budgets/
+  ├── savings_goals/
+  ├── recurring_transactions/
+  ├── tags/
+  └── net_worth_snapshots/
+```
+
+## Configurazione
+
+```ini
+NEXT_PUBLIC_BACKEND=firebase
+NEXT_PUBLIC_FIREBASE_API_KEY=la-tua-api-key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=il-tuo-progetto.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=il-tuo-progetto
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456
+NEXT_PUBLIC_FIREBASE_APP_ID=1:123456:web:abcdef
+```
+
+## Dettagli Implementativi
+
+- **Categorie**: Unisce `/categories` root (predefinite) con la sotto-collezione utente (personalizzate)
+- **Snapshot**: Usa `setDoc` con `{ merge: true }` e ID documento con stringa-data per snapshot giornalieri idempotenti
+- **Rate prestiti**: `generateDue` replica la logica mock inclusa la suddivisione ammortizzata capitale/interessi
+
+## Regole di Sicurezza
+
+Le regole di sicurezza Firestore dovrebbero limitare la sotto-collezione di ogni utente al proprio `userId`. Le categorie root dovrebbero essere leggibili da tutti gli utenti autenticati.

@@ -1,0 +1,31 @@
+---
+title: Reports
+description: Visual financial reports and analytics
+---
+
+## Overview
+
+The Reports page provides visual summaries of your financial data with filterable charts.
+
+## Charts
+
+All charts are pure SVG with no external library dependencies.
+
+| Chart | Description |
+|---|---|
+| **Donut Chart** | Category spending breakdown |
+| **In and Out** | Money in and out by month, as a chart or a table |
+| **Top Expenses** | The largest expenses with total and share |
+| **Net Worth Chart** | Net worth history line chart |
+| **Budgets This Period** | Budget utilization bars |
+| **Category Table** | Spending by category with progress bars |
+
+## Filters
+
+- **Period selector** — Last 30 days, 3 months, 6 months, 1 year, all time
+- **Account filter** — Flat multi-select
+- **Category filter** — Grouped by category group (housing, food, etc.) with group-level toggle. Selecting a group header toggles all categories in that group.
+
+## Report Period
+
+Reports use the `useDateRange` hook to compute start/end dates from the selected period string.
