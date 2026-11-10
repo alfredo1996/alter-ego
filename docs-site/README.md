@@ -1,6 +1,6 @@
 # Documentation site
 
-The docs in `../content/docs` (54 MDX files, English and Italian) rendered as
+The docs in `../content/docs` (English and Italian) rendered as
 static HTML for GitHub Pages.
 
 ```bash
@@ -21,12 +21,9 @@ resolve `next/package.json` from here.
 ## Publishing
 
 `.github/workflows/docs.yml` builds on every change to the docs and asserts the
-export produced at least 50 pages, so a broken page is caught in review.
+export produced at least the page count set in the workflow, so a missing page is caught in review.
 
-**Publishing is manual for now.** GitHub Pages needs either a public repository or
-a paid plan, and this one is private. Run the workflow by hand from the Actions
-tab, or — once the accounting product lives in its own public repository — change
-the `deploy` job's condition to run on pushes to `main`.
+The workflow's `deploy` job publishes to GitHub Pages. It runs only when started by hand from the Actions tab.
 
 `DOCS_BASE_PATH` is the sub-path a project site is served from, `/alter-ego` for
 `<user>.github.io/alter-ego`. The workflow sets it from the repository name. Leave it

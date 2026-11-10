@@ -9,8 +9,11 @@ budgets, savings goals, recurring payments and reports. The backend is swappable
 through an adapter (an in-memory `mock`, or Firebase), and an MCP server exposes
 the same data to an AI client over HTTP or stdio.
 
-**AI is optional.** AI features enhance the experience but never gate it: the app
-is 100% functional with AI turned off.
+There is no AI in the app today. `AIAdapter` is a seam with no provider behind it,
+and nothing in the app depends on it (see [AI](#ai)).
+
+Looking for the company side (clients, pipeline, invoices)? That is a separate app:
+[alter-ego-crm](https://github.com/alfredo1996/alter-ego-crm).
 
 ## Features
 
@@ -44,12 +47,6 @@ is 100% functional with AI turned off.
 - A REST API (`/api/v1`) with API keys
 - See [docs/SELF-HOSTING.md](docs/SELF-HOSTING.md)
 
-**AI (optional)**
-
-- Chat assistant for natural language transaction entry and spending queries
-- Category suggestions based on payee
-- Gated behind the `ai_mode` setting (off / local / cloud), never required
-
 ## Tech Stack
 
 | Layer           | Tech                                                     |
@@ -75,6 +72,8 @@ is 100% functional with AI turned off.
 ### Quick start (mock backend, zero config)
 
 ```bash
+git clone https://github.com/alfredo1996/alter-ego.git
+cd alter-ego
 pnpm install
 pnpm dev          # http://localhost:3000
 ```
@@ -160,12 +159,15 @@ Firebase with a single env var change.
 
 ### State Management
 
-- **Zustand** (`useSettingsStore`) for client-only settings: currency, locale, theme, AI mode
+- **Zustand** (`useSettingsStore`) for client-only settings: currency, locale, theme and the `aiMode` setting
 - **TanStack Query** for all server state: accounts, transactions, budgets, etc.
 
-### AI Philosophy
+### AI
 
-AI is optional and never gates functionality. The `ai_mode` setting (`off` | `local` | `cloud`) controls visibility of AI features. When off, no AI code runs and the chat panel is hidden.
+No AI provider is wired. `AIAdapter` is a seam: `chat()` returns a fixed sentence and
+`categorize()` returns `null` in both adapters. `features.aiChat` is `false`, so the
+chat entry does not render. Settings has an `aiMode` selector (Off, Local, Cloud) that
+is stored and changes nothing yet. The app never needs AI.
 
 ## Testing
 
@@ -207,15 +209,14 @@ and against Firebase when the emulator is up.
 | `pnpm emulator:stop`        | Stop the ephemeral emulator            |
 | `pnpm mcp:stdio`            | MCP server over stdio                  |
 | `pnpm rules:build`          | Regenerate `firestore.rules`           |
-| `pnpm seed`                 | Seed Firebase with default categories  |
+| `pnpm seed:firebase`        | Seed Firebase with default categories  |
+| `pnpm seed:demo`            | Demo user with sample data (emulator)  |
 
 ## Documentation
 
-- **`/docs`**: Fumadocs site covering architecture, features, backend adapters, deployment, and contributing guides
+- **`/docs`**: Fumadocs site covering the user guide, architecture, backend adapters, deployment, and contributing guides
 - **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**: Deploy your own on Firebase
-- **[docs/LOCAL-DEVELOPMENT.md](docs/LOCAL-DEVELOPMENT.md)**: Local development setup guide
-- **[docs/SELF-HOSTING.md](docs/SELF-HOSTING.md)**: Running it locally with persistent data, and connecting an MCP client
-- **[docs/ROADMAP.md](docs/ROADMAP.md)**: Feature roadmap
+- **[docs/SELF-HOSTING.md](docs/SELF-HOSTING.md)**: Running it locally with persistent data, the REST API, and connecting an MCP client
 
 ## Contributing
 
@@ -227,7 +228,7 @@ and against Firebase when the emulator is up.
 - **Styling**: Use `cn()` utility for conditional Tailwind classes
 - **Testing**: Add unit tests for new utilities/logic, E2E tests for new user flows
 
-See the [contributing guide](/docs/contributing/conventions) in the Fumadocs site for full details.
+See the [contributing guide](content/docs/en/contributing/conventions.mdx) for full details.
 
 ## License
 
