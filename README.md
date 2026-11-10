@@ -78,7 +78,7 @@ pnpm install
 pnpm dev          # http://localhost:3000
 ```
 
-Sign in with any email and password: the mock backend stores everything in memory.
+Sign in with a valid email and a password of six or more characters: the mock backend stores everything in memory.
 Data lives in the browser tab and is gone on reload, fine for a look around, not
 for real use.
 

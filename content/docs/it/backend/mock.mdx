@@ -10,7 +10,7 @@ Il backend mock tiene tutti i dati in memoria. È il backend predefinito e non r
 ## Cosa Fa
 
 - Carica le categorie predefinite da `@/lib/categories` e nient'altro: si parte senza conti e senza transazioni.
-- Accetta qualsiasi email e password all'accesso. La password non viene controllata.
+- Accetta qualsiasi indirizzo email valido e una password di almeno sei caratteri all'accesso. La password non viene controllata.
 - Implementa gli stessi metodi di `DatabaseAdapter` del backend Firebase, quindi i test contrattuali girano su entrambi.
 - Dimentica tutto al ricaricamento della pagina.
 
@@ -35,4 +35,4 @@ beforeEach(() => {
 })
 ```
 
-I test end-to-end girano su una build di produzione con il backend mock. Per vedere uno stato di caricamento, che il mock altrimenti risolve subito, imposta `window.__MOCK_LATENCY_MS__`; vedi [Test](/docs/contributing/testing).
+I test end-to-end girano su una build di produzione con il backend mock. Per vedere uno stato di caricamento, che il mock altrimenti risolve subito, imposta `window.__MOCK_LATENCY_MS__`; vedi [Test](/it/docs/contributing/testing).

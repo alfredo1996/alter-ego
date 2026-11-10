@@ -21,7 +21,7 @@ resolve `next/package.json` from here.
 ## Publishing
 
 `.github/workflows/docs.yml` builds on every change to the docs and asserts the
-export produced at least the page count set in the workflow, so a missing page is caught in review.
+export produced exactly the page count set in the workflow (37 today), so a missing page fails the build; raise the number when you add a page.
 
 The workflow's `deploy` job publishes to GitHub Pages. It runs only when started by hand from the Actions tab.
 

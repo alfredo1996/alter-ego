@@ -17,7 +17,10 @@ function walk(dir: string, ext: RegExp): string[] {
 const DOC_FILES = [
   join(ROOT, "README.md"),
   join(ROOT, "docs-site/README.md"),
-  ...walk(join(ROOT, "docs"), /\.md$/),
+  // docs/plans/ is not scanned: a plan names files that do not exist yet.
+  ...walk(join(ROOT, "docs"), /\.md$/).filter(
+    (f) => !f.includes("/docs/plans/"),
+  ),
   ...walk(join(ROOT, "content/docs"), /\.mdx$/),
 ].filter(existsSync);
 
@@ -35,6 +38,12 @@ const PNPM_BUILTINS = new Set([
   "audit", "why", "store", "create", "rebuild", "outdated", "dedupe",
   "init", "approve-builds",
 ]); // prettier-ignore
+
+// Only these prefixes are relative to apps/web.
+const WEB_RELATIVE = /^(src|e2e|scripts)\//;
+
+// Ceiling: only inline code and links are checked. A path inside a fenced block
+// (a file tree, a shell snippet) is not, so those can still go stale.
 
 // Written by the reader on their own machine, never committed.
 const LOCAL_ONLY = new Set(["apps/web/.env.local"]);
@@ -56,6 +65,10 @@ function offenders(check: (text: string, file: string) => string[]): string[] {
   );
 }
 
+// This repository's own files, written as absolute GitHub URLs.
+const REPO_URL =
+  /^https:\/\/github\.com\/alfredo1996\/alter-ego\/(?:blob|tree)\/main\//;
+
 function docsPageExists(lang: string, rest: string) {
   const base = join(ROOT, "content/docs", lang, rest);
   return existsSync(`${base}.mdx`) || existsSync(join(base, "index.mdx"));
@@ -65,7 +78,7 @@ describe("documentation matches the repository", () => {
   it("names only pnpm commands that exist", () => {
     const bad = offenders((text) =>
       [...text.matchAll(/pnpm (?:run )?([a-z][\w:.-]*)/g)]
-        .map((m) => m[1])
+        .map((m) => m[1].replace(/\.+$/, ""))
         .filter((s) => !SCRIPTS.has(s) && !PNPM_BUILTINS.has(s))
         .map((s) => `pnpm ${s}`),
     );
@@ -82,7 +95,7 @@ describe("documentation matches the repository", () => {
           (p) =>
             !LOCAL_ONLY.has(p) &&
             !existsSync(join(ROOT, p)) &&
-            !existsSync(join(ROOT, "apps/web", p)),
+            !(WEB_RELATIVE.test(p) && existsSync(join(ROOT, "apps/web", p))),
         ),
     );
     expect(bad).toEqual([]);
@@ -92,13 +105,16 @@ describe("documentation matches the repository", () => {
     const bad = offenders((text, file) =>
       [...text.matchAll(/\]\(([^)\s]+)\)/g)]
         .map((m) => m[1].split("#")[0])
-        .filter((t) => t && !/^(https?:|mailto:)/.test(t))
+        .filter((t) => t && (REPO_URL.test(t) || !/^(https?:|mailto:)/.test(t)))
         .filter((t) => {
+          if (REPO_URL.test(t))
+            return !existsSync(join(ROOT, t.replace(REPO_URL, "")));
           const inSite = file.startsWith(join(ROOT, "content/docs"));
           const docs = inSite && /^\/(?:(en|it)\/)?docs\/?(.*)$/.exec(t);
           if (docs) {
-            const lang =
-              docs[1] ?? /content\/docs\/(\w+)\//.exec(file)?.[1] ?? "en";
+            // The static site only serves /<lang>/docs/..., in the page's own language.
+            const lang = /content\/docs\/(\w+)\//.exec(file)?.[1] ?? "en";
+            if (docs[1] !== lang) return true;
             return !docsPageExists(lang, docs[2].replace(/\/$/, ""));
           }
           const target = t.startsWith("/")

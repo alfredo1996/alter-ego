@@ -44,14 +44,14 @@ const backend = getBackend()
 await backend.db.getAccounts(userId)
 ```
 
-`NEXT_PUBLIC_BACKEND` selects `mock` or `firebase`. See the [Backend Overview](/docs/backend/overview).
+`NEXT_PUBLIC_BACKEND` selects `mock` or `firebase`. See the [Backend Overview](/en/docs/backend/overview).
 
 ## MCP Server and REST API
 
 The same data is available outside the browser:
 
 - **MCP server** at `/api/mcp`, over HTTP with OAuth 2.1 and PKCE (the authorization server lives in `lib/oauth`), or over stdio with `pnpm mcp:stdio`. The tools are in `lib/mcp/tools`.
-- **REST API** under `/api/v1`, authenticated with an API key from Settings. Its OpenAPI document is served at `/api/openapi`.
+- **REST API** under `/api/v1`, authenticated with an API key from Settings. Its OpenAPI document is served at `/api/openapi` and covers only the transactions endpoints.
 
 Both reach the database through the server-side adapter, not through the browser SDK. [docs/SELF-HOSTING.md](https://github.com/alfredo1996/alter-ego/blob/main/docs/SELF-HOSTING.md) lists the tools.
 

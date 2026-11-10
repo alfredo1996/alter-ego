@@ -10,7 +10,7 @@ The mock backend keeps all data in memory. It is the default backend and needs n
 ## What It Does
 
 - Seeds the default categories from `@/lib/categories` and nothing else: you start with no accounts and no transactions.
-- Accepts any email and password at sign-in. The password is not checked.
+- Accepts any valid email address and a password of six or more characters at sign-in. The password is not checked.
 - Implements the same `DatabaseAdapter` methods as the Firebase backend, so the contract tests run against both.
 - Forgets everything when the page reloads.
 
@@ -35,4 +35,4 @@ beforeEach(() => {
 })
 ```
 
-End-to-end tests run against a production build with the mock backend. To see a loading state, which the mock otherwise answers at once, set `window.__MOCK_LATENCY_MS__`; see [Testing](/docs/contributing/testing).
+End-to-end tests run against a production build with the mock backend. To see a loading state, which the mock otherwise answers at once, set `window.__MOCK_LATENCY_MS__`; see [Testing](/en/docs/contributing/testing).

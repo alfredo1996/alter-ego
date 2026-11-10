@@ -45,7 +45,7 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456
 NEXT_PUBLIC_FIREBASE_APP_ID=1:123456:web:abcdef
 ```
 
-L'API REST e il server MCP richiedono anche credenziali lato server; vedi [Configurazione Firebase](/docs/deployment/firebase-setup).
+L'API REST e il server MCP richiedono anche credenziali lato server: imposta `FIREBASE_SERVICE_ACCOUNT_JSON` (il service account in JSON) oppure `GOOGLE_APPLICATION_CREDENTIALS` (il percorso del suo file di chiave).
 
 ## Regole di Sicurezza
 
@@ -58,4 +58,4 @@ L'API REST e il server MCP richiedono anche credenziali lato server; vedi [Confi
 ## Dettagli di Implementazione
 
 - Le **categorie** uniscono le predefinite della radice con quelle dell'utente.
-- Gli **snapshot del patrimonio netto** usano la data come id del documento, quindi lo snapshot di un giorno viene scritto una volta sola.
+- Gli **snapshot del patrimonio netto** usano la data come id del documento, quindi c'è uno snapshot al giorno e uno successivo dello stesso giorno lo sostituisce.

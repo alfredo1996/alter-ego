@@ -45,7 +45,7 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456
 NEXT_PUBLIC_FIREBASE_APP_ID=1:123456:web:abcdef
 ```
 
-The REST API and the MCP server also need server credentials; see [Firebase Setup](/docs/deployment/firebase-setup).
+The REST API and the MCP server also need server credentials: set `FIREBASE_SERVICE_ACCOUNT_JSON` (the service account as JSON) or `GOOGLE_APPLICATION_CREDENTIALS` (the path to its key file).
 
 ## Security Rules
 
@@ -58,4 +58,4 @@ The REST API and the MCP server also need server credentials; see [Firebase Setu
 ## Key Implementation Details
 
 - **Categories** merge the root defaults with the user's own.
-- **Net worth snapshots** use the date as the document id, so a day's snapshot is written once.
+- **Net worth snapshots** use the date as the document id, so there is one snapshot per day and a later one the same day replaces it.

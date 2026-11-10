@@ -99,26 +99,26 @@ then paste a JSON-RPC `initialize` on stdin.
 
 The MCP server (HTTP and stdio) exposes eleven tools. Over HTTP, calls that write need the `data:write` scope.
 
-| Tool                 | What it does                                                                 |
-| -------------------- | ---------------------------------------------------------------------------- |
-| `list_accounts`      | Accounts with balances, split into assets and liabilities, and the net worth |
-| `list_transactions`  | Transactions, most recent first, with search and date filters                |
-| `list_categories`    | Every category available for a transaction                                   |
-| `list_tags`          | Every tag                                                                    |
-| `get_spending`       | Spending and income for a month window, by category or by month              |
-| `get_budget_status`  | Every budget for its current period, worst first                             |
-| `add_transaction`    | Records an expense, an income or a transfer                                  |
-| `update_transaction` | Changes fields of an existing transaction                                    |
-| `delete_transaction` | Deletes a transaction and restores the balance                               |
-| `create_account`     | Opens an account                                                             |
-| `archive_account`    | Closes or reopens an account (only at a balance of 0)                        |
+| Tool                 | What it does                                                                             |
+| -------------------- | ---------------------------------------------------------------------------------------- |
+| `list_accounts`      | Accounts with balances, split into assets and liabilities, and the net worth             |
+| `list_transactions`  | Transactions, most recent first, with search and date filters                            |
+| `list_categories`    | Every category available for a transaction                                               |
+| `list_tags`          | Every tag                                                                                |
+| `get_spending`       | Spending and income for a month window, by category or by month                          |
+| `get_budget_status`  | Every budget for its current period, worst first                                         |
+| `add_transaction`    | Records an expense, an income or a transfer                                              |
+| `update_transaction` | Changes fields of an existing transaction                                                |
+| `delete_transaction` | Deletes a transaction and restores the balance                                           |
+| `create_account`     | Opens an account                                                                         |
+| `archive_account`    | Closes or reopens an account (closing needs a balance of 0; reopening is always allowed) |
 
 ## The REST API
 
 The app also serves a REST API under `/api/v1` (transactions, accounts, budgets,
 categories, recurring, tags, reports). Create a key in Settings, under Data
 (**Generate New API Key**), and send it as `Authorization: Bearer <key>`. A key is
-shown once. The OpenAPI document is served at `/api/openapi`. Creating a key needs the
+shown once. The OpenAPI document is served at `/api/openapi` and covers only the transactions endpoints. Creating a key needs the
 owner uid, as above.
 
 ## What this is and is not
