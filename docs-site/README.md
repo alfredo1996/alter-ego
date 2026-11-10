@@ -23,7 +23,7 @@ resolve `next/package.json` from here.
 `.github/workflows/docs.yml` builds on every change to the docs and asserts the
 export produced exactly the page count set in the workflow (37 today), so a missing page fails the build; change the number when you add or remove a page.
 
-The workflow's `deploy` job publishes to GitHub Pages. It runs only when started by hand from the Actions tab.
+The workflow's `deploy` job publishes to GitHub Pages on every push to `main` that changes the docs, and when started by hand from the Actions tab. The site is at https://alfredo1996.github.io/alter-ego/.
 
 `DOCS_BASE_PATH` is the sub-path a project site is served from, `/alter-ego` for
 `<user>.github.io/alter-ego`. The workflow sets it from the repository name. Leave it

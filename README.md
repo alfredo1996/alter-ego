@@ -214,7 +214,7 @@ and against Firebase when the emulator is up.
 
 ## Documentation
 
-- **`/docs`**: Fumadocs site covering the user guide, architecture, backend adapters, deployment, and contributing guides
+- **[alfredo1996.github.io/alter-ego](https://alfredo1996.github.io/alter-ego/)**: the docs site, with the user guide, architecture, backend adapters, deployment, and contributing guides. The app serves the same pages under `/docs`
 - **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**: Deploy your own on Firebase
 - **[docs/SELF-HOSTING.md](docs/SELF-HOSTING.md)**: Running it locally with persistent data, the REST API, and connecting an MCP client
 
