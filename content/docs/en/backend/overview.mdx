@@ -1,14 +1,13 @@
 ---
 title: Backend Overview
-description: The adapter pattern that powers Alter Ego's data layer
+description: The adapter pattern behind Alter Ego's data layer
 ---
 
 ## Adapter Pattern
 
-Alter Ego uses an adapter pattern for all backend operations. Feature code never imports Firebase directly — everything goes through the `BackendAdapter` interface.
+Everything the app reads or writes goes through the adapter. Feature code never imports Firebase directly.
 
 ```typescript
-// Always import from @/lib/backend
 import { getBackend } from "@/lib/backend"
 
 const backend = getBackend()
@@ -17,36 +16,34 @@ const accounts = await backend.db.getAccounts(userId)
 
 ## Interface
 
-The adapter has three sub-interfaces:
-
 ```typescript
 interface BackendAdapter {
-  auth: AuthAdapter    // Sign in, sign out, onAuthStateChanged
-  db: DatabaseAdapter  // All CRUD operations
-  ai: AIAdapter        // AI features (optional)
+  auth: AuthAdapter
+  db: DatabaseAdapter
+  ai: AIAdapter
 }
 ```
 
+`AIAdapter` has no provider behind it; see [Architecture](/docs/architecture).
+
 ### DatabaseAdapter
 
-The `DatabaseAdapter` interface covers all data operations:
+`DatabaseAdapter` covers:
 
-- **Accounts** — CRUD + balance updates
-- **Transactions** — CRUD + filtering + CSV import
-- **Categories** — Read (defaults + user custom)
-- **Budgets** — CRUD
-- **Savings Goals** — CRUD + add funds
-- **Recurring Transactions** — CRUD + `generateDue`
-- **Tags** — CRUD + transaction tagging
-- **Categorization Rules** — CRUD + `applyCategorization`
-- **Net Worth** — `takeSnapshot` + `getNetWorthHistory`
-- **Dashboard / Reports** — Aggregated data queries
+- **Accounts**, **transactions** (with filters and imports), **categories**, **budgets**, **savings goals**
+- **Recurring transactions**, including `generateDue`
+- **Tags** and **categorization rules**, including `applyCategorization`
+- **Net worth** snapshots and history
+- **Dashboard** and **reports** aggregates
+- **API keys** and dismissed subscription suggestions
+
+The MCP audit trail is deliberately not on `DatabaseAdapter`: its collection is closed to clients by the rules, so it is reached on the server through `getServerDb()`.
 
 ## Selecting a Backend
 
 Set `NEXT_PUBLIC_BACKEND` in `apps/web/.env.local`:
 
-| Value | Backend | Use Case |
+| Value | Backend | Use |
 |---|---|---|
-| `mock` | In-memory store | Development, testing |
-| `firebase` | Firestore + Firebase Auth | Production (Google Cloud) |
+| `mock` | In-memory store | Development, tests |
+| `firebase` | Firestore and Firebase Auth | Self-hosting, deployment |

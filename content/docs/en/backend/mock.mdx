@@ -1,18 +1,18 @@
 ---
 title: Mock Backend
-description: In-memory backend for development and testing
+description: In-memory backend for development and tests
 ---
 
 ## Overview
 
-The mock backend stores all data in memory and seeds demo data on initialization. It's the default backend and requires no external services.
+The mock backend keeps all data in memory. It is the default backend and needs no external service.
 
-## Features
+## What It Does
 
-- Auto-seeds default categories from `@/lib/categories`
-- Demo user with sample accounts and transactions
-- Full implementation of all `DatabaseAdapter` methods
-- `__resetMockState()` for test isolation
+- Seeds the default categories from `@/lib/categories` and nothing else: you start with no accounts and no transactions.
+- Accepts any email and password at sign-in. The password is not checked.
+- Implements the same `DatabaseAdapter` methods as the Firebase backend, so the contract tests run against both.
+- Forgets everything when the page reloads.
 
 ## Usage
 
@@ -20,17 +20,19 @@ The mock backend stores all data in memory and seeds demo data on initialization
 NEXT_PUBLIC_BACKEND=mock
 ```
 
-No additional configuration needed — just run `pnpm dev`.
+Then run `pnpm dev`.
 
-## Testing
+## In Tests
 
-The mock backend is used in all Vitest unit tests. Call `__resetMockState()` in `beforeEach` to ensure clean state between tests:
+Vitest tests use the mock backend. Reset its state before each test:
 
 ```typescript
-import { getBackend } from "@/lib/backend"
+import { createMockAdapter, __resetMockState } from "../mock"
 
 beforeEach(() => {
-  const backend = getBackend() as MockBackend
-  backend.__resetMockState()
+  __resetMockState()
+  adapter = createMockAdapter()
 })
 ```
+
+End-to-end tests run against a production build with the mock backend. To see a loading state, which the mock otherwise answers at once, set `window.__MOCK_LATENCY_MS__`; see [Testing](/docs/contributing/testing).

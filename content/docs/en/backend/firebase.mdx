@@ -1,28 +1,38 @@
 ---
 title: Firebase Backend
-description: Firestore backend with Firebase Authentication
+description: Firestore and Firebase Authentication
 ---
 
 ## Overview
 
-The Firebase backend uses Firestore for data storage and Firebase Authentication for user management.
+The Firebase backend stores data in Firestore and signs users in with Firebase Authentication. Sign-up is closed: the security rules admit one user id.
 
 ## Data Model
 
-Firestore uses a subcollection-based structure:
+Each user's data lives in subcollections of `users/{userId}`:
 
 ```
-/categories (root — default categories)
+/categories                          default categories (read-only for clients)
 /users/{userId}/
-  ├── categories/
   ├── accounts/
   ├── transactions/
+  ├── categories/                    the user's own categories and copies of defaults
   ├── budgets/
   ├── savings_goals/
-  ├── recurring_transactions/
+  ├── recurring/
   ├── tags/
-  └── net_worth_snapshots/
+  ├── categorization_rules/
+  ├── dismissed_subscription_patterns/
+  ├── account_balance_snapshots/
+  ├── monthly_totals/
+  ├── net_worth_snapshots/
+  ├── api_keys/
+  └── mcp_audit/                     server-only
+/api_keys_index                      key hashes, for server-side validation
+/oauth_clients, /oauth_codes, /oauth_tokens    OAuth server, server-only
 ```
+
+The server-only collections are written through the Admin SDK, which bypasses the rules; the rules deny every client access to them.
 
 ## Configuration
 
@@ -35,12 +45,17 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456
 NEXT_PUBLIC_FIREBASE_APP_ID=1:123456:web:abcdef
 ```
 
-## Key Implementation Details
-
-- **Categories**: Merges root `/categories` (defaults) with user subcollection (custom)
-- **Snapshots**: Uses `setDoc` with `{ merge: true }` and date-string doc IDs for idempotent daily snapshots
-- **Loan payments**: `generateDue` mirrors mock logic including amortized principal/interest splits
+The REST API and the MCP server also need server credentials; see [Firebase Setup](/docs/deployment/firebase-setup).
 
 ## Security Rules
 
-Firestore security rules should restrict each user's subcollection to their own `userId`. Root categories should be readable by all authenticated users.
+`firestore.rules` is generated from `firestore/base.rules` by `pnpm rules:build`. Edit the source, not the output; a test fails when they differ. The rules:
+
+- admit one user id (`isAllowedUser`) and let that user reach only their own subtree;
+- give every collection a closed schema: a write may carry only the fields the app writes, and each field is validated (types, bounds, allowed values);
+- make the default categories and the OAuth and audit collections unreachable for writes from a client.
+
+## Key Implementation Details
+
+- **Categories** merge the root defaults with the user's own.
+- **Net worth snapshots** use the date as the document id, so a day's snapshot is written once.

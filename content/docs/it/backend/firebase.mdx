@@ -1,46 +1,61 @@
 ---
 title: Backend Firebase
-description: Backend Firestore con Firebase Authentication
+description: Firestore e Firebase Authentication
 ---
 
 ## Panoramica
 
-Il backend Firebase usa Firestore per l'archiviazione dati e Firebase Authentication per la gestione utenti.
+Il backend Firebase salva i dati in Firestore e fa accedere gli utenti con Firebase Authentication. La registrazione è chiusa: le regole di sicurezza ammettono un solo user id.
 
 ## Modello Dati
 
-Firestore usa una struttura basata su sotto-collezioni:
+I dati di ogni utente stanno nelle sottocollezioni di `users/{userId}`:
 
 ```
-/categories (root — categorie predefinite)
+/categories                          categorie predefinite (sola lettura per i client)
 /users/{userId}/
-  ├── categories/
   ├── accounts/
   ├── transactions/
+  ├── categories/                    categorie dell'utente e copie delle predefinite
   ├── budgets/
   ├── savings_goals/
-  ├── recurring_transactions/
+  ├── recurring/
   ├── tags/
-  └── net_worth_snapshots/
+  ├── categorization_rules/
+  ├── dismissed_subscription_patterns/
+  ├── account_balance_snapshots/
+  ├── monthly_totals/
+  ├── net_worth_snapshots/
+  ├── api_keys/
+  └── mcp_audit/                     solo server
+/api_keys_index                      hash delle chiavi, per la validazione lato server
+/oauth_clients, /oauth_codes, /oauth_tokens    server OAuth, solo server
 ```
+
+Le collezioni solo server sono scritte con l'Admin SDK, che aggira le regole; le regole negano ogni accesso ai client.
 
 ## Configurazione
 
 ```ini
 NEXT_PUBLIC_BACKEND=firebase
-NEXT_PUBLIC_FIREBASE_API_KEY=la-tua-api-key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=il-tuo-progetto.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=il-tuo-progetto
+NEXT_PUBLIC_FIREBASE_API_KEY=your-api-key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=123456
 NEXT_PUBLIC_FIREBASE_APP_ID=1:123456:web:abcdef
 ```
 
-## Dettagli Implementativi
-
-- **Categorie**: Unisce `/categories` root (predefinite) con la sotto-collezione utente (personalizzate)
-- **Snapshot**: Usa `setDoc` con `{ merge: true }` e ID documento con stringa-data per snapshot giornalieri idempotenti
-- **Rate prestiti**: `generateDue` replica la logica mock inclusa la suddivisione ammortizzata capitale/interessi
+L'API REST e il server MCP richiedono anche credenziali lato server; vedi [Configurazione Firebase](/docs/deployment/firebase-setup).
 
 ## Regole di Sicurezza
 
-Le regole di sicurezza Firestore dovrebbero limitare la sotto-collezione di ogni utente al proprio `userId`. Le categorie root dovrebbero essere leggibili da tutti gli utenti autenticati.
+`firestore.rules` è generato da `firestore/base.rules` con `pnpm rules:build`. Modifica il sorgente, non il file generato; un test fallisce se differiscono. Le regole:
+
+- ammettono un solo user id (`isAllowedUser`) e lasciano a quell'utente solo il proprio sottoalbero;
+- danno a ogni collezione uno schema chiuso: una scrittura può contenere solo i campi che l'app scrive, e ogni campo è validato (tipi, limiti, valori ammessi);
+- impediscono ai client di scrivere le categorie predefinite e le collezioni OAuth e di audit.
+
+## Dettagli di Implementazione
+
+- Le **categorie** uniscono le predefinite della radice con quelle dell'utente.
+- Gli **snapshot del patrimonio netto** usano la data come id del documento, quindi lo snapshot di un giorno viene scritto una volta sola.

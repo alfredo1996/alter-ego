@@ -1,105 +1,43 @@
 ---
 title: Impostazioni
-description: Personalizza il tuo profilo, le preferenze e le regole di automazione.
+description: Il tuo profilo, le preferenze e i dati.
 ---
 
-La pagina Impostazioni ti permette di personalizzare Alter Ego e configurare le funzionalità di automazione. Le modifiche hanno effetto immediato.
+Le Impostazioni hanno cinque sezioni, elencate a lato della pagina: **Profile**, **Preferences**, **Categories & Tags**, **Data** e **Danger Zone**.
 
-## Profilo
+## Profile
 
-Modifica il tuo nome visualizzato e indirizzo email. Questi vengono mostrati nella barra laterale e utilizzati per l'identità del tuo account.
+Mostra nome visualizzato ed email. **Edit** permette di cambiarli, poi **Save Changes**.
 
-- Tocca il pulsante **Modifica** accanto alle informazioni del profilo.
-- Aggiorna il tuo nome o email.
-- Tocca **Salva** per confermare.
+## Preferences
 
-## Tema
+- **Theme** — Light, Dark o System, che segue il dispositivo.
+- **Currency** — usata per i totali e per i nuovi conti. Ogni conto mantiene la propria valuta.
+- **Language and Format** — come vengono scritti numeri e date.
+- **AI Features** — Off, Local o Cloud. Questa impostazione viene salvata, ma nessun provider AI è ancora collegato, quindi oggi non cambia nulla. Tutto nell'app funziona senza di essa.
 
-Scegli l'aspetto dell'app:
+## Categories & Tags
 
-- **Chiaro** — sfondo bianco con testo scuro.
-- **Scuro** — sfondo scuro con testo chiaro.
-- **Sistema** — si adatta automaticamente all'impostazione di aspetto del dispositivo.
+- **Categories** — **Open Categories** porta alla pagina [Categorie](/docs/guide/categories).
+- **Tags** — etichette che attraversano le categorie, come un viaggio o una spesa condivisa. Inserisci un nome, scegli un colore e seleziona **Add Tag**.
+- **Auto-categorization Rules** — un **Pattern**, la **Category** da suggerire e un nome **Display as** facoltativo. Seleziona **Add Rule**. Quando una descrizione nel form della transazione contiene lo schema (senza distinguere maiuscole), il form suggerisce quella categoria. Ogni regola ha un interruttore per disattivarla senza eliminarla.
 
-Il tema si applica a tutte le pagine immediatamente.
+## Data
 
-## Valuta e Lingua
+- **Backup** — **Export All Data (JSON)** scarica un file con conti, transazioni, budget, obiettivi, tag e regole. Il CSV delle transazioni si esporta invece dalla pagina Transactions.
+- **API Keys** — **Generate New API Key** crea una chiave per script e server MCP. La chiave viene mostrata una sola volta, alla creazione. Revoca una chiave per tagliare fuori chi la usa. Vedi il [self-hosting](https://github.com/alfredo1996/alter-ego/blob/main/docs/SELF-HOSTING.md) per come si usa.
+- **Connectors** — le app a cui hai fatto accedere Alter Ego, come Claude. **Disconnect All Connectors** le disconnette tutte; ognuna chiede di nuovo l'approvazione.
 
-Imposta la valuta e la lingua preferite per la formattazione dei numeri:
+## Danger Zone
 
-- **Valuta** — determina il simbolo della valuta utilizzato in tutta l'app (es. €, $, £).
-- **Lingua** — controlla come vengono formattati numeri e date (es. "1.234,56" vs "1,234.56").
+Ogni azione chiede conferma e nessuna si può annullare:
 
-Tutti gli importi nell'app — dashboard, transazioni, report, budget, obiettivi — usano queste impostazioni.
-
-## Modalità AI
-
-Controlla se le funzionalità AI sono abilitate:
-
-- **Off** — nessuna funzionalità AI. L'app funziona completamente senza AI.
-- **Locale** — le funzionalità AI vengono eseguite sul dispositivo dove possibile.
-- **Cloud** — le funzionalità AI utilizzano modelli basati su cloud per capacità avanzate.
-
-Quando la modalità AI è disattivata, gli elementi UI relativi all'AI (come il pulsante chat nella barra laterale) sono nascosti. L'app è completamente funzionale senza AI — è sempre opzionale.
-
-## Gestione Tag
-
-I tag ti permettono di aggiungere etichette extra alle transazioni oltre alla loro categoria. Usali per aspetti trasversali come "vacanza", "deducibile" o "rimborsabile".
-
-### Creare un Tag
-
-1. Scorri alla sezione **Tag** nelle Impostazioni.
-2. Tocca **Aggiungi Tag**.
-3. Inserisci un nome e scegli un colore.
-4. Tocca **Salva**.
-
-### Eliminare un Tag
-
-Tocca il pulsante elimina accanto a qualsiasi tag. Questo rimuove il tag da tutte le transazioni che lo avevano.
-
-### Usare i Tag
-
-Quando crei o modifichi una transazione, puoi assegnare uno o più tag. Puoi poi filtrare la pagina Transazioni per tag per vedere tutte le transazioni correlate attraverso categorie e conti.
-
-## Regole di Auto-Categorizzazione
-
-Le regole assegnano automaticamente una categoria alle nuove transazioni in base alla loro descrizione. Questo ti evita di dover categorizzare manualmente ogni transazione.
-
-### Creare una Regola
-
-1. Scorri alla sezione **Regole di Categorizzazione** nelle Impostazioni.
-2. Tocca **Aggiungi Regola**.
-3. Inserisci un **pattern** — il testo da cercare nelle descrizioni delle transazioni (es. "Netflix", "Starbucks").
-4. Seleziona la **categoria** da assegnare quando il pattern corrisponde.
-5. Tocca **Salva**.
-
-La regola è attiva immediatamente. Le nuove transazioni con una descrizione corrispondente verranno auto-categorizzate.
-
-### Abilitare e Disabilitare le Regole
-
-Ogni regola ha un interruttore. Disattivalo per disabilitare temporaneamente una regola senza eliminarla. Riattivalo quando la vuoi di nuovo attiva.
-
-### Come Funziona la Corrispondenza
-
-Quando digiti una descrizione nel modulo transazione, l'app controlla le tue regole attive. Se la descrizione contiene il pattern di una regola (senza distinzione maiuscole/minuscole), la categoria viene compilata automaticamente. Puoi sempre sovrascrivere il suggerimento selezionando una categoria diversa.
-
-## Esportazione CSV
-
-Tocca il pulsante **Esporta** nelle Impostazioni per scaricare tutte le tue transazioni come file CSV. L'esportazione include:
-
-- Data
-- Descrizione
-- Importo
-- Tipo (uscita/entrata/trasferimento)
-- Categoria
-- Nome del conto
-- Note
-
-Usalo per fare il backup dei tuoi dati, condividerli con un commercialista o importarli in un foglio di calcolo.
+- **Delete All Transactions** — conti, categorie, budget e regole restano.
+- **Delete All Accounts & Transactions** (Start from Zero) — rimuove anche regole ricorrenti e storico dei saldi. Categorie, tag, budget e regole restano.
+- **Reset Categories to Default**.
 
 ## Suggerimenti
 
-- **Imposta prima la valuta** — fallo prima di inserire qualsiasi transazione così tutti gli importi vengono visualizzati correttamente fin dall'inizio.
-- **Costruisci le regole man mano** — ogni volta che categorrizzi una transazione manualmente, considera se è un commerciante ricorrente che merita una regola di auto-categorizzazione.
-- **Usa i tag con parsimonia** — i tag sono più utili quando rappresentano un raggruppamento significativo per cui effettivamente filtrerai. Troppi tag possono diventare rumore.
-- **Esporta periodicamente** — anche se i tuoi dati sono salvati nell'app, avere un backup CSV ti dà tranquillità.
+- **Imposta prima la valuta**, prima di inserire transazioni.
+- **Aggiungi una regola per ogni esercente che categorizzi a mano.**
+- **Esporta ogni tanto** per avere un backup tuo.

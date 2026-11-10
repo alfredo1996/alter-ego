@@ -1,105 +1,43 @@
 ---
 title: Settings
-description: Customize your profile, preferences, and automation rules.
+description: Your profile, preferences and data.
 ---
 
-The Settings page lets you personalize Alter Ego and configure automation features. Changes take effect immediately.
+Settings has five sections, listed on the side of the page: **Profile**, **Preferences**, **Categories & Tags**, **Data** and **Danger Zone**.
 
 ## Profile
 
-Edit your display name and email address. These are shown in the sidebar and used for your account identity.
+Shows your display name and email. **Edit** lets you change both, then **Save Changes**.
 
-- Tap the **Edit** button next to your profile information.
-- Update your name or email.
-- Tap **Save** to confirm.
+## Preferences
 
-## Theme
+- **Theme** — Light, Dark or System, which follows your device.
+- **Currency** — used for totals and new accounts. Each account keeps its own currency.
+- **Language and Format** — how numbers and dates are written.
+- **AI Features** — Off, Local or Cloud. This setting is stored, but no AI provider is connected yet, so it changes nothing today. Everything in the app works without it.
 
-Choose how the app looks:
+## Categories & Tags
 
-- **Light** — white background with dark text.
-- **Dark** — dark background with light text.
-- **System** — automatically matches your device's appearance setting.
+- **Categories** — **Open Categories** goes to the [Categories](/docs/guide/categories) page.
+- **Tags** — labels that cut across categories, like a trip or a shared cost. Enter a name, pick a color and select **Add Tag**.
+- **Auto-categorization Rules** — a **Pattern**, the **Category** to suggest, and an optional **Display as** name. Select **Add Rule**. When a description in the transaction form contains the pattern (ignoring case), the form suggests that category. Each rule has a switch to turn it off without deleting it.
 
-The theme applies across all pages immediately.
+## Data
 
-## Currency & Locale
+- **Backup** — **Export All Data (JSON)** downloads one file with accounts, transactions, budgets, goals, tags and rules. A CSV of transactions is exported from the Transactions page instead.
+- **API Keys** — **Generate New API Key** creates a key for scripts and the MCP server. The key is shown once, when you create it. Revoke a key to cut off anything using it. See [Self-hosting](https://github.com/alfredo1996/alter-ego/blob/main/docs/SELF-HOSTING.md) for how the key is used.
+- **Connectors** — apps you signed in to with Alter Ego, such as Claude. **Disconnect All Connectors** signs all of them out; each asks you to approve again.
 
-Set your preferred currency and locale for number formatting:
+## Danger Zone
 
-- **Currency** — determines the currency symbol used throughout the app (e.g., $, €, £).
-- **Locale** — controls how numbers and dates are formatted (e.g., "1,234.56" vs. "1.234,56").
+Each action asks you to confirm and none can be undone:
 
-All amounts across the app — dashboard, transactions, reports, budgets, goals — use these settings.
-
-## AI Mode
-
-Control whether AI features are enabled:
-
-- **Off** — no AI features. The app works entirely without AI.
-- **Local** — AI features run on-device where possible.
-- **Cloud** — AI features use cloud-based models for enhanced capabilities.
-
-When AI mode is off, AI-related UI elements (like the chat button in the sidebar) are hidden. The app is fully functional without AI — it's always optional.
-
-## Tags Management
-
-Tags let you add extra labels to transactions beyond their category. Use them for cross-cutting concerns like "vacation", "tax-deductible", or "reimbursable".
-
-### Creating a Tag
-
-1. Scroll to the **Tags** section in Settings.
-2. Tap **Add Tag**.
-3. Enter a name and pick a color.
-4. Tap **Save**.
-
-### Deleting a Tag
-
-Tap the delete button next to any tag. This removes the tag from all transactions that had it.
-
-### Using Tags
-
-When creating or editing a transaction, you can assign one or more tags. You can then filter the Transactions page by tag to see all related transactions across categories and accounts.
-
-## Auto-Categorization Rules
-
-Rules automatically assign a category to new transactions based on their description. This saves you from manually categorizing every transaction.
-
-### Creating a Rule
-
-1. Scroll to the **Categorization Rules** section in Settings.
-2. Tap **Add Rule**.
-3. Enter a **pattern** — the text to match in transaction descriptions (e.g., "Netflix", "Starbucks").
-4. Select the **category** to assign when the pattern matches.
-5. Tap **Save**.
-
-The rule is active immediately. New transactions with a matching description will be auto-categorized.
-
-### Enabling and Disabling Rules
-
-Each rule has a toggle switch. Turn it off to temporarily disable a rule without deleting it. Turn it back on when you want it active again.
-
-### How Matching Works
-
-When you type a description in the transaction form, the app checks your active rules. If the description contains a rule's pattern (case-insensitive), the category is automatically filled in. You can always override the suggestion by selecting a different category.
-
-## CSV Export
-
-Tap the **Export** button in Settings to download all your transactions as a CSV file. The export includes:
-
-- Date
-- Description
-- Amount
-- Type (expense/income/transfer)
-- Category
-- Account name
-- Notes
-
-Use this to back up your data, share it with an accountant, or import it into a spreadsheet.
+- **Delete All Transactions** — accounts, categories, budgets and rules stay.
+- **Delete All Accounts & Transactions** (Start from Zero) — also removes recurring rules and balance history. Categories, tags, budgets and rules stay.
+- **Reset Categories to Default**.
 
 ## Tips
 
-- **Set currency first** — do this before entering any transactions so all amounts display correctly from the start.
-- **Build rules as you go** — each time you categorize a transaction manually, consider whether it's a recurring merchant that deserves an auto-categorization rule.
-- **Use tags sparingly** — tags are most useful when they represent a meaningful grouping you'll actually filter by. Too many tags can become noise.
-- **Export periodically** — even though your data is stored in the app, having a CSV backup gives you peace of mind.
+- **Set the currency first**, before entering transactions.
+- **Add a rule for each merchant you categorize by hand.**
+- **Export now and then** for a backup you hold yourself.

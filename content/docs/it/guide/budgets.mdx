@@ -1,56 +1,45 @@
 ---
 title: Budget
-description: Imposta limiti di spesa per categoria e monitora i tuoi progressi.
+description: Imposta limiti di spesa per categoria e segui i progressi.
 ---
 
-I budget ti aiutano a controllare le spese impostando un limite mensile per categorie specifiche. Alter Ego monitora quanto hai speso rispetto a ogni budget e ti avvisa quando ti stai avvicinando al limite.
+Un budget è un limite di spesa per una categoria su un mese o un anno. Alter Ego traccia quanto hai speso rispetto al limite.
 
 ## Creare un Budget
 
-1. Vai alla pagina **Budget** dalla barra laterale.
-2. Tocca **Aggiungi Budget**.
-3. Seleziona una categoria (es. Alimentari, Ristorante, Intrattenimento).
-4. Inserisci il tuo limite di spesa mensile.
-5. Tocca **Salva**.
+1. Apri **Budgets** dalla barra laterale.
+2. Seleziona **New Budget**.
+3. Inserisci un **Name**, scegli una **Category** e un **Limit**, e scegli il **Period**: Monthly o Yearly.
+4. Scegli una modalità **Rollover** (vedi sotto).
+5. Seleziona **Create Budget**.
 
-Ogni budget si applica a una singola categoria. Puoi creare tutti i budget che vuoi.
+## Rollover
 
-## Monitoraggio dei Progressi
+Il campo **Rollover** ha quattro opzioni: **Reset each period**, **Carry surplus forward**, **Carry deficit forward** e **Full rollover**. Il limite con cui un budget viene misurato può quindi differire dall'importo che hai inserito.
 
-Ogni scheda budget mostra:
+## Progressi
 
-- **Nome e emoji della categoria** — per identificarla a colpo d'occhio.
-- **Importo speso** — la tua spesa totale in quella categoria per il mese corrente.
-- **Limite del budget** — il tetto che hai impostato.
-- **Barra di avanzamento** — un indicatore visivo di quanto budget hai utilizzato.
+Ogni scheda mostra quanto è stato speso rispetto al limite, con una barra e uno stato:
 
-## Colori di Stato
+| Stato | Significato |
+|---|---|
+| On track | Sotto l'80% del limite |
+| Near limit | Dall'80% del limite |
+| Over | Al limite o oltre |
 
-La barra di avanzamento cambia colore in base a quanto sei vicino al limite:
+I budget oltre il limite sono elencati per primi. Un budget con limite zero o negativo conta come superato appena si spende qualcosa.
 
-| Stato | Colore | Significato |
-|---|---|---|
-| OK | Verde | Sotto l'80% del budget |
-| Attenzione | Ambra | Tra l'80% e il 99% |
-| Pericolo | Rosso | Al 100% o oltre |
+## Dove Compaiono i Budget
 
-## Avvisi sulla Dashboard
+- La scheda **Budgets** della Dashboard elenca i cinque budget più vicini al limite.
+- Aprendo la dashboard compare un toast per i budget oltre il limite e uno per quelli all'80% o più, al massimo una volta al giorno.
+- La scheda **Budgets This Period** nei Report disegna ogni budget come barra.
 
-Quando un budget raggiunge la soglia di attenzione o pericolo, appare nel widget **Budget a Rischio** sulla dashboard. Riceverai anche una notifica toast una volta al giorno quando apri l'app.
+## Modificare ed Eliminare
 
-Questi avvisi ti aiutano a individuare le spese eccessive in anticipo, così puoi regolarti prima della fine del mese.
-
-## Budget nei Report
-
-Nella pagina **Report**, la scheda "Budget del Periodo" elenca ogni budget con una barra di avanzamento della spesa finora, così vedi dove sei in linea e dove hai sforato.
-
-## Modifica ed Eliminazione
-
-Tocca il menu a tre punti su qualsiasi scheda budget per modificare il limite o eliminare il budget. Eliminare un budget rimuove il monitoraggio — non influisce sulle transazioni sottostanti.
+Il menu azioni di una scheda ha **Edit** e **Delete**. Eliminare un budget non tocca le transazioni.
 
 ## Suggerimenti
 
-- **Inizia in grande** — se sei nuovo ai budget, crea budget per le tue tre o quattro categorie di spesa più grandi. Puoi sempre aggiungerne altri in seguito.
-- **Rivedi mensilmente** — alla fine di ogni mese, controlla quali budget hai raggiunto e quali no. Aggiusta i limiti per essere realistico piuttosto che aspirazionale.
-- **Abbina ai report** — usa la scheda Budget del Periodo nei Report per individuare tendenze su più mesi.
-- **Categorizza con costanza** — i budget si basano sulle categorie delle transazioni. Se le spese sono mal categorizzate, il monitoraggio del budget sarà impreciso.
+- **Parti dalle categorie più grandi.**
+- **Categorizza in modo coerente** — un budget conta solo le transazioni registrate nella sua categoria.

@@ -4,6 +4,7 @@
     "dashboard",
     "accounts",
     "transactions",
+    "categories",
     "budgets",
     "goals",
     "recurring",

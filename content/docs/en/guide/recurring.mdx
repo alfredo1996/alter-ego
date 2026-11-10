@@ -3,63 +3,42 @@ title: Recurring Transactions
 description: Automate repeating income and expenses.
 ---
 
-Recurring transactions represent regular financial events — your monthly rent, biweekly paycheck, annual subscriptions, or loan payments. Alter Ego automatically generates transactions based on the rules you define.
+A recurring rule describes a payment that repeats: rent, a salary, a subscription, a loan installment. Alter Ego creates the transactions that fall due.
 
-## Creating a Recurring Rule
+## Creating a Rule
 
-1. Go to the **Recurring** page from the sidebar.
-2. Tap **Add Recurring**.
-3. Fill in the details:
-   - **Description** — what this payment is for (e.g., "Netflix", "Rent", "Salary").
-   - **Amount** — the transaction amount.
-   - **Type** — expense, income, or transfer.
-   - **Account** — which account this transaction affects.
-   - **Category** — the spending or income category.
-   - **Frequency** — how often it repeats: daily, weekly, biweekly, monthly, or yearly.
-   - **Start date** — when the recurrence begins.
-   - **End date** (optional) — when it should stop recurring.
-4. Tap **Save**.
+1. Open **Recurring** from the sidebar.
+2. Select **New Rule**. The dialog is called **New Recurring Transaction**.
+3. Fill in:
+   - **Description**, **Type** and **Amount**.
+   - **Account** and **Category**.
+   - **Frequency** — Daily, Weekly, Monthly or Yearly — and **Every (interval)**, how many of those between occurrences.
+   - **Start Date**, and optionally an **End Date**.
+4. Save.
 
-## How Auto-Generation Works
+## How Due Transactions Are Created
 
-Each time you open the app, Alter Ego checks your recurring rules and generates any transactions that are due. For example, if you have a monthly rule starting January 1 and you open the app on March 5, it will generate transactions for January, February, and March if they haven't been created yet.
-
-Generated transactions appear in your transaction list like any other transaction. You can edit or delete them individually without affecting the recurring rule.
+The first time you open the Recurring page on a given day, the app creates the transactions that have come due. They appear in the Transactions list like any other, and you can edit or delete them without touching the rule.
 
 ## Pause and Resume
 
-If a recurring transaction is temporarily on hold (e.g., a paused subscription), you can pause the rule instead of deleting it:
+Each rule has a **Pause** button, which becomes **Resume** once paused. A paused rule is marked **Paused** and creates nothing until you resume it.
 
-- Tap the **Pause** button on the recurring card.
-- The rule stops generating new transactions until you resume it.
-- Tap **Resume** when you want it to start again.
+## The Tabs
 
-Paused rules appear in the "Paused" section of the Recurring page.
+- **Active** — rules that are running.
+- **Loans** — rules that carry loan details. The tab appears only when you have one, and the rule shows a badge such as "Loan 4.5% · 30 yr".
+- **Paused** — rules you have paused.
+- **Suggested** — repeating charges the app found in the last 13 months that no rule covers yet. **Confirm** opens a new rule already filled in; a dismissed charge is not suggested again.
 
-## Loan Payments
-
-For loans and mortgages, recurring transactions support amortization:
-
-- Rules that carry **loan metadata** (the interest rate and loan term, for example from an earlier import) are split this way.
-- Each generated payment is automatically split into **principal** and **interest** portions based on an amortization schedule.
-- The loan details appear as a badge on the recurring card (e.g., "4.5 % / 30 yr").
-
-Rules with loan metadata are listed under the **Loans** tab.
-
-## Sections on the Recurring Page
-
-The Recurring page organizes your rules into sections:
-
-- **Active** — rules that are currently generating transactions.
-- **Loans** — active rules with loan metadata attached.
-- **Paused** — rules you've temporarily stopped.
+When rules are running, three figures sit above the tabs: **In every month**, **Out every month** and **Left every month**.
 
 ## Editing and Deleting
 
-Tap the three-dot menu on any recurring card to edit or delete the rule. Editing a rule affects only future generated transactions — past transactions are unchanged.
+Each rule has **Edit** and **Delete** buttons.
 
 ## Tips
 
-- **Set up all your fixed costs first** — rent, utilities, subscriptions, loan payments. This gives you an accurate picture of your committed spending.
-- **Use end dates for temporary commitments** — if a subscription runs for 12 months, set an end date so it stops automatically.
-- **Review generated transactions** — auto-generated transactions use the amount from the rule. If a bill varies month to month, you may need to adjust individual transactions after they're generated.
+- **Start with fixed costs** — rent, utilities, subscriptions.
+- **Use an End Date** for commitments that stop.
+- **Check generated amounts** — a transaction uses the rule's amount, so adjust it if a bill varies.

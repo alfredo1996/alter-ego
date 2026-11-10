@@ -1,35 +1,41 @@
 ---
 title: Architettura
-description: Struttura del progetto, pattern adapter e convenzioni principali
+description: Il workspace, il pattern adapter e come si incastrano le parti
 ---
 
-## Struttura del Progetto
+## Workspace
+
+Il repository è un workspace pnpm.
 
 ```
-src/
-├── app/              # Pagine Next.js App Router
-│   ├── (auth)/       # Login e registrazione (non autenticati)
-│   └── (app)/        # Dashboard, conti, transazioni (autenticati)
-├── components/
-│   ├── ui/           # Primitivi shadcn/ui
-│   ├── charts/       # Componenti grafici SVG
-│   ├── reports/      # Grafici e filtri per i report
-│   └── ...           # Componenti per funzionalità
-├── hooks/            # React hooks (use-accounts, use-transactions, ecc.)
-├── lib/
-│   ├── backend/      # Adapter backend (types, mock, firebase)
-│   ├── currency.ts   # Formattazione valuta
-│   ├── dates.ts      # Helper per intervalli di date
-│   ├── categories.ts # Categorie predefinite
-│   ├── amortization.ts# Piano di ammortamento dei prestiti
-│   └── utils.ts      # Helper cn()
-├── stores/           # Store Zustand
-└── types/            # Tipi TypeScript e schemi Zod
+apps/web/                 # l'app Next.js (@alter-ego/web)
+├── src/
+│   ├── app/
+│   │   ├── (auth)/       # /login, /register
+│   │   ├── (app)/        # dashboard, conti, transazioni, categorie,
+│   │   │                 #   budget, obiettivi, ricorrenti, report, impostazioni
+│   │   ├── api/          # API REST (v1), server MCP, OAuth, chiavi API
+│   │   └── [lang]/docs/  # questa documentazione
+│   ├── components/       # componenti delle funzionalità
+│   ├── hooks/            # hook TanStack Query
+│   ├── lib/
+│   │   ├── backend/      # l'adapter: types, mock, firebase, firebase-admin
+│   │   ├── mcp/          # strumenti MCP
+│   │   ├── oauth/        # server OAuth 2.1 per l'endpoint MCP
+│   │   └── ...           # categorie, ammortamento, import CSV, patrimonio netto, ...
+│   ├── stores/           # store Zustand
+│   └── types/            # tipi condivisi e schemi Zod
+packages/
+├── kernel/               # @alter-ego/kernel: helper per valuta e date
+└── ui/                   # @alter-ego/ui: primitive shadcn/ui, il page kit, cn()
+firestore/                # i sorgenti di firestore.rules
 ```
 
-## Pattern Adapter per il Backend
+Il kernel non importa nulla dall'app, e il kit UI importa solo il kernel e le proprie dipendenze. Un test di confine in ogni pacchetto fallisce su un import vietato.
 
-Tutto l'accesso ai dati passa attraverso un'interfaccia adapter unificata. Il codice delle funzionalità non importa mai Firebase direttamente.
+## Pattern Adapter Backend
+
+Ogni accesso ai dati passa da un unico adapter. Il codice delle funzionalità non importa mai Firebase direttamente.
 
 ```typescript
 import { getBackend } from "@/lib/backend"
@@ -38,29 +44,29 @@ const backend = getBackend()
 await backend.db.getAccounts(userId)
 ```
 
-L'adapter viene selezionato a runtime dalla variabile d'ambiente `NEXT_PUBLIC_BACKEND`:
-- `mock` — Store in memoria, genera dati demo automaticamente
-- `firebase` — Firestore tramite Firebase SDK
+`NEXT_PUBLIC_BACKEND` seleziona `mock` o `firebase`. Vedi la [Panoramica Backend](/docs/backend/overview).
 
-Vedi la [Panoramica Backend](/it/docs/backend/overview) per i dettagli implementativi.
+## Server MCP e API REST
+
+Gli stessi dati sono disponibili fuori dal browser:
+
+- **Server MCP** su `/api/mcp`, via HTTP con OAuth 2.1 e PKCE (il server di autorizzazione è in `lib/oauth`), oppure via stdio con `pnpm mcp:stdio`. Gli strumenti sono in `lib/mcp/tools`.
+- **API REST** sotto `/api/v1`, autenticata con una chiave API dalle Impostazioni. Il suo documento OpenAPI è servito su `/api/openapi`.
+
+Entrambi raggiungono il database tramite l'adapter lato server, non con l'SDK del browser. [docs/SELF-HOSTING.md](https://github.com/alfredo1996/alter-ego/blob/main/docs/SELF-HOSTING.md) elenca gli strumenti.
 
 ## Gestione dello Stato
 
-- **Stato del server**: TanStack Query con hook personalizzati (`useAccounts`, `useTransactions`, ecc.)
-- **Stato del client**: Zustand (`useSettingsStore`) per impostazioni come valuta, locale, tema e modalità AI
-- **Form**: React Hook Form + schemi di validazione Zod
+- **Stato server**: TanStack Query, con hook come `useAccounts` e `useTransactions`.
+- **Stato client**: Zustand (`useSettingsStore`) per impostazioni come valuta, locale, tema e `aiMode`.
+- **Form**: React Hook Form con schemi Zod.
 
-## Integrazione AI
+## AI
 
-L'AI è opzionale — l'app è completamente funzionale senza di essa. Gli utenti controllano l'AI tramite `aiMode` nelle impostazioni:
-- `off` — Nessuna funzionalità AI
-- `local` — Inferenza con modello locale
-- `cloud` — AI basata su cloud
-
-Le funzionalità AI sono sempre subordinate al controllo della modalità e non bloccano mai le funzionalità principali.
+L'app non ha bisogno dell'AI e nessuna è collegata. `AIAdapter` è un punto di innesto con due metodi: `chat()` restituisce una frase fissa e `categorize()` restituisce `null` in entrambi gli adapter. Il flag `aiChat` è `false`, quindi la voce della chat non viene mostrata. Le Impostazioni hanno un selettore `aiMode` (Off, Local, Cloud) che viene salvato ma per ora non cambia nulla.
 
 ## Stile
 
-- Tailwind CSS v4 con l'utility `cn()` per classi condizionali
-- Primitivi di componenti shadcn/ui (da non modificare direttamente)
-- I grafici sono SVG puri — nessuna libreria esterna per i grafici
+- Tailwind CSS v4, con `cn()` per le classi condizionali.
+- Primitive shadcn/ui in `packages/ui`; mantieni le loro API e aggiungi una variante invece di rinominarne una.
+- I grafici sono SVG puri, senza libreria di grafici.
