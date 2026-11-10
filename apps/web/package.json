@@ -18,8 +18,7 @@
     "seed:demo": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/seed-demo.mjs",
     "mcp:stdio": "tsx scripts/mcp-stdio.ts",
     "seed": "tsx --env-file=.env.local scripts/seed-firebase-categories.ts",
-    "seed:firebase": "tsx scripts/seed-firebase-categories.ts",
-    "setup": "./scripts/setup-backend.sh"
+    "seed:firebase": "tsx scripts/seed-firebase-categories.ts"
   },
   "dependencies": {
     "@alter-ego/kernel": "workspace:*",
