@@ -1,52 +1,47 @@
 ---
 title: Configurazione Firebase
-description: Configura Firebase per la produzione
+description: Configura Firebase per la tua installazione
 ---
 
-## Configurazione Progetto
+Questa pagina riguarda il lato Firebase. I passaggi di distribuzione (App Hosting, segreti, regole, seed) sono in [docs/DEPLOYMENT.md](https://github.com/alfredo1996/alter-ego/blob/main/docs/DEPLOYMENT.md).
 
-1. Crea un progetto nella [Console Firebase](https://console.firebase.google.com)
-2. Abilita **Firestore Database** in modalità produzione
-3. Abilita **Authentication** con il provider email/password
-4. Registra una **Web app** e copia i valori di configurazione
+## Progetto
+
+1. Crea un progetto nella [Console Firebase](https://console.firebase.google.com).
+2. Abilita **Firestore Database**.
+3. Abilita **Authentication** con il provider email/password.
+4. Registra una **Web app** e copia i valori di configurazione.
 
 ## Regole di Sicurezza
 
-Distribuisci le regole di sicurezza Firestore che corrispondono al modello dati:
+Non scrivere regole tue. `firestore.rules` è generato da `firestore/base.rules` e contiene la validazione dei campi e la lista di accesso a un solo utente su cui l'app si basa.
 
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Categorie predefinite — leggibili da tutti gli utenti autenticati
-    match /categories/{categoryId} {
-      allow read: if request.auth != null;
-    }
-
-    // Dati utente — accessibili solo dal proprietario
-    match /users/{userId}/{document=**} {
-      allow read, write: if request.auth != null
-                         && request.auth.uid == userId;
-    }
-  }
-}
+```bash
+pnpm rules:build
+firebase deploy --only firestore:rules,firestore:indexes --project YOUR_PROJECT_ID
 ```
+
+Per cambiare qualcosa modifica `firestore/base.rules`, mai il file generato.
+
+## Chi Può Accedere
+
+La registrazione è chiusa. Le regole ammettono un solo user id, `isAllowedUser` in `firestore/base.rules`, e lo stesso id compare in `apps/web/src/lib/owner-uid.ts`, che le route del server controllano. Crea il tuo utente nella console, sotto Authentication, inserisci il suo uid in entrambi i posti ed esegui `pnpm rules:build`.
 
 ## Categorie Predefinite
 
-Genera le categorie predefinite nella collezione root `/categories`. Puoi usare il Firebase Admin SDK o importare da un file JSON nella Console Firebase.
+Inserisci le categorie predefinite nella collezione radice `categories` con l'Admin SDK (i client non possono scriverci):
+
+```bash
+FIREBASE_PROJECT_ID=YOUR_PROJECT_ID pnpm seed:firebase
+```
 
 ## Emulatore
 
-Per lo sviluppo locale con Firebase:
+Per sviluppare su Firebase senza un progetto cloud:
 
 ```bash
-firebase emulators:start --only auth,firestore
+pnpm emulator:start     # Auth, Firestore e interfaccia dell'emulatore, in Docker
+pnpm dev:emulator       # l'app, con NEXT_PUBLIC_USE_EMULATOR=true, sulla porta 3003
 ```
 
-Imposta le variabili d'ambiente dell'emulatore in `apps/web/.env.local`:
-
-```ini
-NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST=localhost:9099
-NEXT_PUBLIC_FIRESTORE_EMULATOR_HOST=localhost:8080
-```
+`pnpm dev:emulator` imposta da solo le variabili dell'emulatore. L'emulatore avviato da `pnpm emulator:start` carica `firestore.rules` così com'è generato, quindi può scrivere solo l'uid autorizzato. Per una configurazione locale che conserva i dati e apre la lista di accesso usa invece `pnpm local:start`; vedi [docs/SELF-HOSTING.md](https://github.com/alfredo1996/alter-ego/blob/main/docs/SELF-HOSTING.md).
