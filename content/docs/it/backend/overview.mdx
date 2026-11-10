@@ -1,14 +1,13 @@
 ---
 title: Panoramica Backend
-description: Il pattern adapter che alimenta il livello dati di Alter Ego
+description: Il pattern adapter dietro il livello dati di Alter Ego
 ---
 
 ## Pattern Adapter
 
-Alter Ego usa un pattern adapter per tutte le operazioni backend. Il codice delle funzionalità non importa mai Firebase direttamente — tutto passa attraverso l'interfaccia `BackendAdapter`.
+Tutto ciò che l'app legge o scrive passa dall'adapter. Il codice delle funzionalità non importa mai Firebase direttamente.
 
 ```typescript
-// Importa sempre da @/lib/backend
 import { getBackend } from "@/lib/backend"
 
 const backend = getBackend()
@@ -17,36 +16,34 @@ const accounts = await backend.db.getAccounts(userId)
 
 ## Interfaccia
 
-L'adapter ha tre sotto-interfacce:
-
 ```typescript
 interface BackendAdapter {
-  auth: AuthAdapter    // Accesso, disconnessione, onAuthStateChanged
-  db: DatabaseAdapter  // Tutte le operazioni CRUD
-  ai: AIAdapter        // Funzionalità AI (opzionale)
+  auth: AuthAdapter
+  db: DatabaseAdapter
+  ai: AIAdapter
 }
 ```
 
+`AIAdapter` non ha alcun provider dietro; vedi [Architettura](/it/docs/architecture).
+
 ### DatabaseAdapter
 
-L'interfaccia `DatabaseAdapter` copre tutte le operazioni sui dati:
+`DatabaseAdapter` copre:
 
-- **Conti** — CRUD + aggiornamento saldi
-- **Transazioni** — CRUD + filtri + importazione CSV
-- **Categorie** — Lettura (predefinite + personalizzate utente)
-- **Budget** — CRUD
-- **Obiettivi di Risparmio** — CRUD + aggiunta fondi
-- **Transazioni Ricorrenti** — CRUD + `generateDue`
-- **Tag** — CRUD + tagging transazioni
-- **Regole di Categorizzazione** — CRUD + `applyCategorization`
-- **Patrimonio Netto** — `takeSnapshot` + `getNetWorthHistory`
-- **Dashboard / Report** — Query di dati aggregati
+- **Conti**, **transazioni** (con filtri e importazioni), **categorie**, **budget**, **obiettivi di risparmio**
+- **Transazioni ricorrenti**, incluso `generateDue`
+- **Tag** e **regole di categorizzazione**, incluso `applyCategorization`
+- **Patrimonio netto**: snapshot e storico
+- Aggregati per **dashboard** e **report**
+- **Chiavi API** e suggerimenti di abbonamento scartati
 
-## Selezione del Backend
+Il registro di audit MCP non è su `DatabaseAdapter` di proposito: la sua collezione è chiusa ai client dalle regole, quindi si raggiunge sul server tramite `getServerDb()`.
+
+## Selezionare un Backend
 
 Imposta `NEXT_PUBLIC_BACKEND` in `apps/web/.env.local`:
 
-| Valore | Backend | Caso d'uso |
+| Valore | Backend | Uso |
 |---|---|---|
-| `mock` | Store in memoria | Sviluppo, test |
-| `firebase` | Firestore + Firebase Auth | Produzione (Google Cloud) |
+| `mock` | Archivio in memoria | Sviluppo, test |
+| `firebase` | Firestore e Firebase Auth | Self-hosting, distribuzione |

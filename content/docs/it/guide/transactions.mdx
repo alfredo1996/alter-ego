@@ -1,74 +1,72 @@
 ---
 title: Transazioni
-description: Registra, importa, filtra ed esporta le tue transazioni finanziarie.
+description: Registra, importa, filtra ed esporta le tue transazioni.
 ---
 
-Le transazioni sono il cuore di Alter Ego. Ogni volta che il denaro si muove — un acquisto, uno stipendio, un trasferimento tra conti — lo registri come transazione.
+Ogni volta che si muove del denaro registri una transazione: un acquisto, uno stipendio, un trasferimento tra i tuoi conti.
 
 ## Tipi di Transazione
 
-- **Uscita** — denaro in uscita (spesa, affitto, abbonamenti).
-- **Entrata** — denaro in entrata (stipendio, freelance, rimborsi).
-- **Trasferimento** — denaro che si sposta tra i tuoi conti (corrente → risparmio).
+- **Expense** — denaro in uscita.
+- **Income** — denaro in entrata.
+- **Transfer** — denaro che si sposta tra due tuoi conti.
 
 ## Creare una Transazione
 
-1. Vai alla pagina **Transazioni** o tocca **New Transaction** nell'intestazione delle pagine Dashboard, Conti o Transazioni, oppure il **+** nella barra in alto sul telefono.
-2. Scegli il tipo di transazione (uscita, entrata o trasferimento).
-3. Inserisci l'importo, la data, il conto, la categoria e una descrizione e nota opzionali.
-4. Tocca **Salva**.
+1. Seleziona **New Transaction** nell'intestazione di Dashboard, Accounts o Transactions, oppure il **+** nella barra superiore su telefono.
+2. Scegli il tipo.
+3. Compila importo, data, descrizione, conto e categoria. Un trasferimento ha **From Account** e **To Account** al posto della categoria. **Notes** è facoltativo.
+4. Salva.
 
-Se hai configurato regole di auto-categorizzazione, la categoria potrebbe essere pre-compilata in base alla descrizione che digiti.
+**Split** accanto alla categoria permette di dividere una transazione tra più categorie; **Single category** torna indietro.
 
-## Aggiunta Rapida sul Telefono
+### Categorie Suggerite
 
-Sul telefono, il **+** all'estremità destra della barra in alto ti permette di aggiungere una transazione da qualsiasi pagina personale senza navigare altrove. Apre lo stesso modulo di creazione transazione.
+Mentre scrivi una descrizione, il form può proporre **Suggested:** seguito dal nome di una categoria. Viene dalle tue regole di auto-categorizzazione nelle Impostazioni: la prima regola attiva il cui schema è contenuto nella descrizione (senza distinguere maiuscole). Seleziona il suggerimento per applicarlo; nulla viene compilato al posto tuo.
 
-## Modifica ed Eliminazione
+## Modificare ed Eliminare
 
-Tocca una transazione nella lista per aprirla. Da lì puoi modificare tutti i campi o eliminare la transazione. Eliminare una transazione aggiusta automaticamente il saldo del conto associato.
+Seleziona una transazione per modificarla o eliminarla. Eliminare una transazione aggiusta il saldo del conto.
 
-## Gesti di Scorrimento (Mobile)
+## Gesti di Scorrimento
 
-Sui dispositivi mobili, puoi scorrere le righe delle transazioni:
-
-- **Scorri a sinistra** — mostra l'azione di eliminazione.
-- **Scorri a destra** — mostra l'azione di modifica.
-
-Questi gesti offrono un modo più rapido per gestire le transazioni senza aprirle una per una.
+Su telefono puoi scorrere una riga: a sinistra per eliminare, a destra per modificare.
 
 ## Filtri
 
-La pagina Transazioni offre filtri potenti per restringere la lista:
+La pagina Transactions ha una casella di ricerca, le schede **All**, **Income**, **Expenses** e **Transfers**, e questi filtri:
 
-- **Intervallo di date** — scegli una data di inizio e/o fine.
-- **Intervallo di importo** — imposta importi minimo e/o massimo.
-- **Categoria** — filtra per una o più categorie.
-- **Conto** — mostra solo le transazioni di un conto specifico.
-- **Tipo** — uscita, entrata o trasferimento.
-- **Tag** — filtra per tag assegnati.
-- **Solo non categorizzate** — mostra le transazioni senza categoria.
-- **Con nota** — mostra solo le transazioni con una nota allegata.
+- **Dates** — un intervallo di date.
+- **Account** e **Category**. L'elenco delle categorie inizia con **Uncategorized**.
+- **Tags**.
+- **More Filters** — **Status** (Pending, Cleared o Reconciled), **Min amount**, **Max amount** e **Has note**.
 
-I filtri si riflettono nell'URL, quindi puoi salvare nei preferiti o condividere una vista filtrata.
+I filtri sono conservati nell'indirizzo, quindi una vista filtrata si può salvare nei preferiti.
 
-## Importazione CSV
+## Selezionare Più Transazioni
 
-Puoi importare transazioni da un file CSV in tre passaggi:
+Seleziona delle righe per agire su di esse insieme. La barra che appare può eliminare la selezione, oppure cambiarne conto o data.
 
-1. **Caricamento** — seleziona un file CSV dal tuo dispositivo.
-2. **Mappatura colonne** — abbina le colonne del CSV (data, importo, descrizione, ecc.) ai campi di Alter Ego. L'importatore suggerisce automaticamente le mappature quando possibile.
-3. **Revisione** — anteprima delle transazioni analizzate, correggi eventuali problemi e conferma l'importazione.
+## Importare
 
-L'importatore gestisce vari formati di data e stili di importo (numeri negativi, parentesi, colonne separate per debito/credito).
+Il menu **More** nell'intestazione ha i due importatori.
 
-## Esportazione CSV
+### Import CSV
 
-Per esportare le tue transazioni come file CSV, vai su **Impostazioni** e tocca il pulsante **Esporta**. Il file include tutte le transazioni con nomi dei conti, categorie, date, importi e note.
+1. **Import Transactions** — scegli un conto e carica un file CSV.
+2. **Map CSV Columns** — associa le colonne del file ai campi della transazione. L'importatore propone un'associazione dove può.
+3. **Review & Import** — controlla le righe lette, poi importa. Le righe già importate vengono saltate.
+
+### Money Manager
+
+**Money Manager** importa un export CSV dell'app Money Manager, in quattro passi: Upload, Reconcile, Preview e Import. Reconcile elenca i conti e le categorie trovati nel file. Importare due volte lo stesso file è sicuro: i duplicati vengono rilevati e saltati.
+
+## Esportare
+
+**Export…** nel menu **More** apre **Export Transactions**. Scegli un intervallo di date e scarica un CSV. **Expand splits into separate rows** produce una riga per ogni suddivisione, con la sua categoria e il suo importo. Per un backup di tutto usa **Export All Data (JSON)** nelle Impostazioni.
 
 ## Suggerimenti
 
-- **Usa il pulsante +** — sul telefono è il modo più veloce per registrare una transazione nel momento in cui avviene.
-- **Categorizza tutto** — la dashboard, i budget e i report dipendono tutti da categorie accurate. Configura regole di auto-categorizzazione nelle Impostazioni per risparmiare tempo.
-- **Tagga per contesto** — i tag ti permettono di aggiungere una seconda dimensione oltre alle categorie. Ad esempio, tagga le spese delle vacanze attraverso più categorie.
-- **Importa subito** — se stai passando da un'altra app, l'importazione CSV inserisce rapidamente i tuoi dati storici.
+- **Usa il pulsante +** su telefono per registrare un acquisto nel momento in cui lo fai.
+- **Categorizza tutto** — dashboard, budget e report ne dipendono.
+- **Usa i tag per il contesto** — i tag attraversano le categorie, per esempio un viaggio.

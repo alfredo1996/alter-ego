@@ -19,7 +19,7 @@ pnpm dev:emulator    # the app, on http://localhost:3003
 
 Sign-up is closed in the app: production admits one uid (the allowlist,
 `isAllowedUser()` in `firestore/base.rules`).
-`pnpm local:start` loads the rules with that allowlist open, so locally any
+`pnpm local:start` loads the rules with that allowlist open, so in the browser any
 account works. Create one with `pnpm seed:demo`, or in the Auth emulator UI on
 http://localhost:4000. To run your own deployment, put your uid in
 `firestore/base.rules` and in `apps/web/src/lib/owner-uid.ts`, then `pnpm rules:build`. Stop with:
@@ -82,10 +82,10 @@ The HTTP endpoint (`/api/mcp`) authenticates with OAuth 2.1 + PKCE and grants tw
 scopes: **`data:read`** and **`data:write`**. Clients discover them from
 `/.well-known/oauth-authorization-server`, so there is nothing to configure.
 
-These were named `crm:read` / `crm:write` until September 2026, back when the
-company tools were the only consumer. **A token issued before the rename no
-longer satisfies the gate** — reconnect the connector once and the new scopes are
-requested automatically. Nothing else about the flow changed.
+**The owner uid still applies locally.** `/api/keys` and `/api/oauth/authorize` check
+the uid in `apps/web/src/lib/owner-uid.ts` on the emulator too. Until you put your own
+uid there, you cannot create an API key or connect a remote MCP client. Stdio MCP and
+the browser UI do not need it.
 
 Try it without a client:
 
@@ -94,6 +94,32 @@ ALTER_EGO_USER_ID=<uid> NEXT_PUBLIC_BACKEND=mock pnpm mcp:stdio
 ```
 
 then paste a JSON-RPC `initialize` on stdin.
+
+## The tools
+
+The MCP server (HTTP and stdio) exposes eleven tools. Over HTTP, calls that write need the `data:write` scope.
+
+| Tool                 | What it does                                                                             |
+| -------------------- | ---------------------------------------------------------------------------------------- |
+| `list_accounts`      | Accounts with balances, split into assets and liabilities, and the net worth             |
+| `list_transactions`  | Transactions, most recent first, with search and date filters                            |
+| `list_categories`    | Every category available for a transaction                                               |
+| `list_tags`          | Every tag                                                                                |
+| `get_spending`       | Spending and income for a month window, by category or by month                          |
+| `get_budget_status`  | Every budget for its current period, worst first                                         |
+| `add_transaction`    | Records an expense, an income or a transfer                                              |
+| `update_transaction` | Changes fields of an existing transaction                                                |
+| `delete_transaction` | Deletes a transaction and restores the balance                                           |
+| `create_account`     | Opens an account                                                                         |
+| `archive_account`    | Closes or reopens an account (closing needs a balance of 0; reopening is always allowed) |
+
+## The REST API
+
+The app also serves a REST API under `/api/v1` (transactions, accounts, budgets,
+categories, recurring, tags, reports). Create a key in Settings, under Data
+(**Generate New API Key**), and send it as `Authorization: Bearer <key>`. A key is
+shown once. The OpenAPI document is served at `/api/openapi` and covers only the transactions endpoints. Creating a key needs the
+owner uid, as above.
 
 ## What this is and is not
 
@@ -105,8 +131,8 @@ large datasets, or unattended uptime.
 
 If it outgrows that, the adapter boundary is the seam to replace: implement
 `AccountingAdapter` against
-whatever store you prefer, and add it to `NEXT_PUBLIC_BACKEND` in `src/lib/env.ts`.
-The shared contract in `src/lib/backend/__tests__/adapter-contract.ts` is what a
+whatever store you prefer, and add it to `NEXT_PUBLIC_BACKEND` in `apps/web/src/lib/env.ts`.
+The shared contract in `apps/web/src/lib/backend/__tests__/adapter-contract.ts` is what a
 new backend has to satisfy.
 
 ## Why this is separate from the test emulator

@@ -1,57 +1,48 @@
 ---
 title: Per Iniziare
-description: Configura e avvia Alter Ego in locale
+description: Esegui Alter Ego sulla tua macchina
 ---
 
 ## Panoramica
 
-Alter Ego è un'app di finanza personale costruita con Next.js 16, TypeScript e Tailwind CSS v4. Utilizza un pattern adapter per il backend che permette di passare tra il backend Mock in memoria e Firebase senza modificare il codice delle funzionalità.
+Alter Ego è un'app di finanza personale costruita con Next.js 16, TypeScript e Tailwind CSS v4: conti, transazioni, budget, obiettivi di risparmio, pagamenti ricorrenti e report. Un adapter backend ti permette di usarla con un mock in memoria o con Firebase senza cambiare il codice delle funzionalità. Un server MCP e un'API REST espongono gli stessi dati ad altri strumenti.
 
 ## Prerequisiti
 
 - **Node.js** 24+ (vedi `.nvmrc`)
 - **pnpm** 10+
-- (Opzionale) **Docker** per eseguire l'emulatore Firebase in locale
+- (Opzionale) **Docker**, per l'emulatore Firebase
 
 ## Avvio Rapido
 
 ```bash
-# Clona il repository
 git clone https://github.com/alfredo1996/alter-ego.git
 cd alter-ego
-
-# Installa le dipendenze
 pnpm install
-
-# Avvia il server di sviluppo (usa il backend mock per default)
 pnpm dev
 ```
 
-Apri [http://localhost:3000](http://localhost:3000) — il backend mock genera dati demo automaticamente.
+Apri [http://localhost:3000](http://localhost:3000) e accedi con un indirizzo email valido e una password di almeno sei caratteri. Il backend mock tiene tutto in memoria, parte vuoto a parte le categorie predefinite e dimentica tutto al ricaricamento della pagina. Va bene per dare un'occhiata, non per un uso reale.
+
+## Conservare i Dati
+
+Per conservare i dati tra una sessione e l'altra, esegui l'app su un emulatore Firebase locale. Configurazione, client MCP e limiti di questo approccio sono in [docs/SELF-HOSTING.md](https://github.com/alfredo1996/alter-ego/blob/main/docs/SELF-HOSTING.md). Per eseguirla sul tuo progetto Firebase, vedi [Configurazione Firebase](/it/docs/deployment/firebase-setup).
 
 ## Variabili d'Ambiente
 
-Crea un file `apps/web/.env.local`:
+Copia `apps/web/.env.example` in `apps/web/.env.local`. Le variabili sono elencate nel README del repository. `NEXT_PUBLIC_BACKEND` vale `mock` (predefinito) o `firebase`; i valori Firebase servono solo per `firebase`.
 
-```ini
-# Backend: "mock" | "firebase"
-NEXT_PUBLIC_BACKEND=mock
-
-# Firebase (necessario solo quando NEXT_PUBLIC_BACKEND=firebase)
-NEXT_PUBLIC_FIREBASE_API_KEY=
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
-NEXT_PUBLIC_FIREBASE_APP_ID=
-```
-
-## Comandi
+## Script
 
 | Comando | Descrizione |
 |---|---|
-| `pnpm dev` | Avvia il server di sviluppo (Turbopack) |
+| `pnpm dev` | Server di sviluppo con backend mock |
+| `pnpm dev:emulator` | Server di sviluppo sull'emulatore locale |
 | `pnpm build` | Build di produzione |
-| `pnpm lint` | Esegui ESLint |
-| `pnpm test` | Esegui Vitest in modalità watch |
-| `pnpm test --run` | Esegui Vitest una sola volta |
-| `pnpm test:e2e` | Esegui i test E2E con Playwright |
+| `pnpm lint` | ESLint |
+| `pnpm typecheck` | Controllo dei tipi di ogni pacchetto |
+| `pnpm test` | Vitest in modalità watch |
+| `pnpm test --run` | Vitest una volta |
+| `pnpm test:e2e` | Test end-to-end Playwright |
+
+L'elenco completo è nel README.

@@ -1,35 +1,41 @@
 ---
 title: Architecture
-description: Project structure, adapter pattern, and key conventions
+description: The workspace, the adapter pattern and how the pieces fit
 ---
 
-## Project Structure
+## Workspace
+
+The repository is a workspace managed by pnpm.
 
 ```
-src/
-├── app/              # Next.js App Router pages
-│   ├── (auth)/       # Login & register (unauthenticated)
-│   └── (app)/        # Dashboard, accounts, transactions (authenticated)
-├── components/
-│   ├── ui/           # shadcn/ui primitives
-│   ├── charts/       # SVG chart components
-│   ├── reports/      # Report-specific charts and filters
-│   └── ...           # Feature components
-├── hooks/            # React hooks (use-accounts, use-transactions, etc.)
-├── lib/
-│   ├── backend/      # Backend adapter (types, mock, firebase)
-│   ├── currency.ts   # Currency formatting
-│   ├── dates.ts      # Date range helpers
-│   ├── categories.ts # Default category seeds
-│   ├── amortization.ts# Loan amortization schedule
-│   └── utils.ts      # cn() helper
-├── stores/           # Zustand stores
-└── types/            # TypeScript types and Zod schemas
+apps/web/                 # the Next.js app (@alter-ego/web)
+├── src/
+│   ├── app/
+│   │   ├── (auth)/       # /login, /register
+│   │   ├── (app)/        # dashboard, accounts, transactions, categories,
+│   │   │                 #   budgets, goals, recurring, reports, settings
+│   │   ├── api/          # REST API (v1), MCP server, OAuth, API keys
+│   │   └── [lang]/docs/  # this documentation
+│   ├── components/       # feature components
+│   ├── hooks/            # TanStack Query hooks
+│   ├── lib/
+│   │   ├── backend/      # the adapter: types, mock, firebase, firebase-admin
+│   │   ├── mcp/          # MCP tools
+│   │   ├── oauth/        # OAuth 2.1 server for the MCP endpoint
+│   │   └── ...           # categories, amortization, CSV import, net worth, ...
+│   ├── stores/           # Zustand stores
+│   └── types/            # shared types and Zod schemas
+packages/
+├── kernel/               # @alter-ego/kernel: currency and date helpers
+└── ui/                   # @alter-ego/ui: shadcn/ui primitives, the page kit, cn()
+firestore/                # the sources of firestore.rules
 ```
+
+The kernel imports nothing from the app, and the UI kit imports only the kernel and its own dependencies. A boundary test in each package fails on a forbidden import.
 
 ## Backend Adapter Pattern
 
-All data access goes through a unified adapter interface. Feature code never imports Firebase directly.
+All data access goes through one adapter. Feature code never imports Firebase directly.
 
 ```typescript
 import { getBackend } from "@/lib/backend"
@@ -38,29 +44,29 @@ const backend = getBackend()
 await backend.db.getAccounts(userId)
 ```
 
-The adapter is selected at runtime by the `NEXT_PUBLIC_BACKEND` environment variable:
-- `mock` — In-memory store, seeds demo data automatically
-- `firebase` — Firestore via Firebase SDK
+`NEXT_PUBLIC_BACKEND` selects `mock` or `firebase`. See the [Backend Overview](/en/docs/backend/overview).
 
-See the [Backend Overview](/docs/backend/overview) for implementation details.
+## MCP Server and REST API
+
+The same data is available outside the browser:
+
+- **MCP server** at `/api/mcp`, over HTTP with OAuth 2.1 and PKCE (the authorization server lives in `lib/oauth`), or over stdio with `pnpm mcp:stdio`. The tools are in `lib/mcp/tools`.
+- **REST API** under `/api/v1`, authenticated with an API key from Settings. Its OpenAPI document is served at `/api/openapi` and covers only the transactions endpoints.
+
+Both reach the database through the server-side adapter, not through the browser SDK. [docs/SELF-HOSTING.md](https://github.com/alfredo1996/alter-ego/blob/main/docs/SELF-HOSTING.md) lists the tools.
 
 ## State Management
 
-- **Server state**: TanStack Query with custom hooks (`useAccounts`, `useTransactions`, etc.)
-- **Client state**: Zustand (`useSettingsStore`) for settings like currency, locale, theme, and AI mode
-- **Forms**: React Hook Form + Zod validation schemas
+- **Server state**: TanStack Query, with hooks such as `useAccounts` and `useTransactions`.
+- **Client state**: Zustand (`useSettingsStore`) for settings such as currency, locale, theme and `aiMode`.
+- **Forms**: React Hook Form with Zod schemas.
 
-## AI Integration
+## AI
 
-AI is optional — the app is fully functional without it. Users control AI via `aiMode` in settings:
-- `off` — No AI features
-- `local` — Local model inference
-- `cloud` — Cloud-based AI
-
-AI features are always gated behind the mode check and never block core functionality.
+The app does not need AI and none is connected. `AIAdapter` is a seam with two methods: `chat()` returns a fixed sentence and `categorize()` returns `null` in both adapters. The `aiChat` feature flag is `false`, so the chat entry is not rendered. Settings has an `aiMode` selector (Off, Local, Cloud) that is stored but changes nothing yet.
 
 ## Styling
 
-- Tailwind CSS v4 with the `cn()` utility for conditional classes
-- shadcn/ui component primitives (do not modify directly)
-- Charts are pure SVG — no external chart library
+- Tailwind CSS v4, with `cn()` for conditional classes.
+- shadcn/ui primitives in `packages/ui`; keep their APIs and add a variant instead of renaming one.
+- Charts are pure SVG, with no chart library.

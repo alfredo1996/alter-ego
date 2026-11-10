@@ -5,17 +5,12 @@ description: Testing strategy and patterns
 
 ## Unit Tests (Vitest)
 
-**354+ unit tests** cover utilities, business logic, and the mock backend adapter.
+Unit tests cover utilities, business logic, hooks, components and the mock backend.
 
 ```bash
-# Watch mode
-pnpm test
-
-# Single run
-pnpm test --run
-
-# With coverage
-pnpm test --run --coverage
+pnpm test              # watch mode
+pnpm test --run        # single run
+pnpm test:coverage     # with coverage
 ```
 
 ### Test Files
@@ -23,15 +18,15 @@ pnpm test --run --coverage
 Tests live in `__tests__/` directories next to the code they test:
 
 ```
-src/lib/__tests__/
-  ├── dates.test.ts
-  ├── export.test.ts
+apps/web/src/lib/__tests__/
+  ├── budgets.test.ts
+  ├── loan-buckets.test.ts
   ├── merchants.test.ts
   ├── net-worth.test.ts
   ├── amortization.test.ts
   └── ...
-src/lib/backend/__tests__/
-  ├── adapter-contract.ts  # Shared contract tests
+apps/web/src/lib/backend/__tests__/
+  ├── adapter-contract.ts      # shared contract tests
   ├── mock.test.ts
   ├── mock.adapter.test.ts
   └── firebase.adapter.test.ts
@@ -39,55 +34,43 @@ src/lib/backend/__tests__/
 
 ### Mock Backend in Tests
 
-Always reset state between tests:
+Reset the mock's state before each test:
 
 ```typescript
-import { getBackend } from "@/lib/backend"
+import { createMockAdapter, __resetMockState } from "../mock"
 
 beforeEach(() => {
-  const backend = getBackend()
-  ;(backend as any).__resetMockState()
+  __resetMockState()
+  adapter = createMockAdapter()
 })
 ```
 
 ### Contract Tests
 
-The adapter contract test suite (`adapter-contract.ts`) defines 97 shared tests that any backend adapter must pass. They run against the mock adapter on every `pnpm test`, and against Firebase under the emulator with `pnpm test:firebase:docker`.
+`adapter-contract.ts` holds the tests any backend adapter must pass. They run against the mock on every `pnpm test`, and against Firebase when the emulator is up (`pnpm test:firebase:docker`). A new write path needs a case there.
+
+### Documentation Check
+
+`apps/web/src/lib/__tests__/docs-check.test.ts` reads the README, `docs/` and these pages. It fails when they name a `pnpm` command that is not a script, a repository path that does not exist, or a link that does not resolve.
 
 ## E2E Tests (Playwright)
 
-E2E tests cover critical user flows using the mock backend. **18 spec files** across all major features.
+End-to-end tests cover the main user flows against a production build with the mock backend, on port 3001.
 
 ```bash
 pnpm test:e2e
 ```
 
-### Test Specs
+This builds the app and starts it with `next start`. For quick iteration, start a dev server on that port first (`NEXT_PUBLIC_BACKEND=mock pnpm dev --port 3001`) and Playwright reuses it instead of building. Tests run in Desktop Chrome, and a subset also runs in Mobile Chrome (a Pixel 5 viewport).
 
-```
-e2e/
-  ├── auth.spec.ts              # Login, register
-  ├── dashboard.spec.ts         # Dashboard widgets, drill-down
-  ├── accounts.spec.ts          # Account CRUD
-  ├── account-detail.spec.ts    # Account detail, balance chart
-  ├── transactions.spec.ts      # Transaction CRUD, filters
-  ├── categories.spec.ts        # Category management
-  ├── budgets.spec.ts           # Budget CRUD, alerts
-  ├── savings-goals.spec.ts     # Goal CRUD, add funds
-  ├── recurring.spec.ts         # Recurring rule CRUD
-  ├── reports.spec.ts           # Charts, period selector
-  ├── mm-import.spec.ts         # Money Manager import flow
-  ├── navigation.spec.ts        # Sidebar, mobile nav
-  ├── settings.spec.ts          # Settings sections
-  ├── sign-out.spec.ts          # Sign-out flow, protected routes
-  ├── mobile.spec.ts            # Phone layout: nav sheet, dialogs, selects
-  ├── loading-states.spec.ts    # No empty state before data
-  ├── oauth-consent.spec.ts     # OAuth consent screen
-  └── security-headers.spec.ts  # CSP and security headers
-```
+The specs are in `apps/web/e2e/`, one file per area: `auth.spec.ts`, `dashboard.spec.ts`, `accounts.spec.ts`, `transactions.spec.ts`, `budgets.spec.ts`, `reports.spec.ts`, `mobile.spec.ts` and so on.
+
+### Loading States
+
+The mock answers every read at once, so a loading state is gone before a test can see it. To slow it down, a spec sets `window.__MOCK_LATENCY_MS__` (with `page.evaluate` or `page.addInitScript`) and every mock database call then waits that long. `loading-states.spec.ts` uses it to check that no page shows an empty state before its data.
 
 ### Patterns
 
-- Tests run against the mock backend for speed and isolation
-- Use `aria-label` and role-based selectors for accessibility
-- Desktop-only interactions (hover menus, dropdowns) are tested in desktop viewport
+- Tests run against the mock backend for speed and isolation.
+- Use role-based selectors and `aria-label`.
+- Desktop-only interactions, such as hover menus, are tested in the desktop viewport.

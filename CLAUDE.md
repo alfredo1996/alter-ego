@@ -14,7 +14,7 @@ Two more tests guard the structure: `packages/kernel/src/__tests__/boundary.test
 
 ## Core Principle
 
-**AI is optional.** The app must be fully functional without any AI features. AI enhances the experience but never gates it. Users can set `ai_mode` to `off`, `local`, or `cloud`.
+**AI is optional.** The app must be fully functional without any AI features, and none is wired today: `AIAdapter` is a seam (`chat()` returns a fixed sentence, `categorize()` returns `null`), `features.aiChat` is `false`, and the `aiMode` setting (`off`, `local`, `cloud`) changes nothing yet.
 
 ## Tech Stack
 

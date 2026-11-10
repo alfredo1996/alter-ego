@@ -6,7 +6,7 @@ description: Convenzioni di codifica e pattern utilizzati in Alter Ego
 ## Nomenclatura File
 
 - **kebab-case** per tutti i file: `use-accounts.ts`, `transaction-list.tsx`
-- Test collocati in directory `__tests__/`: `src/lib/__tests__/dates.test.ts`
+- Test collocati in directory `__tests__/`: `src/lib/__tests__/budgets.test.ts`
 
 ## Esportazioni
 
@@ -69,6 +69,10 @@ Usa sempre l'hook `useCurrency()` — mai hardcodare `Intl.NumberFormat`:
 const { format } = useCurrency()
 // format(1234.56) → "€1.234,56"
 ```
+
+## File Generati
+
+`firestore.rules` è generato. Modifica `firestore/base.rules` ed esegui `pnpm rules:build`; un test fallisce se i due file differiscono.
 
 ## Grafici
 

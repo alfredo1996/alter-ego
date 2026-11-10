@@ -2,6 +2,7 @@
   "name": "alter-ego",
   "version": "0.22.0",
   "private": true,
+  "license": "MIT",
   "packageManager": "pnpm@10.34.1",
   "scripts": {
     "dev": "pnpm --filter @alter-ego/web dev",
@@ -28,8 +29,7 @@
     "mcp:stdio": "pnpm --filter @alter-ego/web mcp:stdio",
     "prepare": "husky",
     "seed": "pnpm --filter @alter-ego/web seed",
-    "seed:firebase": "pnpm --filter @alter-ego/web seed:firebase",
-    "setup": "pnpm --filter @alter-ego/web setup"
+    "seed:firebase": "pnpm --filter @alter-ego/web seed:firebase"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

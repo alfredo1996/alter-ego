@@ -1,74 +1,72 @@
 ---
 title: Transactions
-description: Record, import, filter, and export your financial transactions.
+description: Record, import, filter and export your transactions.
 ---
 
-Transactions are the core of Alter Ego. Every time money moves — a purchase, a paycheck, a transfer between accounts — you record it as a transaction.
+Every time money moves, you record a transaction: a purchase, a paycheck, a transfer between your own accounts.
 
 ## Transaction Types
 
-- **Expense** — money going out (groceries, rent, subscriptions).
-- **Income** — money coming in (salary, freelance, refunds).
-- **Transfer** — money moving between your own accounts (checking → savings).
+- **Expense** — money going out.
+- **Income** — money coming in.
+- **Transfer** — money moving between two of your accounts.
 
 ## Creating a Transaction
 
-1. Tap **New Transaction** in the header of the Dashboard, Accounts, or Transactions page, or the **+** in the top bar on a phone.
-2. Choose the transaction type (expense, income, or transfer).
-3. Fill in the amount, date, account, category, and an optional description and note.
-4. Tap **Save**.
+1. Select **New Transaction** in the header of the Dashboard, Accounts or Transactions page, or the **+** in the top bar on a phone.
+2. Choose the type.
+3. Fill in the amount, date, description, account and category. A transfer has a **From Account** and a **To Account** instead of a category. **Notes** are optional.
+4. Save.
 
-If you've set up auto-categorization rules, the category may be pre-filled based on the description you type.
+**Split** next to the category lets you divide one transaction between several categories; **Single category** goes back.
 
-## Quick Add on a Phone
+### Suggested Categories
 
-On a phone, the **+** at the right end of the top bar adds a transaction from any personal page without navigating away. It opens the same transaction form dialog.
+While you type a description, the form can offer **Suggested:** followed by a category name. It comes from your auto-categorization rules in Settings: the first active rule whose pattern the description contains (ignoring case). Select the suggestion to apply it; nothing is filled in for you.
 
 ## Editing and Deleting
 
-Tap any transaction in the list to open it. From there you can edit all fields or delete the transaction entirely. Deleting a transaction adjusts the associated account balance automatically.
+Select a transaction to edit it or delete it. Deleting a transaction adjusts the account balance.
 
-## Swipe Gestures (Mobile)
+## Swipe Gestures
 
-On mobile devices, you can swipe transaction rows:
-
-- **Swipe left** — reveals the delete action.
-- **Swipe right** — reveals the edit action.
-
-These gestures provide a faster way to manage transactions without opening each one.
+On a phone you can swipe a row: left to delete, right to edit.
 
 ## Filtering
 
-The Transactions page provides powerful filters to narrow down your list:
+The Transactions page has a search box, the tabs **All**, **Income**, **Expenses** and **Transfers**, and these filters:
 
-- **Date range** — pick a start and/or end date.
-- **Amount range** — set minimum and/or maximum amounts.
-- **Category** — filter by one or more categories.
-- **Account** — show only transactions from a specific account.
-- **Type** — expense, income, or transfer.
-- **Tags** — filter by assigned tags.
-- **Uncategorized only** — show transactions that haven't been categorized yet.
-- **Has note** — show only transactions with a note attached.
+- **Dates** — a date range.
+- **Account** and **Category**. The category list starts with **Uncategorized**.
+- **Tags**.
+- **More Filters** — **Status** (Pending, Cleared or Reconciled), **Min amount**, **Max amount** and **Has note**.
 
-Filters are reflected in the URL, so you can bookmark or share a filtered view.
+Filters are kept in the address, so a filtered view can be bookmarked.
 
-## CSV Import
+## Selecting Several Transactions
 
-You can import transactions from a CSV file in three steps:
+Select rows to act on them together. The bar that appears can delete the selection, or change its account or date.
 
-1. **Upload** — select a CSV file from your device.
-2. **Map columns** — match your CSV columns (date, amount, description, etc.) to Alter Ego fields. The importer auto-suggests mappings when it can.
-3. **Review** — preview the parsed transactions, fix any issues, and confirm the import.
+## Importing
 
-The importer handles various date formats and amount styles (negative numbers, parentheses, separate debit/credit columns).
+The **More** menu in the header has the two importers.
 
-## CSV Export
+### Import CSV
 
-To export your transactions as a CSV file, go to **Settings** and tap the **Export** button. The file includes all transactions with their account names, categories, dates, amounts, and notes.
+1. **Import Transactions** — choose an account and upload a CSV file.
+2. **Map CSV Columns** — match the file's columns to the transaction fields. The importer suggests a mapping where it can.
+3. **Review & Import** — check the parsed rows, then import. Rows that were already imported are skipped.
+
+### Money Manager
+
+**Money Manager** imports a CSV export from the Money Manager app, in four steps: Upload, Reconcile, Preview and Import. Reconcile lists the accounts and categories found in the file. Importing the same file twice is safe: duplicates are detected and skipped.
+
+## Exporting
+
+**Export…** in the **More** menu opens **Export Transactions**. Choose a date range and download a CSV. **Expand splits into separate rows** gives one row per split, with its own category and amount. For a backup of everything, use **Export All Data (JSON)** in Settings.
 
 ## Tips
 
-- **Use the + button** — on a phone it's the fastest way to log a transaction the moment it happens.
-- **Categorize everything** — the dashboard, budgets, and reports all depend on accurate categories. Set up auto-categorization rules in Settings to save time.
-- **Tag for context** — tags let you add a second dimension beyond categories. For example, tag vacation expenses across multiple categories.
-- **Import early** — if you're switching from another app, CSV import gets your historical data in quickly.
+- **Use the + button** on a phone to log a purchase the moment it happens.
+- **Categorize everything** — the dashboard, budgets and reports depend on it.
+- **Tag for context** — tags cut across categories, for example a trip.

@@ -5,17 +5,12 @@ description: Strategia e pattern di testing
 
 ## Test Unitari (Vitest)
 
-**354+ test unitari** coprono utility, logica di business e l'adapter del backend mock.
+I test unitari coprono utility, logica di business, hook, componenti e il backend mock.
 
 ```bash
-# Modalità watch
-pnpm test
-
-# Esecuzione singola
-pnpm test --run
-
-# Con copertura
-pnpm test --run --coverage
+pnpm test              # modalità watch
+pnpm test --run        # esecuzione singola
+pnpm test:coverage     # con copertura
 ```
 
 ### File di Test
@@ -23,15 +18,15 @@ pnpm test --run --coverage
 I test risiedono nelle directory `__tests__/` accanto al codice che testano:
 
 ```
-src/lib/__tests__/
-  ├── dates.test.ts
-  ├── export.test.ts
+apps/web/src/lib/__tests__/
+  ├── budgets.test.ts
+  ├── loan-buckets.test.ts
   ├── merchants.test.ts
   ├── net-worth.test.ts
   ├── amortization.test.ts
   └── ...
-src/lib/backend/__tests__/
-  ├── adapter-contract.ts  # Test contrattuali condivisi
+apps/web/src/lib/backend/__tests__/
+  ├── adapter-contract.ts      # test contrattuali condivisi
   ├── mock.test.ts
   ├── mock.adapter.test.ts
   └── firebase.adapter.test.ts
@@ -39,55 +34,43 @@ src/lib/backend/__tests__/
 
 ### Backend Mock nei Test
 
-Resetta sempre lo stato tra i test:
+Azzera lo stato del mock prima di ogni test:
 
 ```typescript
-import { getBackend } from "@/lib/backend"
+import { createMockAdapter, __resetMockState } from "../mock"
 
 beforeEach(() => {
-  const backend = getBackend()
-  ;(backend as any).__resetMockState()
+  __resetMockState()
+  adapter = createMockAdapter()
 })
 ```
 
 ### Test Contrattuali
 
-La suite di test contrattuali dell'adapter (`adapter-contract.ts`) definisce 97 test condivisi che qualsiasi adapter backend deve superare. Vengono eseguiti contro l'adapter mock a ogni `pnpm test`, e contro Firebase sull'emulatore con `pnpm test:firebase:docker`.
+`adapter-contract.ts` contiene i test che ogni adapter backend deve superare. Vengono eseguiti contro il mock a ogni `pnpm test`, e contro Firebase quando l'emulatore è attivo (`pnpm test:firebase:docker`). Un nuovo percorso di scrittura richiede un caso lì.
+
+### Controllo della Documentazione
+
+`apps/web/src/lib/__tests__/docs-check.test.ts` legge il README, `docs/` e queste pagine. Fallisce quando nominano un comando `pnpm` che non è uno script, un percorso del repository che non esiste o un link che non porta da nessuna parte.
 
 ## Test E2E (Playwright)
 
-I test E2E coprono i flussi utente critici usando il backend mock. **18 file spec** su tutte le funzionalità principali.
+I test end-to-end coprono i flussi principali su una build di produzione con il backend mock, sulla porta 3001.
 
 ```bash
 pnpm test:e2e
 ```
 
-### Spec dei Test
+Il comando compila l'app e la avvia con `next start`. Per iterare in fretta, avvia prima un server di sviluppo su quella porta (`NEXT_PUBLIC_BACKEND=mock pnpm dev --port 3001`) e Playwright lo riusa invece di compilare. I test girano in Desktop Chrome, e un sottoinsieme anche in Mobile Chrome (viewport Pixel 5).
 
-```
-e2e/
-  ├── auth.spec.ts              # Login, registrazione
-  ├── dashboard.spec.ts         # Widget dashboard, drill-down
-  ├── accounts.spec.ts          # CRUD conti
-  ├── account-detail.spec.ts    # Dettaglio conto, grafico saldo
-  ├── transactions.spec.ts      # CRUD transazioni, filtri
-  ├── categories.spec.ts        # Gestione categorie
-  ├── budgets.spec.ts           # CRUD budget, avvisi
-  ├── savings-goals.spec.ts     # CRUD obiettivi, aggiunta fondi
-  ├── recurring.spec.ts         # CRUD regole ricorrenti
-  ├── reports.spec.ts           # Grafici, selettore periodo
-  ├── mm-import.spec.ts         # Flusso di import da Money Manager
-  ├── navigation.spec.ts        # Barra laterale, nav mobile
-  ├── settings.spec.ts          # Sezioni impostazioni
-  ├── sign-out.spec.ts          # Flusso disconnessione, route protette
-  ├── mobile.spec.ts            # Layout su telefono: menu, dialog, select
-  ├── loading-states.spec.ts    # Nessuno stato vuoto prima dei dati
-  ├── oauth-consent.spec.ts     # Schermata di consenso OAuth
-  └── security-headers.spec.ts  # CSP e header di sicurezza
-```
+Gli spec sono in `apps/web/e2e/`, un file per area: `auth.spec.ts`, `dashboard.spec.ts`, `accounts.spec.ts`, `transactions.spec.ts`, `budgets.spec.ts`, `reports.spec.ts`, `mobile.spec.ts` e così via.
+
+### Stati di Caricamento
+
+Il mock risponde subito a ogni lettura, quindi uno stato di caricamento sparisce prima che un test lo veda. Per rallentarlo, uno spec imposta `window.__MOCK_LATENCY_MS__` (con `page.evaluate` o `page.addInitScript`) e ogni chiamata al database mock aspetta quel tempo. `loading-states.spec.ts` lo usa per verificare che nessuna pagina mostri uno stato vuoto prima dei dati.
 
 ### Pattern
 
-- I test vengono eseguiti contro il backend mock per velocità e isolamento
-- Usano selettori `aria-label` e basati su ruolo per l'accessibilità
-- Le interazioni solo desktop (menu hover, dropdown) vengono testate nel viewport desktop
+- I test girano contro il backend mock per velocità e isolamento.
+- Usa selettori basati sul ruolo e `aria-label`.
+- Le interazioni solo desktop, come i menu hover, si testano nel viewport desktop.
