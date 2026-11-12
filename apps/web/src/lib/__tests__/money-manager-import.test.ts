@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest"
 
 import {
   parseMoneyManagerCSV,
+  parseDDMMYYYY,
   isMoneyManagerFormat,
   inferAccountType,
   normalizeAccountName,
@@ -340,6 +341,46 @@ describe("parseMoneyManagerCSV", () => {
     const result = parseMoneyManagerCSV(csv)
     expect(result.rows).toHaveLength(1)
     expect(result.rows[0].currency).toBe("EUR")
+  })
+
+  it("returns an error for an impossible day-first date (31/02/2026)", () => {
+    const tsv = [
+      "Periodo\tConto\tCategoria\tSotto-categoria\tNota\tEUR\tGuadagni/Spese\tDescrizione\tImporto\tValuta\tConto",
+      "31/02/2026\tConto in banca\tCibo\t\tTest\t10\tSpese\t\t10\tEUR\t10",
+    ].join("\n")
+    const result = parseMoneyManagerCSV(tsv)
+    expect(result.rows).toHaveLength(0)
+    expect(result.errors).toHaveLength(1)
+    expect(result.errors[0].message).toMatch(/invalid date/i)
+  })
+})
+
+// ─── parseDDMMYYYY ────────────────────────────────────────────────────────────
+
+describe("parseDDMMYYYY", () => {
+  it("parses a valid DD/MM/YYYY date", () => {
+    expect(parseDDMMYYYY("15/01/2024")).toEqual(new Date(2024, 0, 15))
+  })
+
+  it("parses a date with a time suffix and drops the time", () => {
+    expect(parseDDMMYYYY("04/09/2026 16:05:48")).toEqual(new Date(2026, 8, 4))
+  })
+
+  it("rejects an impossible date instead of rolling it over (31/02/2024)", () => {
+    expect(parseDDMMYYYY("31/02/2024")).toBeNull()
+  })
+
+  it("rejects month 13", () => {
+    expect(parseDDMMYYYY("01/13/2024")).toBeNull()
+  })
+
+  it("rejects day 0", () => {
+    expect(parseDDMMYYYY("00/01/2024")).toBeNull()
+  })
+
+  it("returns null for non-matching input", () => {
+    expect(parseDDMMYYYY("2024-01-15")).toBeNull()
+    expect(parseDDMMYYYY("not-a-date")).toBeNull()
   })
 })
 
