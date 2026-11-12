@@ -82,6 +82,31 @@ describe("parseCSV", () => {
     const result = parseCSV('note\n"  spaced  "')
     expect(result.rows[0]).toEqual(["spaced"])
   })
+
+  it("parses semicolon-delimited CSV", () => {
+    const result = parseCSV("Data;Importo\n15/01/2024;-12,50")
+    expect(result.headers).toEqual(["Data", "Importo"])
+    expect(result.rows).toEqual([["15/01/2024", "-12,50"]])
+  })
+
+  it("parses tab-separated CSV", () => {
+    const result = parseCSV("Data\tImporto\n15/01/2024\t-12,50")
+    expect(result.headers).toEqual(["Data", "Importo"])
+    expect(result.rows).toEqual([["15/01/2024", "-12,50"]])
+  })
+
+  it("keeps a quoted line break inside a field", () => {
+    const result = parseCSV('date,desc,amount\n2024-01-15,"line one\nline two",-5')
+    expect(result.headers).toEqual(["date", "desc", "amount"])
+    expect(result.rows).toHaveLength(1)
+    expect(result.rows[0]).toEqual(["2024-01-15", "line one\nline two", "-5"])
+  })
+
+  it("keeps commas inside quotes when using semicolon delimiter", () => {
+    const result = parseCSV('Data;Descrizione;Importo\n15/01/2024;"Coffee, Tea";-12,50')
+    expect(result.headers).toEqual(["Data", "Descrizione", "Importo"])
+    expect(result.rows).toEqual([["15/01/2024", "Coffee, Tea", "-12,50"]])
+  })
 })
 
 // ─── tryParseDate ─────────────────────────────────────────────────────────────

@@ -3,42 +3,109 @@ export interface ParsedCSV {
   rows: string[][]
 }
 
-function parseLine(line: string): string[] {
-  const result: string[] = []
+function detectDelimiter(headerText: string): string {
+  let inQuotes = false
+  const counts: Record<string, number> = { ",": 0, ";": 0, "\t": 0 }
+  for (let i = 0; i < headerText.length; i++) {
+    const ch = headerText[i]
+    if (ch === '"') {
+      if (inQuotes && headerText[i + 1] === '"') {
+        i++
+      } else {
+        inQuotes = !inQuotes
+      }
+    } else if (!inQuotes && (ch === "," || ch === ";" || ch === "\t")) {
+      counts[ch]++
+    }
+  }
+  // Pick most frequent; on tie, prefer comma (current behavior)
+  let best = ","
+  let bestCount = counts[","]
+  for (const d of [";", "\t"] as const) {
+    if (counts[d] > bestCount) {
+      best = d
+      bestCount = counts[d]
+    }
+  }
+  return best
+}
+
+function parseRecords(text: string, delimiter: string): string[][] {
+  const records: string[][] = []
+  let row: string[] = []
   let current = ""
   let inQuotes = false
 
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i]
+  const pushField = () => {
+    row.push(current.trim())
+    current = ""
+  }
+
+  const pushRow = () => {
+    // Skip completely empty/blank rows (same behavior as before: filter lines with trim length > 0)
+    const isBlank = row.length === 1 ? row[0].trim().length === 0 : row.every((f) => f.trim().length === 0)
+    if (!isBlank) records.push(row)
+    row = []
+  }
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i]
     if (ch === '"') {
-      if (inQuotes && line[i + 1] === '"') {
+      if (inQuotes && text[i + 1] === '"') {
         current += '"'
         i++
       } else {
         inQuotes = !inQuotes
       }
-    } else if (ch === "," && !inQuotes) {
-      result.push(current.trim())
-      current = ""
+    } else if (ch === delimiter && !inQuotes) {
+      pushField()
+    } else if (!inQuotes && (ch === "\n" || ch === "\r")) {
+      // Handle CRLF as single record separator
+      if (ch === "\r" && text[i + 1] === "\n") i++
+      pushField()
+      pushRow()
     } else {
       current += ch
     }
   }
-  result.push(current.trim())
-  return result
+
+  // Final field/row if any content remains
+  if (current.length > 0 || row.length > 0) {
+    pushField()
+    pushRow()
+  }
+
+  return records
 }
 
 export function parseCSV(text: string): ParsedCSV {
-  const lines = text
-    .replace(/\r\n/g, "\n")
-    .replace(/\r/g, "\n")
-    .split("\n")
-    .filter((l) => l.trim().length > 0)
+  if (!text || text.trim().length === 0) return { headers: [], rows: [] }
 
-  if (lines.length === 0) return { headers: [], rows: [] }
+  // Detect delimiter from the header record (first record, respecting quotes)
+  // Find end of first record to extract header text for delimiter detection
+  let inQuotes = false
+  let headerEnd = text.length
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i]
+    if (ch === '"') {
+      if (inQuotes && text[i + 1] === '"') {
+        i++
+      } else {
+        inQuotes = !inQuotes
+      }
+    } else if (!inQuotes && (ch === "\n" || ch === "\r")) {
+      headerEnd = i
+      break
+    }
+  }
+  const headerText = text.slice(0, headerEnd)
+  const delimiter = detectDelimiter(headerText)
 
-  const headers = parseLine(lines[0])
-  const rows = lines.slice(1).map(parseLine)
+  const records = parseRecords(text, delimiter)
+  if (records.length === 0) return { headers: [], rows: [] }
+
+  const headers = records[0]
+  const rows = records.slice(1)
   return { headers, rows }
 }
 
