@@ -11,7 +11,7 @@ import {
 } from "@/lib/account-ledger"
 import { calculateMortgage } from "@/lib/amortization"
 import { defaultCategories } from "@/lib/categories"
-import { normalizeDescription } from "@/lib/merchants"
+import { matchCategorizationRule, normalizeDescription } from "@/lib/merchants"
 import { monthBounds, monthKeysBetween, totalsDelta, totalsFromTransactions } from "@/lib/monthly-totals"
 import { encodeLoanNote } from "@/lib/mortgage"
 import { netWorthTotals } from "@/lib/net-worth"
@@ -943,16 +943,8 @@ const mockDb: DatabaseAdapter & AuditAdapter & { validateApiKey(keyHash: string)
   },
 
   async applyCategorization(userId: string, description: string): Promise<string | null> {
-    const userRules = Array.from(categorizationRules.values()).filter(
-      (r) => r.userId === userId && r.isActive
-    )
-    const lowerDesc = description.toLowerCase()
-    for (const rule of userRules) {
-      if (lowerDesc.includes(rule.pattern.toLowerCase())) {
-        return rule.categoryId
-      }
-    }
-    return null
+    const userRules = Array.from(categorizationRules.values()).filter((r) => r.userId === userId)
+    return matchCategorizationRule(userRules, description)
   },
 
   async renormalizeTransactions(userId: string): Promise<number> {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest"
 
-import { normalizeMerchant, normalizeDescription } from "@/lib/merchants"
+import { matchCategorizationRule, normalizeMerchant, normalizeDescription } from "@/lib/merchants"
 
 import type { CategorizationRule } from "@/types"
 
@@ -129,5 +129,52 @@ describe("normalizeDescription", () => {
       },
     ]
     expect(normalizeDescription("JOE'S [PIZZA DOWNTOWN", rules)).toBe("Joe's Pizza")
+  })
+})
+
+describe("matchCategorizationRule", () => {
+  const makeRule = (overrides: Partial<CategorizationRule>): CategorizationRule => ({
+    id: "r1",
+    userId: "u1",
+    pattern: "COFFEE",
+    categoryId: "cat-coffee",
+    displayAs: null,
+    isActive: true,
+    createdAt: new Date(),
+    ...overrides,
+  })
+
+  it("returns the categoryId of a matching rule", () => {
+    const rules = [makeRule({})]
+    expect(matchCategorizationRule(rules, "COFFEE BAR 42")).toBe("cat-coffee")
+  })
+
+  it("returns null when no rule matches", () => {
+    const rules = [makeRule({})]
+    expect(matchCategorizationRule(rules, "BOOKSTORE")).toBeNull()
+  })
+
+  it("ignores inactive rules", () => {
+    const rules = [makeRule({ isActive: false })]
+    expect(matchCategorizationRule(rules, "COFFEE BAR 42")).toBeNull()
+  })
+
+  it("matches case-insensitively in both directions", () => {
+    const rules = [makeRule({ pattern: "coffee" })]
+    expect(matchCategorizationRule(rules, "COFFEE BAR 42")).toBe("cat-coffee")
+    const rulesUpper = [makeRule({ pattern: "COFFEE" })]
+    expect(matchCategorizationRule(rulesUpper, "Coffee Bar 42")).toBe("cat-coffee")
+  })
+
+  it("first matching rule wins", () => {
+    const rules = [
+      makeRule({ id: "r1", pattern: "COFFEE", categoryId: "cat-coffee" }),
+      makeRule({ id: "r2", pattern: "BAR", categoryId: "cat-bar" }),
+    ]
+    expect(matchCategorizationRule(rules, "COFFEE BAR 42")).toBe("cat-coffee")
+  })
+
+  it("returns null for an empty rule list", () => {
+    expect(matchCategorizationRule([], "COFFEE BAR 42")).toBeNull()
   })
 })
