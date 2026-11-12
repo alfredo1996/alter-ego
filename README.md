@@ -89,6 +89,7 @@ machine, and the UI and MCP server share one store:
 
 ```bash
 pnpm local:start     # emulator, restoring ./.emulator-data
+pnpm local:seed      # default categories into the emulator
 pnpm dev:emulator    # http://localhost:3003
 pnpm local:stop      # exports on the way out
 ```
@@ -189,28 +190,29 @@ and against Firebase when the emulator is up.
 
 ## Commands
 
-| Command                     | Description                            |
-| --------------------------- | -------------------------------------- |
-| `pnpm dev`                  | Dev server, mock backend (Turbopack)   |
-| `pnpm dev:emulator`         | Dev server against the local emulator  |
-| `pnpm build`                | Production build                       |
-| `pnpm lint`                 | ESLint                                 |
-| `pnpm typecheck`            | Type check                             |
-| `pnpm test`                 | Vitest (watch mode)                    |
-| `pnpm test --run`           | Vitest (single run)                    |
-| `pnpm test:coverage`        | Vitest with coverage report            |
-| `pnpm test:e2e`             | Playwright E2E tests                   |
-| `pnpm test:firebase`        | Firebase emulator tests                |
-| `pnpm test:firebase:docker` | Same, starts emulator via Docker first |
-| `pnpm local:start`          | Persistent emulator for self-hosting   |
-| `pnpm local:stop`           | Stop it, exporting data on the way out |
-| `pnpm local:logs`           | Tail the persistent emulator           |
-| `pnpm emulator:start`       | Ephemeral emulator (tests)             |
-| `pnpm emulator:stop`        | Stop the ephemeral emulator            |
-| `pnpm mcp:stdio`            | MCP server over stdio                  |
-| `pnpm rules:build`          | Regenerate `firestore.rules`           |
-| `pnpm seed:firebase`        | Seed Firebase with default categories  |
-| `pnpm seed:demo`            | Demo user with sample data (emulator)  |
+| Command                     | Description                                                                                            |
+| --------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `pnpm dev`                  | Dev server, mock backend (Turbopack)                                                                   |
+| `pnpm dev:emulator`         | Dev server against the local emulator                                                                  |
+| `pnpm build`                | Production build                                                                                       |
+| `pnpm lint`                 | ESLint                                                                                                 |
+| `pnpm typecheck`            | Type check                                                                                             |
+| `pnpm test`                 | Vitest (watch mode)                                                                                    |
+| `pnpm test --run`           | Vitest (single run)                                                                                    |
+| `pnpm test:coverage`        | Vitest with coverage report                                                                            |
+| `pnpm test:e2e`             | Playwright E2E tests                                                                                   |
+| `pnpm test:firebase`        | Firebase emulator tests                                                                                |
+| `pnpm test:firebase:docker` | Same, starts emulator via Docker first                                                                 |
+| `pnpm local:start`          | Persistent emulator for self-hosting                                                                   |
+| `pnpm local:stop`           | Stop it, exporting data on the way out                                                                 |
+| `pnpm local:logs`           | Tail the persistent emulator                                                                           |
+| `pnpm local:seed`           | Seed the emulator with default categories                                                              |
+| `pnpm emulator:start`       | Ephemeral emulator (tests)                                                                             |
+| `pnpm emulator:stop`        | Stop the ephemeral emulator                                                                            |
+| `pnpm mcp:stdio`            | MCP server over stdio                                                                                  |
+| `pnpm rules:build`          | Regenerate `firestore.rules`                                                                           |
+| `pnpm seed:firebase`        | Seed default categories; needs `FIREBASE_PROJECT_ID` and seeds whichever project the Admin SDK reaches |
+| `pnpm seed:demo`            | Demo user with sample data (emulator)                                                                  |
 
 ## Documentation
 

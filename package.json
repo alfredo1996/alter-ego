@@ -26,6 +26,7 @@
     "local:rules": "pnpm --filter @alter-ego/web local:rules",
     "local:stop": "docker compose -f docker-compose.local.yml down",
     "local:logs": "docker compose -f docker-compose.local.yml logs -f",
+    "local:seed": "FIRESTORE_EMULATOR_HOST=localhost:8080 FIREBASE_PROJECT_ID=demo-alter-ego pnpm seed:firebase",
     "mcp:stdio": "pnpm --filter @alter-ego/web mcp:stdio",
     "prepare": "husky",
     "seed": "pnpm --filter @alter-ego/web seed",
