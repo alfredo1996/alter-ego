@@ -3,7 +3,35 @@ export interface ParsedCSV {
   rows: string[][]
 }
 
-function parseLine(line: string): string[] {
+function detectDelimiter(header: string): string {
+  const counts: Record<string, number> = { ",": 0, ";": 0, "\t": 0 }
+  let inQuotes = false
+
+  for (let i = 0; i < header.length; i++) {
+    const ch = header[i]
+    if (ch === '"') {
+      if (inQuotes && header[i + 1] === '"') {
+        i++
+      } else {
+        inQuotes = !inQuotes
+      }
+    } else if (!inQuotes && ch in counts) {
+      counts[ch]++
+    }
+  }
+
+  let delimiter = ","
+  let max = counts[","]
+  for (const d of [";", "\t"]) {
+    if (counts[d] > max) {
+      max = counts[d]
+      delimiter = d
+    }
+  }
+  return delimiter
+}
+
+function parseLine(line: string, delimiter: string): string[] {
   const result: string[] = []
   let current = ""
   let inQuotes = false
@@ -17,7 +45,7 @@ function parseLine(line: string): string[] {
       } else {
         inQuotes = !inQuotes
       }
-    } else if (ch === "," && !inQuotes) {
+    } else if (ch === delimiter && !inQuotes) {
       result.push(current.trim())
       current = ""
     } else {
@@ -29,16 +57,36 @@ function parseLine(line: string): string[] {
 }
 
 export function parseCSV(text: string): ParsedCSV {
-  const lines = text
-    .replace(/\r\n/g, "\n")
-    .replace(/\r/g, "\n")
-    .split("\n")
-    .filter((l) => l.trim().length > 0)
+  const normalized = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n")
 
+  const records: string[] = []
+  let current = ""
+  let inQuotes = false
+  for (let i = 0; i < normalized.length; i++) {
+    const ch = normalized[i]
+    if (ch === '"') {
+      if (inQuotes && normalized[i + 1] === '"') {
+        current += '""'
+        i++
+      } else {
+        inQuotes = !inQuotes
+        current += ch
+      }
+    } else if (ch === "\n" && !inQuotes) {
+      records.push(current)
+      current = ""
+    } else {
+      current += ch
+    }
+  }
+  records.push(current)
+
+  const lines = records.filter((l) => l.trim().length > 0)
   if (lines.length === 0) return { headers: [], rows: [] }
 
-  const headers = parseLine(lines[0])
-  const rows = lines.slice(1).map(parseLine)
+  const delimiter = detectDelimiter(lines[0])
+  const headers = parseLine(lines[0], delimiter)
+  const rows = lines.slice(1).map((l) => parseLine(l, delimiter))
   return { headers, rows }
 }
 
