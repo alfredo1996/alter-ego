@@ -41,12 +41,15 @@ import {
   autoSuggestColumns,
   tryParseDate,
   tryParseAmount,
+  detectDateOrder,
+  detectDecimalSeparator,
   inferTransactionType,
   typeFromString,
   computeImportHash,
 } from "@/lib/csv-import"
 import { useImportStore } from "@/stores/import-store"
 
+import type { DateOrder, DecimalSeparator } from "@/lib/csv-import"
 import type { Account, TransactionType } from "@/types"
 
 type Step = "upload" | "map" | "review"
@@ -96,6 +99,8 @@ export function ImportDialog({ open, onOpenChange, accounts }: ImportDialogProps
     notes: "",
   })
   const [flipSigns, setFlipSigns] = useState(false)
+  const [dateFormat, setDateFormat] = useState<"auto" | DateOrder>("auto")
+  const [decimalSeparator, setDecimalSeparator] = useState<"auto" | DecimalSeparator>("auto")
   const [rowHashes, setRowHashes] = useState<Map<number, string>>(new Map())
   const [importProgress, setImportProgress] = useState<{ done: number; total: number } | null>(null)
   const [importDone, setImportDone] = useState(false)
@@ -110,6 +115,8 @@ export function ImportDialog({ open, onOpenChange, accounts }: ImportDialogProps
     setFileName("")
     setColumnMap({ date: "", description: "", amount: "", type: "", notes: "" })
     setFlipSigns(false)
+    setDateFormat("auto")
+    setDecimalSeparator("auto")
     setRowHashes(new Map())
     setImportProgress(null)
     setImportDone(false)
@@ -158,6 +165,26 @@ export function ImportDialog({ open, onOpenChange, accounts }: ImportDialogProps
     e.target.value = ""
   }
 
+  const resolvedDateOrder = useMemo((): DateOrder => {
+    if (dateFormat !== "auto") return dateFormat
+    if (parsed && columnMap.date) {
+      const idx = parsed.headers.indexOf(columnMap.date)
+      const detected = detectDateOrder(parsed.rows.map((r) => r[idx] ?? ""))
+      if (detected) return detected
+    }
+    return "mdy"
+  }, [parsed, columnMap.date, dateFormat])
+
+  const resolvedDecimalSeparator = useMemo((): DecimalSeparator => {
+    if (decimalSeparator !== "auto") return decimalSeparator
+    if (parsed && columnMap.amount) {
+      const idx = parsed.headers.indexOf(columnMap.amount)
+      const detected = detectDecimalSeparator(parsed.rows.map((r) => r[idx] ?? ""))
+      if (detected) return detected
+    }
+    return "."
+  }, [parsed, columnMap.amount, decimalSeparator])
+
   const rows = useMemo((): MappedRow[] => {
     if (!parsed || !columnMap.date || !columnMap.description || !columnMap.amount) return []
 
@@ -174,8 +201,8 @@ export function ImportDialog({ open, onOpenChange, accounts }: ImportDialogProps
       const typeVal = typeIdx >= 0 ? (row[typeIdx] ?? "") : ""
       const notesVal = notesIdx >= 0 ? (row[notesIdx] ?? "") : ""
 
-      const date = tryParseDate(dateVal)
-      const rawAmount = tryParseAmount(amtVal)
+      const date = tryParseDate(dateVal, resolvedDateOrder)
+      const rawAmount = tryParseAmount(amtVal, resolvedDecimalSeparator)
 
       let error: string | null = null
       if (!date) error = `Invalid date: "${dateVal}"`
@@ -200,7 +227,7 @@ export function ImportDialog({ open, onOpenChange, accounts }: ImportDialogProps
         error,
       }
     })
-  }, [parsed, columnMap, flipSigns])
+  }, [parsed, columnMap, flipSigns, resolvedDateOrder, resolvedDecimalSeparator])
 
   // Asynchronously compute hashes for all valid rows whenever inputs change
   useEffect(() => {
@@ -435,13 +462,47 @@ export function ImportDialog({ open, onOpenChange, accounts }: ImportDialogProps
                           {h}
                         </SelectItem>
                       ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              ))}
-            </div>
+                     </SelectContent>
+                   </Select>
+                 </div>
+               ))}
 
-            {!columnMap.type && (
+               <div className="space-y-1.5">
+                 <Label>Date format</Label>
+                 <Select
+                   value={dateFormat}
+                   onValueChange={(v) => setDateFormat(v as "auto" | DateOrder)}
+                 >
+                   <SelectTrigger>
+                     <SelectValue placeholder="Auto" />
+                   </SelectTrigger>
+                   <SelectContent>
+                     <SelectItem value="auto">Auto</SelectItem>
+                     <SelectItem value="dmy">Day first (DD/MM/YYYY)</SelectItem>
+                     <SelectItem value="mdy">Month first (MM/DD/YYYY)</SelectItem>
+                   </SelectContent>
+                 </Select>
+               </div>
+
+               <div className="space-y-1.5">
+                 <Label>Decimal separator</Label>
+                 <Select
+                   value={decimalSeparator}
+                   onValueChange={(v) => setDecimalSeparator(v as "auto" | DecimalSeparator)}
+                 >
+                   <SelectTrigger>
+                     <SelectValue placeholder="Auto" />
+                   </SelectTrigger>
+                   <SelectContent>
+                     <SelectItem value="auto">Auto</SelectItem>
+                     <SelectItem value=".">Period (1,234.56)</SelectItem>
+                     <SelectItem value=",">Comma (1.234,56)</SelectItem>
+                   </SelectContent>
+                 </Select>
+               </div>
+             </div>
+
+             {!columnMap.type && (
               <div className="flex items-center gap-2">
                 <Checkbox
                   id="flip-signs"

@@ -4,6 +4,8 @@ import {
   parseCSV,
   tryParseDate,
   tryParseAmount,
+  detectDateOrder,
+  detectDecimalSeparator,
   autoSuggestColumns,
   inferTransactionType,
   typeFromString,
@@ -157,6 +159,58 @@ describe("tryParseDate", () => {
     // 7-digit number doesn't match any pattern
     expect(tryParseDate("2024011")).toBeNull()
   })
+
+  it("parses 15/01/2024 as 15 January 2024 in day-first mode", () => {
+    const d = tryParseDate("15/01/2024", "dmy")
+    expect(d).not.toBeNull()
+    expect(d!.getFullYear()).toBe(2024)
+    expect(d!.getMonth()).toBe(0)
+    expect(d!.getDate()).toBe(15)
+  })
+
+  it("parses 05/01/2024 as 5 January 2024 in day-first mode", () => {
+    const d = tryParseDate("05/01/2024", "dmy")
+    expect(d).not.toBeNull()
+    expect(d!.getFullYear()).toBe(2024)
+    expect(d!.getMonth()).toBe(0)
+    expect(d!.getDate()).toBe(5)
+  })
+
+  it("returns null for 15/01/2024 in month-first mode (month 15)", () => {
+    expect(tryParseDate("15/01/2024", "mdy")).toBeNull()
+  })
+
+  it("returns null for 31/02/2024 in day-first mode instead of rolling over", () => {
+    expect(tryParseDate("31/02/2024", "dmy")).toBeNull()
+  })
+
+  it("returns null for 02/30/2024 in month-first mode instead of rolling over", () => {
+    expect(tryParseDate("02/30/2024", "mdy")).toBeNull()
+  })
+
+  it("returns null for an impossible slash date even without an order argument", () => {
+    expect(tryParseDate("02/30/2024")).toBeNull()
+    expect(tryParseDate("15/01/2024")).toBeNull()
+  })
+
+  it("parses a day-first two-digit-year date", () => {
+    const d = tryParseDate("05/01/24", "dmy")
+    expect(d).not.toBeNull()
+    expect(d!.getFullYear()).toBe(2024)
+    expect(d!.getMonth()).toBe(0)
+    expect(d!.getDate()).toBe(5)
+  })
+
+  it("keeps ISO and YYYYMMDD formats independent of the order argument", () => {
+    for (const order of ["dmy", "mdy"] as const) {
+      const iso = tryParseDate("2024-01-15", order)
+      expect(iso!.getMonth()).toBe(0)
+      expect(iso!.getDate()).toBe(15)
+      const compact = tryParseDate("20240115", order)
+      expect(compact!.getMonth()).toBe(0)
+      expect(compact!.getDate()).toBe(15)
+    }
+  })
 })
 
 // ─── tryParseAmount ───────────────────────────────────────────────────────────
@@ -212,6 +266,100 @@ describe("tryParseAmount", () => {
 
   it("handles negative with currency symbol", () => {
     expect(tryParseAmount("-$42.00")).toBe(-42)
+  })
+
+  it("parses 12,50 as 12.5 with a comma decimal separator", () => {
+    expect(tryParseAmount("12,50", ",")).toBe(12.5)
+  })
+
+  it("parses 1.234,56 as 1234.56 with a comma decimal separator", () => {
+    expect(tryParseAmount("1.234,56", ",")).toBe(1234.56)
+  })
+
+  it("parses -3,50 as -3.5 with a comma decimal separator", () => {
+    expect(tryParseAmount("-3,50", ",")).toBe(-3.5)
+  })
+
+  it("treats spaces as thousands separators with a comma decimal separator", () => {
+    expect(tryParseAmount("1 234,56", ",")).toBe(1234.56)
+  })
+
+  it("still strips currency symbols with a comma decimal separator", () => {
+    expect(tryParseAmount("€12,50", ",")).toBe(12.5)
+  })
+})
+
+// ─── detectDateOrder ──────────────────────────────────────────────────────────
+
+describe("detectDateOrder", () => {
+  it("detects a day-first column (first part > 12)", () => {
+    expect(detectDateOrder(["15/01/2024", "20/12/2024", "03/11/2024"])).toBe("dmy")
+  })
+
+  it("detects a month-first column (second part > 12)", () => {
+    expect(detectDateOrder(["01/15/2024", "12/20/2024", "11/03/2024"])).toBe("mdy")
+  })
+
+  it("returns null for an ambiguous column (all parts ≤ 12)", () => {
+    expect(detectDateOrder(["05/01/2024", "12/11/2024"])).toBeNull()
+  })
+
+  it("returns null for a column without slash dates", () => {
+    expect(detectDateOrder(["2024-01-15", "20240115"])).toBeNull()
+  })
+
+  it("returns null for an empty column", () => {
+    expect(detectDateOrder([])).toBeNull()
+  })
+})
+
+// ─── detectDecimalSeparator ──────────────────────────────────────────────────
+
+describe("detectDecimalSeparator", () => {
+  it("detects a comma column (values end in ,dd and none in .dd)", () => {
+    expect(detectDecimalSeparator(["-3,50", "1.234,56", "12,00"])).toBe(",")
+  })
+
+  it("keeps period for a period column", () => {
+    expect(detectDecimalSeparator(["3.50", "1,234.56", "12.00"])).toBeNull()
+  })
+
+  it("returns null when both ,dd and .dd endings appear", () => {
+    expect(detectDecimalSeparator(["3,50", "4.20"])).toBeNull()
+  })
+
+  it("returns null for integer-only values", () => {
+    expect(detectDecimalSeparator(["100", "250"])).toBeNull()
+  })
+
+  it("returns null for an empty column", () => {
+    expect(detectDecimalSeparator([])).toBeNull()
+  })
+})
+
+// ─── day-first / decimal-comma import end to end ──────────────────────────────
+
+describe("day-first CSV with decimal-comma amounts (Auto detection)", () => {
+  it("imports Date,Description,Amount / 15/01/2024,Coffee,\"-3,50\" as one 3.50 expense on 15 January 2024", () => {
+    const parsed = parseCSV('Date,Description,Amount\n15/01/2024,Coffee,"-3,50"')
+    const dateIdx = parsed.headers.indexOf("Date")
+    const amtIdx = parsed.headers.indexOf("Amount")
+    const dateVals = parsed.rows.map((r) => r[dateIdx] ?? "")
+    const amtVals = parsed.rows.map((r) => r[amtIdx] ?? "")
+
+    const order = detectDateOrder(dateVals) ?? "mdy"
+    const sep = detectDecimalSeparator(amtVals) ?? "."
+
+    expect(order).toBe("dmy")
+    expect(sep).toBe(",")
+
+    const date = tryParseDate(dateVals[0], order)
+    const rawAmount = tryParseAmount(amtVals[0], sep)
+
+    expect(date).toEqual(new Date(2024, 0, 15))
+    expect(rawAmount).toBe(-3.5)
+    expect(Math.abs(rawAmount!)).toBe(3.5)
+    expect(inferTransactionType(rawAmount!, false)).toBe("expense")
   })
 })
 
