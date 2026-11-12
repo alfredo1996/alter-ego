@@ -52,7 +52,7 @@ import {
 import { calculateMortgage } from "@/lib/amortization"
 import { mergeCategoryCopies } from "@/lib/categories"
 import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebase-client"
-import { normalizeDescription } from "@/lib/merchants"
+import { matchCategorizationRule, normalizeDescription } from "@/lib/merchants"
 import {
   afterCreate,
   afterUpdate,
@@ -1387,12 +1387,7 @@ function createFirebaseDbAdapter(): DatabaseAdapter {
 
     async applyCategorization(userId: string, description: string): Promise<string | null> {
       const rules = await this.getCategorizationRules(userId)
-      const active = rules.filter((r) => r.isActive)
-      const lower = description.toLowerCase()
-      for (const rule of active) {
-        if (lower.includes(rule.pattern.toLowerCase())) return rule.categoryId
-      }
-      return null
+      return matchCategorizationRule(rules, description)
     },
 
     async renormalizeTransactions(userId: string): Promise<number> {
