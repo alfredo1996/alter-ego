@@ -10,7 +10,7 @@ pnpm --dir docs-site build   # static output in docs-site/out
 
 ## Why this is a second app
 
-The main app cannot be exported. It has six API route handlers and a middleware,
+The main app cannot be exported. It has API route handlers and a middleware,
 and `output: "export"` supports neither. This app carries only the docs routes and
 reads the same `../content/docs`, so there is one copy of the prose and no risk of
 the two drifting.
@@ -21,9 +21,9 @@ resolve `next/package.json` from here.
 ## Publishing
 
 `.github/workflows/docs.yml` builds on every change to the docs and asserts the
-export produced exactly the page count set in the workflow (37 today), so a missing page fails the build; raise the number when you add a page.
+export produced exactly the page count set in the workflow (37 today), so a missing page fails the build; change the number when you add or remove a page.
 
-The workflow's `deploy` job publishes to GitHub Pages. It runs only when started by hand from the Actions tab.
+The workflow's `deploy` job publishes to GitHub Pages on every push to `main` that changes the docs, and when started by hand from the Actions tab. The site is at https://alfredo1996.github.io/alter-ego/.
 
 `DOCS_BASE_PATH` is the sub-path a project site is served from, `/alter-ego` for
 `<user>.github.io/alter-ego`. The workflow sets it from the repository name. Leave it

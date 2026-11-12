@@ -17,10 +17,7 @@ function walk(dir: string, ext: RegExp): string[] {
 const DOC_FILES = [
   join(ROOT, "README.md"),
   join(ROOT, "docs-site/README.md"),
-  // docs/plans/ is not scanned: a plan names files that do not exist yet.
-  ...walk(join(ROOT, "docs"), /\.md$/).filter(
-    (f) => !f.includes("/docs/plans/"),
-  ),
+  ...walk(join(ROOT, "docs"), /\.md$/),
   ...walk(join(ROOT, "content/docs"), /\.mdx$/),
 ].filter(existsSync);
 
