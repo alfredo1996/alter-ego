@@ -1,7 +1,5 @@
 "use client"
 
-// ponytail: a copy of apps/web/src/hooks/create-crud-hooks.ts, which the app still uses; the package cannot import the app. Keep the two in step.
-
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 
 /**

@@ -129,15 +129,14 @@ apps/web/src/   (kernel: packages/kernel; UI kit: packages/ui; personal finance:
 │   │                        #   /budgets, /goals, /recurring, /reports, /settings
 │   ├── api/                 # REST API (v1), MCP server, OAuth endpoints
 │   └── [lang]/docs/         # Fumadocs pages
-├── components/              # Feature components (dashboard, transactions, accounts, …)
-├── hooks/                   # TanStack Query hooks (use-accounts, use-transactions, …)
+├── components/              # Shell and settings components (finance ones: packages/modules/finance)
+├── hooks/                   # use-auth, use-api-keys, use-chat
 ├── lib/
 │   ├── backend/             # Adapter: types.ts, mock.ts, firebase.ts
 │   ├── mcp/                 # MCP tools (finance-*, shared helpers)
 │   ├── oauth/               # OAuth 2.1 authorization server for the MCP endpoint
-│   └── …                    # Amortization, CSV import, merchants, net worth, …
-├── stores/                  # Zustand: useSettingsStore
-└── types/                   # Shared types + Zod schemas
+│   └── …                    # Host wiring, CSP, env
+└── types/                   # Barrels over the finance package's types + schemas
 ```
 
 ## Architecture

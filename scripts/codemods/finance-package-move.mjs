@@ -3,6 +3,12 @@
  * so a reviewer can re-run it on the parent commit and diff its output with `git diff -M`.
  *
  *   node scripts/codemods/finance-package-move.mjs
+ *   pnpm exec eslint --fix <the touched files>     # import order and blank lines only
+ *
+ * Commit 1 is this output plus the eslint pass, plus hand-cut types.ts and schemas.ts (the app-only
+ * User, ApiKey, McpAuditEntry and sign-in schemas stay in the app) and the new skeleton (host, adapter
+ * interface, barrels, build wiring). Use `git diff -M -C -C` so types.ts, schemas.ts and adapter.ts
+ * follow their sources. The follow-up commit moves create-crud-hooks as well; the script now does that too.
  *
  * 1. `git mv` every finance file from apps/web/src to packages/modules/finance/src.
  * 2. Copy the three shell helpers finance also needs (the app keeps its own use of them).
@@ -31,7 +37,7 @@ const all = walk(SRC).map((p) => relative(SRC, p))
 
 // ── What moves ─────────────────────────────────────────────────────────────────────────────────
 const COMPONENT_DIRS = ["accounts", "budgets", "categories", "charts", "dashboard", "recurring", "reports", "savings-goals", "transactions"]
-const HOOKS_STAY = ["use-api-keys.ts", "use-auth.ts", "use-chat.ts", "create-crud-hooks.ts"]
+const HOOKS_STAY = ["use-api-keys.ts", "use-auth.ts", "use-chat.ts"]
 const LIB_MOVE = [
   "account-ledger", "amortization", "mortgage", "balance-series", "loan-buckets", "splits", "monthly-totals", "merchants",
   "budgets", "rollover", "net-worth", "chart-scale", "subscription-detector", "recurring-summary", "categories", "category-groups",
@@ -49,7 +55,7 @@ const TESTS_MOVE = new Set([
   "components/__tests__/state-not-faded.test.tsx", "components/__tests__/loading-states.test.tsx",
 ])
 // Shell files finance also uses: copied, the app keeps its own.
-const COPIES = ["components/confirm-delete-dialog.tsx", "hooks/create-crud-hooks.ts", "lib/zod.ts"]
+const COPIES = ["components/confirm-delete-dialog.tsx", "lib/zod.ts"]
 
 function dest(f) {
   let m
@@ -135,7 +141,9 @@ function rewrite(file, oldDir, newDir, inPackage) {
     if (target === "types/index.ts" || target === "types/schemas.ts") return whole // the app keeps barrels here
     return pre + q + "@alter-ego/finance/" + stripExt(moved) + q
   })
-  if (out !== src) writeFileSync(file, out)
+  // the package's adapter interface is FinanceAdapter, a subset of the app's DatabaseAdapter
+  const renamed = inPackage && /from "(\.\.?\/)+adapter"/.test(out) ? out.replace(/\bDatabaseAdapter\b/g, "FinanceAdapter") : out
+  if (renamed !== src) writeFileSync(file, renamed)
 }
 
 for (const [from, to] of moves) rewrite(join(PKG, to), dirname(join(SRC, from)), dirname(join(PKG, to)), true)
@@ -152,7 +160,6 @@ for (const p of stay) rewrite(p, dirname(p), dirname(p), false)
 // the shell helpers the package copied say so
 const NOTE = {
   "components/confirm-delete-dialog.tsx": "components/confirm-delete-dialog.tsx",
-  "hooks/create-crud-hooks.ts": "hooks/create-crud-hooks.ts",
   "lib/zod.ts": "lib/zod.ts",
 }
 for (const [c, orig] of Object.entries(NOTE)) {

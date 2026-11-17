@@ -45,15 +45,13 @@ apps/web/                 # the Next.js app (@alter-ego/web); its own .env.local
 │   │   ├── api/          # REST API (v1), MCP server, OAuth endpoints
 │   │   └── [lang]/docs/  # Fumadocs
 │   ├── components/
-│   │   └── ...           # Feature components
-│   ├── hooks/            # React hooks (use-accounts, use-transactions, etc.)
+│   │   └── ...           # Shell and settings components (the finance ones live in the package)
+│   ├── hooks/            # use-auth, use-api-keys, use-chat
 │   ├── lib/
 │   │   ├── backend/      # Adapter (types, mock, firebase, firebase-admin, server-db)
 │   │   ├── mcp/          # MCP tools: finance-*, context.ts, helpers.ts
-│   │   ├── oauth/        # OAuth 2.1 server for the remote MCP endpoint
-│   │   └── categories.ts # Default category seeds
-│   ├── stores/           # Zustand stores
-│   └── types/            # index.ts, schemas.ts
+│   │   └── oauth/        # OAuth 2.1 server for the remote MCP endpoint
+│   └── types/            # barrels over @alter-ego/finance's types and schemas, plus the app-only ones
 ├── apphosting.yaml       # App Hosting reads it from the backend's root directory (set to apps/web)
 └── e2e/, scripts/, vitest*.ts, playwright*.ts
 packages/
@@ -96,7 +94,8 @@ The adapter is selected by `NEXT_PUBLIC_BACKEND` env var (`mock` | `firebase`).
 
 Interfaces in `lib/backend/types.ts`:
 
-- `AccountingAdapter` — the database surface; `DatabaseAdapter` is its alias
+- `AccountingAdapter` — the database surface: `FinanceAdapter` (from
+  `@alter-ego/finance/adapter`) plus `ApiKeysAdapter`; `DatabaseAdapter` is its alias
 - `AuthAdapter`, `AIAdapter`, `BackendAdapter`
 - `AuditAdapter` — **server-only**, deliberately off
   `DatabaseAdapter`: `mcp_audit` is `allow read, write: if false`, so the
@@ -110,11 +109,12 @@ This rule is enforced, not just stated: the MCP tools once imported
 
 - **File naming**: kebab-case (`use-accounts.ts`, `transaction-list.tsx`)
 - **Exports**: Named exports only (no default exports except pages)
-- **Imports**: Use `@/*` path alias
+- **Imports**: Use `@/*` path alias in the app; inside `packages/modules/finance` imports are
+  relative (ESLint forbids `@/*` there) and `getBackend`/`useAuth` come from its `host`
 - **Styling**: Use `cn()` utility for conditional Tailwind classes
 - **Validation**: Zod schemas for all external data boundaries
 - **Components**: forwardRef pattern, displayName for all UI components
-- **Types**: Colocate with usage or in `apps/web/src/types/` for shared types
+- **Types**: Colocate with usage or in `apps/web/src/types/` for shared types (finance types: `packages/modules/finance/src/types.ts`)
 - **Language**: the whole app is English: UI copy, zod
   messages, errors, and every MCP title, description and reply. Plain English
   literals, no i18n layer. Title Case for buttons, dialog titles and headings

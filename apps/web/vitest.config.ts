@@ -68,13 +68,12 @@ export default defineConfig({
         "src/app/.well-known/**",
         "src/app/api-docs/**",
         "src/app/oauth/**",
-        // State / React hooks — require provider setup; business logic tested via adapters
-        "src/stores/**",
         // Pure Firestore I/O — exercised by the OAuth flow emulator tests
         "src/lib/oauth/store.ts",
         // Firestore I/O tool handlers — exercised by the MCP emulator tests
         "src/lib/mcp/tools/finance-read.ts",
         "src/lib/mcp/tools/finance-write.ts",
+        // React hooks — require provider setup; business logic tested via adapters
         "src/hooks/**",
         // External service adapters — require live connections
         "src/lib/backend/firebase.ts",
@@ -86,8 +85,6 @@ export default defineConfig({
         "src/lib/backend/server-db.ts",
         // Pure TypeScript interface declarations (no executable statements)
         "src/lib/backend/types.ts",
-        // Static data arrays, no logic
-        "src/lib/options.ts",
       ],
       thresholds: {
         lines: 80,
