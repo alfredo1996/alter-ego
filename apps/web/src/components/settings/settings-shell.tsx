@@ -1,5 +1,11 @@
 "use client"
 
+import { useDeleteAllAccountData } from "@alter-ego/finance/hooks/use-accounts"
+import { useCategories, useDeleteAllCategories } from "@alter-ego/finance/hooks/use-categories"
+import { useTransactions, useDeleteAllTransactions } from "@alter-ego/finance/hooks/use-transactions"
+import { currencyOptionsShort, localeOptions } from "@alter-ego/finance/lib/options"
+import { useImportStore } from "@alter-ego/finance/stores/import-store"
+import { useSettingsStore } from "@alter-ego/finance/stores/settings-store"
 import { OnThisPage } from "@alter-ego/ui/page/on-this-page"
 import { PageHeader } from "@alter-ego/ui/page/page-header"
 import { SegmentedButtons } from "@alter-ego/ui/page/segmented-buttons"
@@ -28,14 +34,9 @@ import { ConnectorsSection } from "@/components/settings/connectors-section"
 import { DataExportSection } from "@/components/settings/data-export-section"
 import { SettingsRow, SettingsSection } from "@/components/settings/settings-section"
 import { TagsSection } from "@/components/settings/tags-section"
-import { useDeleteAllAccountData } from "@/hooks/use-accounts"
 import { useAuth } from "@/hooks/use-auth"
-import { useCategories, useDeleteAllCategories } from "@/hooks/use-categories"
-import { useTransactions, useDeleteAllTransactions } from "@/hooks/use-transactions"
 import { getBackend } from "@/lib/backend"
-import { currencyOptionsShort, localeOptions } from "@/lib/options"
-import { useImportStore } from "@/stores/import-store"
-import { useSettingsStore } from "@/stores/settings-store"
+
 
 import type { AIMode, Currency } from "@/types"
 

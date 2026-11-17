@@ -1,5 +1,7 @@
 "use client"
 
+import { features } from "@alter-ego/finance/lib/features"
+import { useSettingsStore } from "@alter-ego/finance/stores/settings-store"
 import { BrandMark } from "@alter-ego/ui/page/brand-mark"
 import { Avatar, AvatarFallback, AvatarImage } from "@alter-ego/ui/ui/avatar"
 import { Button } from "@alter-ego/ui/ui/button"
@@ -32,9 +34,8 @@ import { forwardRef, useMemo, useState } from "react"
 
 import { ChatPanel } from "@/components/chat/chat-panel"
 import { useAuth } from "@/hooks/use-auth"
-import { features } from "@/lib/features"
 import { visibleNavGroups, BOTTOM_ITEMS, isOnRoute, type NavGroup, type NavItem } from "@/lib/nav"
-import { useSettingsStore } from "@/stores/settings-store"
+
 
 import type { ComponentPropsWithoutRef } from "react"
 

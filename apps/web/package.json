@@ -21,6 +21,7 @@
     "seed:firebase": "tsx scripts/seed-firebase-categories.ts"
   },
   "dependencies": {
+    "@alter-ego/finance": "workspace:*",
     "@alter-ego/kernel": "workspace:*",
     "@alter-ego/ui": "workspace:*",
     "@hookform/resolvers": "^5.2.2",

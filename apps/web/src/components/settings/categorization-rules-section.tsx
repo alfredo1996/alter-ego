@@ -1,5 +1,14 @@
 "use client"
 
+import { CategoryChip } from "@alter-ego/finance/components/categories/category-chip"
+import { useCategories } from "@alter-ego/finance/hooks/use-categories"
+import {
+  useCategorizationRules,
+  useCreateCategorizationRule,
+  useUpdateCategorizationRule,
+  useDeleteCategorizationRule,
+} from "@alter-ego/finance/hooks/use-categorization-rules"
+import { useMerchantNormalization } from "@alter-ego/finance/hooks/use-merchant-normalization"
 import { EmptyPrompt } from "@alter-ego/ui/page/empty-prompt"
 import { TagChip } from "@alter-ego/ui/page/status-pill"
 import { Button } from "@alter-ego/ui/ui/button"
@@ -16,17 +25,9 @@ import { useToast } from "@alter-ego/ui/use-toast"
 import { ArrowRight, Plus, RefreshCw, Trash2 } from "lucide-react"
 import { useState } from "react"
 
-import { CategoryChip } from "@/components/categories/category-chip"
 import { ConfirmDeleteDialog } from "@/components/confirm-delete-dialog"
 import { SettingsRow } from "@/components/settings/settings-section"
-import { useCategories } from "@/hooks/use-categories"
-import {
-  useCategorizationRules,
-  useCreateCategorizationRule,
-  useUpdateCategorizationRule,
-  useDeleteCategorizationRule,
-} from "@/hooks/use-categorization-rules"
-import { useMerchantNormalization } from "@/hooks/use-merchant-normalization"
+
 
 
 interface CategorizationRulesSectionProps {

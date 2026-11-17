@@ -5,11 +5,11 @@
  * Firestore rule rejection or a dropped connection visible, so it gets a test.
  */
 
+import { useTakeSnapshot } from "@alter-ego/finance/hooks/use-net-worth"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { act, render, screen, waitFor } from "@testing-library/react"
 import { afterEach, describe, it, expect, vi } from "vitest"
 
-import { useTakeSnapshot } from "@/hooks/use-net-worth"
 import { getBackend } from "@/lib/backend"
 
 import { exposesBackend, Providers } from "../providers"

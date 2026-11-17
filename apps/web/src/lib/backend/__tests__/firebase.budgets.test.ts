@@ -4,11 +4,11 @@
  *
  * Own file: the users are signed in and never signed out (see firebase.freshness.test.ts).
  */
+import { budgetsWindowStart, budgetsWithSpending, loadBudgetsWithSpending } from "@alter-ego/finance/lib/budgets"
 import { createUserWithEmailAndPassword } from "firebase/auth"
 import { beforeAll, describe, expect, it, vi } from "vitest"
 
 import { createFirebaseAdapter } from "@/lib/backend/firebase"
-import { budgetsWindowStart, budgetsWithSpending, loadBudgetsWithSpending } from "@/lib/budgets"
 import { getAdminFirestore } from "@/lib/firebase-admin-client"
 import { getFirebaseAuth } from "@/lib/firebase-client"
 

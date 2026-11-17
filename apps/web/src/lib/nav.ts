@@ -8,6 +8,7 @@
  * flag flip can never disagree with what the guard enforces.
  */
 
+import { features } from "@alter-ego/finance/lib/features"
 import {
   LayoutDashboard,
   Wallet,
@@ -20,7 +21,6 @@ import {
   Settings,
 } from "lucide-react"
 
-import { features } from "./features"
 
 import type { LucideIcon } from "lucide-react"
 

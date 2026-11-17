@@ -7,7 +7,7 @@
 
 import { execSync } from "child_process"
 
-import { defaultCategories } from "../src/lib/categories"
+import { defaultCategories } from "@alter-ego/finance/lib/categories"
 
 const PROJECT_ID = process.env.FIREBASE_PROJECT_ID
 if (!PROJECT_ID) {

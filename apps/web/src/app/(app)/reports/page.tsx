@@ -1,7 +1,7 @@
+import { ReportsShell } from "@alter-ego/finance/components/reports/reports-shell"
 import { Skeleton } from "@alter-ego/ui/ui/skeleton"
 import { Suspense } from "react"
 
-import { ReportsShell } from "@/components/reports/reports-shell"
 
 import type { Metadata } from "next"
 

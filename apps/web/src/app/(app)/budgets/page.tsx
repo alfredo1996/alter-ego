@@ -1,7 +1,7 @@
-import { redirect } from "next/navigation"
 
-import { BudgetsShell } from "@/components/budgets/budgets-shell"
-import { features } from "@/lib/features"
+import { BudgetsShell } from "@alter-ego/finance/components/budgets/budgets-shell"
+import { features } from "@alter-ego/finance/lib/features"
+import { redirect } from "next/navigation"
 
 import type { Metadata } from "next"
 

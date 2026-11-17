@@ -1,7 +1,7 @@
-import { redirect } from "next/navigation"
 
-import { SavingsGoalsShell } from "@/components/savings-goals/savings-goals-shell"
-import { features } from "@/lib/features"
+import { SavingsGoalsShell } from "@alter-ego/finance/components/savings-goals/savings-goals-shell"
+import { features } from "@alter-ego/finance/lib/features"
+import { redirect } from "next/navigation"
 
 import type { Metadata } from "next"
 

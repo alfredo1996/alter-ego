@@ -1,16 +1,16 @@
+import { TransactionFormDialog } from "@alter-ego/finance/components/transactions/transaction-form-dialog"
 import { fireEvent, render, screen } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 
-import { TransactionFormDialog } from "../transaction-form-dialog"
 
 import type { Account, Transaction } from "@/types"
 
 vi.mock("@/hooks/use-auth", () => ({ useAuth: () => ({ user: { id: "u1" } }) }))
-vi.mock("@/hooks/use-category-suggestion", () => ({
+vi.mock("@alter-ego/finance/hooks/use-category-suggestion", () => ({
   useCategorySuggestion: () => ({ suggestedCategoryId: null, clearSuggestion: () => {} }),
 }))
-vi.mock("@/hooks/use-merchant-normalization", () => ({ useMerchantNormalization: () => ({ normalize: (s: string) => s }) }))
-vi.mock("@/hooks/use-transactions", () => ({ useDescriptionSuggestions: () => ({ data: [] }) }))
+vi.mock("@alter-ego/finance/hooks/use-merchant-normalization", () => ({ useMerchantNormalization: () => ({ normalize: (s: string) => s }) }))
+vi.mock("@alter-ego/finance/hooks/use-transactions", () => ({ useDescriptionSuggestions: () => ({ data: [] }) }))
 
 const at = new Date(2026, 9, 1)
 const account = { id: "a1", name: "Main Checking", currency: "EUR", isArchived: false } as Account

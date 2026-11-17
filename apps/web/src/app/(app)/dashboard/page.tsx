@@ -1,4 +1,4 @@
-import { DashboardShell } from "@/components/dashboard/dashboard-shell"
+import { DashboardShell } from "@alter-ego/finance/components/dashboard/dashboard-shell"
 
 import type { Metadata } from "next"
 

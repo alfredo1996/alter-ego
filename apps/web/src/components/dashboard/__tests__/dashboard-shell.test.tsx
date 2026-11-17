@@ -1,10 +1,10 @@
+import { DashboardShell } from "@alter-ego/finance/components/dashboard/dashboard-shell"
 import { isoDate } from "@alter-ego/kernel/dates"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { act, render, screen, waitFor } from "@testing-library/react"
 import { endOfMonth, format, subMonths } from "date-fns"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-import { DashboardShell } from "@/components/dashboard/dashboard-shell"
 import { QuickAddFab } from "@/components/quick-add-fab"
 import { getBackend } from "@/lib/backend"
 import { __resetMockState } from "@/lib/backend/mock"

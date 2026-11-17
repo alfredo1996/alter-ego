@@ -84,7 +84,23 @@ const eslintConfig = defineConfig([
       ],
     },
   },
-  { files: ["apps/web/src/lib/zod.ts"], rules: { "no-restricted-imports": "off" } },
+  // The finance package keeps both rules: no app import, and zod only through its own jitless copy.
+  {
+    files: ["packages/modules/finance/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [{ name: "zod", allowTypeImports: true, message: "Import { z } from the package's lib/zod: it turns off zod's eval-based JIT." }],
+          patterns: [
+            { group: ["@/*", "@alter-ego/web", "@alter-ego/web/*"], message: "A workspace package never imports the app." },
+            { group: ["zod/*"], allowTypeImports: true, message: "Import { z } from the package's lib/zod: it turns off zod's eval-based JIT." },
+          ],
+        },
+      ],
+    },
+  },
+  { files: ["apps/web/src/lib/zod.ts", "packages/modules/finance/src/lib/zod.ts"], rules: { "no-restricted-imports": "off" } },
 ]);
 
 export default eslintConfig;

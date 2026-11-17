@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from "vitest"
 import { TagsSection } from "../tags-section"
 
 const deleteTag = vi.fn().mockResolvedValue(undefined)
-vi.mock("@/hooks/use-tags", () => ({
+vi.mock("@alter-ego/finance/hooks/use-tags", () => ({
   useTags: () => ({ data: [{ id: "t1", userId: "u1", name: "vacation", color: "#f59e0b" }], isLoading: false }),
   useCreateTag: () => ({ mutateAsync: vi.fn(), isPending: false }),
   useDeleteTag: () => ({ mutateAsync: deleteTag, isPending: false }),

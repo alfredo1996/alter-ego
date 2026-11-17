@@ -1,4 +1,4 @@
-import { AccountsShell } from "@/components/accounts/accounts-shell"
+import { AccountsShell } from "@alter-ego/finance/components/accounts/accounts-shell"
 
 import type { Metadata } from "next"
 

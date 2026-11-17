@@ -1,7 +1,7 @@
+import { closedTarget, unknownTarget } from "@alter-ego/finance/lib/account-ledger"
 import { type NextRequest } from "next/server"
 
 
-import { closedTarget, unknownTarget } from "@/lib/account-ledger"
 import { validateApiKey, apiError, internalError } from "@/lib/api-auth"
 import { getServerDb } from "@/lib/backend/server-db"
 import { z } from "@/lib/zod"

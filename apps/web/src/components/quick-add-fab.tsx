@@ -1,11 +1,11 @@
 "use client"
 
+import { NewTransactionDialog } from "@alter-ego/finance/components/transactions/new-transaction-dialog"
 import { Button } from "@alter-ego/ui/ui/button"
 import { Plus } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 
-import { NewTransactionDialog } from "@/components/transactions/new-transaction-dialog"
 
 /** The phone's New Transaction: a + in the mobile top bar's empty right end. A desktop page has it in its header. */
 export function QuickAddFab() {

@@ -3,4 +3,5 @@
 @import "@alter-ego/ui/tokens.css";
 /* Tailwind scans the app on its own; the kit sits outside it. */
 @source "../../../../packages/ui/src";
-
+/* Nor does it scan the finance package: every class its components use comes from here. */
+@source "../../../../packages/modules/finance/src";

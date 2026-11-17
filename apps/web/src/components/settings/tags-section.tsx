@@ -1,5 +1,6 @@
 "use client"
 
+import { useTags, useCreateTag, useDeleteTag } from "@alter-ego/finance/hooks/use-tags"
 import { EmptyPrompt } from "@alter-ego/ui/page/empty-prompt"
 import { Button } from "@alter-ego/ui/ui/button"
 import { Input } from "@alter-ego/ui/ui/input"
@@ -9,7 +10,6 @@ import { useState } from "react"
 
 import { ConfirmDeleteDialog } from "@/components/confirm-delete-dialog"
 import { SettingsRow } from "@/components/settings/settings-section"
-import { useTags, useCreateTag, useDeleteTag } from "@/hooks/use-tags"
 
 
 const DEFAULT_COLOR = "#6366f1"

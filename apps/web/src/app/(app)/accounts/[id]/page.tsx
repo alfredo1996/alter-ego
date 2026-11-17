@@ -1,6 +1,6 @@
+import { AccountDetailShell } from "@alter-ego/finance/components/accounts/account-detail-shell"
 import { use } from "react"
 
-import { AccountDetailShell } from "@/components/accounts/account-detail-shell"
 
 import type { Metadata } from "next"
 

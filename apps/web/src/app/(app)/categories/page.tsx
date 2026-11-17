@@ -1,4 +1,4 @@
-import { CategoriesShell } from "@/components/categories/categories-shell"
+import { CategoriesShell } from "@alter-ego/finance/components/categories/categories-shell"
 
 import type { Metadata } from "next"
 

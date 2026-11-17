@@ -1,8 +1,8 @@
+import { useLastActivity } from "@alter-ego/finance/hooks/use-accounts"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { renderHook, waitFor } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 
-import { useLastActivity } from "../use-accounts"
 
 import type { ReactNode } from "react"
 

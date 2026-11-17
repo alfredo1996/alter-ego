@@ -1,7 +1,7 @@
+import { TransactionsShell } from "@alter-ego/finance/components/transactions/transactions-shell"
 import { Skeleton } from "@alter-ego/ui/ui/skeleton"
 import { Suspense } from "react"
 
-import { TransactionsShell } from "@/components/transactions/transactions-shell"
 
 import type { Metadata } from "next"
 

@@ -1,9 +1,9 @@
+import { RecurringShell } from "@alter-ego/finance/components/recurring/recurring-shell"
+import { features } from "@alter-ego/finance/lib/features"
 import { PageLoader } from "@alter-ego/ui/page/page-state"
 import { redirect } from "next/navigation"
 import { Suspense } from "react"
 
-import { RecurringShell } from "@/components/recurring/recurring-shell"
-import { features } from "@/lib/features"
 
 import type { Metadata } from "next"
 

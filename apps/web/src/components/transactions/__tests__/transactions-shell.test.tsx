@@ -1,10 +1,10 @@
+import { TransactionsShell } from "@alter-ego/finance/components/transactions/transactions-shell"
+import { useSettingsStore } from "@alter-ego/finance/stores/settings-store"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { useSettingsStore } from "@/stores/settings-store"
 
-import { TransactionsShell } from "../transactions-shell"
 
 
 import type { Transaction } from "@/types"

@@ -1,13 +1,13 @@
+import { pickableAccounts } from "@alter-ego/finance/components/transactions/transaction-form-dialog"
 import { describe, expect, it, vi } from "vitest"
 
-import { pickableAccounts } from "../transaction-form-dialog"
 
 import type { Account, Transaction } from "@/types"
 
 // The dialog module pulls in the app's hooks; the helper under test needs none of them.
 vi.mock("@/hooks/use-auth", () => ({ useAuth: () => ({ user: null }) }))
-vi.mock("@/hooks/use-merchant-normalization", () => ({ useMerchantNormalization: () => ({ normalize: (s: string) => s }) }))
-vi.mock("@/hooks/use-transactions", () => ({ useDescriptionSuggestions: () => ({ data: [] }) }))
+vi.mock("@alter-ego/finance/hooks/use-merchant-normalization", () => ({ useMerchantNormalization: () => ({ normalize: (s: string) => s }) }))
+vi.mock("@alter-ego/finance/hooks/use-transactions", () => ({ useDescriptionSuggestions: () => ({ data: [] }) }))
 
 const now = new Date()
 const account = (id: string, isArchived: boolean): Account => ({

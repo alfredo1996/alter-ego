@@ -10,12 +10,12 @@
  * This script uses the Admin SDK, which bypasses Security Rules.
  */
 
+import { defaultCategories } from "@alter-ego/finance/lib/categories"
 import { initializeApp } from "firebase-admin/app"
 import { getFirestore } from "firebase-admin/firestore"
 
 // We import defaultCategories from source — tsx handles the path alias via tsconfig
 // @ts-expect-error — path alias resolved by tsx / tsconfig paths
-import { defaultCategories } from "../src/lib/categories"
 
 const projectId = process.env.FIREBASE_PROJECT_ID
 if (!projectId) {
