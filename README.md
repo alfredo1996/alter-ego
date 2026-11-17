@@ -122,7 +122,7 @@ API and the MCP server, which use the Admin SDK and bypass Firestore rules:
 ## Project Structure
 
 ```
-apps/web/src/   (kernel: packages/kernel; UI kit: packages/ui)
+apps/web/src/   (kernel: packages/kernel; UI kit: packages/ui; personal finance: packages/modules/finance)
 ├── app/
 │   ├── (auth)/              # /login, /register
 │   ├── (app)/               # /dashboard, /accounts, /transactions, /categories,

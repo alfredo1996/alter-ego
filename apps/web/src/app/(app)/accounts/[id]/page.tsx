@@ -1,16 +1,11 @@
-import { AccountDetailShell } from "@alter-ego/finance/components/accounts/account-detail-shell"
+import { AccountDetailPage } from "@alter-ego/finance/pages/account-detail-page"
 import { use } from "react"
-
 
 import type { Metadata } from "next"
 
 export const metadata: Metadata = { title: "Account | Alter Ego" }
 
-export default function AccountDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
+export default function Route({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
-  return <AccountDetailShell accountId={id} />
+  return <AccountDetailPage accountId={id} />
 }

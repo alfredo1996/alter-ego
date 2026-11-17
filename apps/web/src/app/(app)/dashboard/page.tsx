@@ -1,4 +1,4 @@
-import { DashboardShell } from "@alter-ego/finance/components/dashboard/dashboard-shell"
+import { DashboardPage } from "@alter-ego/finance/pages/dashboard-page"
 
 import type { Metadata } from "next"
 
@@ -6,6 +6,6 @@ export const metadata: Metadata = {
   title: "Dashboard | Alter Ego",
 }
 
-export default function DashboardPage() {
-  return <DashboardShell />
+export default function Route() {
+  return <DashboardPage />
 }

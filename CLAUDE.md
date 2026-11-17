@@ -8,9 +8,11 @@ build, and `apps/web/src/lib/__tests__/firestore-rules-build.test.ts` fails when
 the two drift. The marker line in `base.rules` is where a deployment that adds
 collections of its own splices them in; leave it.
 
-Two more tests guard the structure: `packages/kernel/src/__tests__/boundary.test.ts`
-(the kernel imports nothing app-side) and `packages/ui/src/__tests__/boundary.test.ts`
-(the UI kit imports only the kernel and its own dependencies).
+Three more tests guard the structure: `packages/kernel/src/__tests__/boundary.test.ts`
+(the kernel imports nothing app-side), `packages/ui/src/__tests__/boundary.test.ts`
+(the UI kit imports only the kernel and its own dependencies) and
+`packages/modules/finance/src/__tests__/boundary.test.ts` (the finance package imports no `@/` path,
+nothing from `apps/web`, only the kernel, the UI kit and its declared dependencies).
 
 ## Core Principle
 
@@ -57,15 +59,24 @@ apps/web/                 # the Next.js app (@alter-ego/web); its own .env.local
 packages/
 ├── kernel/               # @alter-ego/kernel: money (currency) and dates.
 │                         # Imports nothing app-side
-└── ui/                   # @alter-ego/ui: ui/ (shadcn primitives; keep their APIs: add a
-                          # variant, never rename one), page/ (the page kit: every page's h1
-                          # is a PageHeader), FiltersSheet, use-toast, cn(), tokens.css.
-                          # Imports only the kernel and its own dependencies
+├── ui/                   # @alter-ego/ui: ui/ (shadcn primitives; keep their APIs: add a
+│                         # variant, never rename one), page/ (the page kit: every page's h1
+│                         # is a PageHeader), FiltersSheet, use-toast, cn(), tokens.css.
+│                         # Imports only the kernel and its own dependencies
+└── modules/finance/      # @alter-ego/finance: the nine pages and their components, hooks, libs,
+                          # stores, types, schemas and the FinanceAdapter interface. Reaches the app
+                          # only through provideFinanceHost({ getBackend, useAuth }) (src/host.ts),
+                          # which the app's providers and the vitest setup call once. The adapter
+                          # implementations, MCP tools and finance settings stay in apps/web for now.
+                          # The app's routes are one-line pages from @alter-ego/finance/pages/*
 firestore/, firestore.rules, firebase.json, docker/   # stay at the root
 ```
 
 Import the packages as `@alter-ego/ui/ui/button`, `@alter-ego/ui/page/page-header`,
-`@alter-ego/ui/utils` (`cn`), `@alter-ego/kernel/currency`, `@alter-ego/kernel/dates`.
+`@alter-ego/ui/utils` (`cn`), `@alter-ego/kernel/currency`, `@alter-ego/kernel/dates`,
+`@alter-ego/finance/hooks/use-accounts`. Finance code inside the package imports `getBackend` and
+`useAuth` from its own `host`, never from the app. `@/types` and `@/types/schemas` in the app
+re-export the package's, so those imports did not change.
 Each package has a boundary test (`packages/*/src/__tests__/boundary.test.ts`) that
 fails on a forbidden import. Type-check everything with `pnpm typecheck`.
 
