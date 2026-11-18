@@ -5,8 +5,7 @@ vi.mock("@/components/auth/auth-guard", () => ({ AuthGuard: ({ children }: { chi
 vi.mock("@/components/route-guard", () => ({ RouteGuard: ({ children }: { children: React.ReactNode }) => children }))
 vi.mock("@/components/app-sidebar", () => ({ AppSidebar: () => null }))
 vi.mock("@/components/mobile-nav", () => ({ MobileNav: () => null }))
-vi.mock("@/components/import-progress-indicator", () => ({ ImportProgressIndicator: () => null }))
-vi.mock("@/components/quick-add-fab", () => ({ QuickAddFab: () => <button aria-label="New Transaction" /> }))
+vi.mock("@alter-ego/finance/overlays", () => ({ FinanceOverlays: () => <button aria-label="New Transaction" /> }))
 
 import AppLayout from "../layout"
 

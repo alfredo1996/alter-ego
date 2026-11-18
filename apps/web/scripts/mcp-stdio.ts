@@ -13,14 +13,13 @@
  *
  *   ALTER_EGO_USER_ID=<uid> pnpm mcp:stdio
  */
+import { registerFinanceReadTools, registerFinanceWriteTools, STDIO_USER_ID_ENV } from "@alter-ego/finance/mcp"
 import { pinServerTimeZone } from "@alter-ego/kernel/dates"
 import { McpServer } from "@modelcontextprotocol/server"
 import { serveStdio } from "@modelcontextprotocol/server/stdio"
 
+import { getServerDb } from "@/lib/backend/server-db"
 import { MCP_VERSION } from "@/lib/mcp/config"
-import { STDIO_USER_ID_ENV } from "@/lib/mcp/tools/context"
-import { registerFinanceReadTools } from "@/lib/mcp/tools/finance-read"
-import { registerFinanceWriteTools } from "@/lib/mcp/tools/finance-write"
 
 pinServerTimeZone()
 
@@ -44,8 +43,8 @@ serveStdio(() => {
     { capabilities: { tools: {} } }
   )
 
-  registerFinanceReadTools(server)
-  registerFinanceWriteTools(server)
+  registerFinanceReadTools(server, { db: getServerDb })
+  registerFinanceWriteTools(server, { db: getServerDb })
 
   return server
 })

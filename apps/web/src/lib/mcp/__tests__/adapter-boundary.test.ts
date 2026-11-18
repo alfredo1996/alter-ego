@@ -6,20 +6,13 @@
  * This is the guard, not a re-test of the routing: it fails the moment a tool file
  * reaches past the adapter again.
  */
-import { readdirSync, readFileSync } from "node:fs"
-import { join } from "node:path"
+import { readFileSync } from "node:fs"
 
 import { describe, expect, it } from "vitest"
 
-const TOOLS_DIR = "src/lib/mcp/tools"
-const ROUTE = "src/app/api/mcp/route.ts"
-
-const sourceFiles = [
-  ...readdirSync(TOOLS_DIR)
-    .filter((f) => f.endsWith(".ts"))
-    .map((f) => join(TOOLS_DIR, f)),
-  ROUTE,
-]
+// The tools themselves live in @alter-ego/finance, which has its own boundary test (no "@/" import at
+// all, so no firebase-admin); what is left here is the two places that register them.
+const sourceFiles = ["src/app/api/mcp/route.ts", "scripts/mcp-stdio.ts"]
 
 describe("MCP tools reach the database through the adapter", () => {
   it.each(sourceFiles)("%s does not import firebase-admin", (file) => {

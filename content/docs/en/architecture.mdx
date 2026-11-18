@@ -50,7 +50,7 @@ await backend.db.getAccounts(userId)
 
 The same data is available outside the browser:
 
-- **MCP server** at `/api/mcp`, over HTTP with OAuth 2.1 and PKCE (the authorization server lives in `lib/oauth`), or over stdio with `pnpm mcp:stdio`. The tools are in `lib/mcp/tools`.
+- **MCP server** at `/api/mcp`, over HTTP with OAuth 2.1 and PKCE (the authorization server lives in `lib/oauth`), or over stdio with `pnpm mcp:stdio`. The tools are in `packages/modules/finance/src/mcp`; the route and the stdio script register them with the server database.
 - **REST API** under `/api/v1`, authenticated with an API key from Settings. Its OpenAPI document is served at `/api/openapi` and covers only the transactions endpoints.
 
 Both reach the database through the server-side adapter, not through the browser SDK. [docs/SELF-HOSTING.md](https://github.com/alfredo1996/alter-ego/blob/main/docs/SELF-HOSTING.md) lists the tools.

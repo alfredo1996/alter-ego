@@ -1,7 +1,8 @@
-import { useSettingsStore } from "@alter-ego/finance/stores/settings-store"
+import { useFinanceSettingsStore } from "@alter-ego/finance/stores/finance-settings-store"
 import { fireEvent, render, screen, within } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
+import { useSettingsStore } from "@/stores/settings-store"
 
 import { SettingsShell } from "../settings-shell"
 
@@ -19,17 +20,18 @@ vi.mock("@alter-ego/finance/hooks/use-categories", () => ({
   useDeleteAllCategories: () => ({ mutate: vi.fn(), isPending: false }),
 }))
 vi.mock("@alter-ego/ui/use-toast", () => ({ useToast: () => ({ toast: vi.fn() }) }))
-vi.mock("@/components/settings/tags-section", () => ({ TagsSection: () => null }))
-vi.mock("@/components/settings/categorization-rules-section", () => ({ CategorizationRulesSection: () => null }))
+vi.mock("@alter-ego/finance/components/settings/tags-section", () => ({ TagsSection: () => null }))
+vi.mock("@alter-ego/finance/components/settings/categorization-rules-section", () => ({ CategorizationRulesSection: () => null }))
 vi.mock("@/components/settings/api-keys-section", () => ({ ApiKeysSection: () => null }))
 vi.mock("@/components/settings/connectors-section", () => ({ ConnectorsSection: () => null }))
-vi.mock("@/components/settings/data-export-section", () => ({ DataExportSection: () => null }))
+vi.mock("@alter-ego/finance/components/settings/data-export-section", () => ({ DataExportSection: () => null }))
 
 describe("SettingsShell", () => {
   beforeEach(() => {
     load.tx = { data: { total: 88 }, isLoading: false }
     load.cats = { isLoading: false }
-    useSettingsStore.setState({ defaultCurrency: "USD", theme: "system" })
+    useFinanceSettingsStore.setState({ defaultCurrency: "USD" })
+    useSettingsStore.setState({ theme: "system" })
   })
 
   it("chooses the currency with a segmented EUR / USD / GBP, Other opening the rest", () => {
@@ -37,7 +39,7 @@ describe("SettingsShell", () => {
     const group = screen.getByRole("group", { name: "Currency" })
     expect(within(group).getByRole("button", { name: "USD" })).toHaveAttribute("aria-pressed", "true")
     fireEvent.click(within(group).getByRole("button", { name: "GBP" }))
-    expect(useSettingsStore.getState().defaultCurrency).toBe("GBP")
+    expect(useFinanceSettingsStore.getState().defaultCurrency).toBe("GBP")
     expect(within(group).getByRole("button", { name: "GBP" })).toHaveAttribute("aria-pressed", "true")
     expect(within(group).getByRole("combobox", { name: "Other currency" })).toBeInTheDocument()
   })

@@ -9,7 +9,7 @@
  */
 
 import { getBackend } from "@/lib/backend"
-import * as firebaseAdmin from "@/lib/backend/firebase-admin"
+import { firebaseAdmin } from "@/lib/backend/firebase-admin"
 import { env } from "@/lib/env"
 
 import type { AuditAdapter, DatabaseAdapter } from "./types"

@@ -1,8 +1,8 @@
+import { FinanceOverlays } from "@alter-ego/finance/overlays"
+
 import { AppSidebar } from "@/components/app-sidebar"
 import { AuthGuard } from "@/components/auth/auth-guard"
-import { ImportProgressIndicator } from "@/components/import-progress-indicator"
 import { MobileNav } from "@/components/mobile-nav"
-import { QuickAddFab } from "@/components/quick-add-fab"
 import { RouteGuard } from "@/components/route-guard"
 
 export default function AppLayout({
@@ -23,8 +23,7 @@ export default function AppLayout({
             </div>
           </main>
         </div>
-        <QuickAddFab />
-        <ImportProgressIndicator />
+        <FinanceOverlays />
       </div>
     </AuthGuard>
   )

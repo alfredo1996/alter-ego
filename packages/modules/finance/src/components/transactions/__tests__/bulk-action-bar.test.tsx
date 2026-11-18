@@ -2,13 +2,13 @@ import { cleanup, render, screen } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 
 import { selectionSummary } from "../../../lib/selection-summary"
-import { useSettingsStore } from "../../../stores/settings-store"
+import { useFinanceSettingsStore } from "../../../stores/finance-settings-store"
 import { BulkActionBar } from "../bulk-action-bar"
 
 
 import type { Transaction } from "../../../types"
 
-beforeEach(() => useSettingsStore.setState({ defaultCurrency: "EUR" }))
+beforeEach(() => useFinanceSettingsStore.setState({ defaultCurrency: "EUR" }))
 afterEach(cleanup)
 
 const tx = (type: Transaction["type"], amount: number, currency = "EUR") => ({ type, amount, currency }) as Transaction

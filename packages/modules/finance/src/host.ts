@@ -4,14 +4,16 @@ import type { FinanceAdapter, FinanceAI } from "./adapter"
 
 /** What finance needs from the app that runs it: data access and the signed-in user. */
 export interface FinanceHost {
-  getBackend(): { db: FinanceAdapter; ai: FinanceAI }
+  getBackend(): { db: FinanceAdapter }
   useAuth(): { user: { id: string; displayName: string | null } | null; loading: boolean }
+  /** The app's AI suggestion for a description. The app decides whether AI is on; null means no suggestion. */
+  categorize: FinanceAI["categorize"]
 }
 
 /** Finance code ran before the app called provideFinanceHost. */
 export class FinanceHostNotProvidedError extends Error {
   constructor() {
-    super("FinanceHostNotProvidedError: call provideFinanceHost({ getBackend, useAuth }) before using @alter-ego/finance")
+    super("FinanceHostNotProvidedError: call provideFinanceHost({ getBackend, useAuth, categorize }) before using @alter-ego/finance")
     this.name = "FinanceHostNotProvidedError"
   }
 }
@@ -35,3 +37,6 @@ export const getBackend: FinanceHost["getBackend"] = () => provided().getBackend
 
 /** The app's auth state. Finance code calls it where it used to call `@/hooks/use-auth`. */
 export const useAuth: FinanceHost["useAuth"] = () => provided().useAuth()
+
+/** The app's AI categorizer. Finance code calls it where it used to read the AI mode and call the backend's `ai`. */
+export const categorize: FinanceHost["categorize"] = (description) => provided().categorize(description)

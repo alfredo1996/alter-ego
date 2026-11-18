@@ -1,53 +1,31 @@
 "use client"
 
-import { useDeleteAllAccountData } from "@alter-ego/finance/hooks/use-accounts"
-import { useCategories, useDeleteAllCategories } from "@alter-ego/finance/hooks/use-categories"
-import { useTransactions, useDeleteAllTransactions } from "@alter-ego/finance/hooks/use-transactions"
-import { currencyOptionsShort, localeOptions } from "@alter-ego/finance/lib/options"
-import { useImportStore } from "@alter-ego/finance/stores/import-store"
-import { useSettingsStore } from "@alter-ego/finance/stores/settings-store"
+import { FinancePreferenceRows, FinanceSettings } from "@alter-ego/finance/settings"
 import { OnThisPage } from "@alter-ego/ui/page/on-this-page"
 import { PageHeader } from "@alter-ego/ui/page/page-header"
 import { SegmentedButtons } from "@alter-ego/ui/page/segmented-buttons"
-import { StatusPill } from "@alter-ego/ui/page/status-pill"
 import { Button } from "@alter-ego/ui/ui/button"
 import { Input } from "@alter-ego/ui/ui/input"
 import { Label } from "@alter-ego/ui/ui/label"
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@alter-ego/ui/ui/select"
 import { Skeleton } from "@alter-ego/ui/ui/skeleton"
 import { useToast } from "@alter-ego/ui/use-toast"
-import { cn } from "@alter-ego/ui/utils"
-import { ArrowRight, Sun, Moon, Monitor, Pencil, Trash2 } from "lucide-react"
-import Link from "next/link"
+import { Sun, Moon, Monitor, Pencil } from "lucide-react"
 import { useState } from "react"
 
-import { ConfirmDeleteDialog } from "@/components/confirm-delete-dialog"
 import { ApiKeysSection } from "@/components/settings/api-keys-section"
-import { CategorizationRulesSection } from "@/components/settings/categorization-rules-section"
 import { ConnectorsSection } from "@/components/settings/connectors-section"
-import { DataExportSection } from "@/components/settings/data-export-section"
 import { SettingsRow, SettingsSection } from "@/components/settings/settings-section"
-import { TagsSection } from "@/components/settings/tags-section"
 import { useAuth } from "@/hooks/use-auth"
 import { getBackend } from "@/lib/backend"
+import { useSettingsStore } from "@/stores/settings-store"
 
-
-import type { AIMode, Currency } from "@/types"
+import type { AIMode } from "@/types"
 
 const aiModeOptions: { value: AIMode; label: string; description: string }[] = [
   { value: "off", label: "Off", description: "No AI features" },
   { value: "local", label: "Local", description: "Your own API key" },
   { value: "cloud", label: "Cloud", description: "Cloud-powered AI" },
 ]
-
-const MAIN_CURRENCIES: Currency[] = ["EUR", "USD", "GBP"]
-const CURRENCY_SYMBOL: Record<string, string> = { EUR: "\u20ac", USD: "$", GBP: "\u00a3" }
 
 const themeOptions = [
   { value: "light" as const, label: "Light", icon: Sun },
@@ -57,33 +35,8 @@ const themeOptions = [
 
 export function SettingsShell() {
   const { user, loading: authLoading, refreshUser } = useAuth()
-  // Only the total is shown; one row keeps the read to a count, not the whole ledger.
-  const { data: txResult, isLoading: txLoading } = useTransactions(user?.id, { limit: 1 })
-  const transactionCount = txResult?.total ?? 0
-  const {
-    defaultCurrency,
-    locale,
-    theme,
-    aiMode,
-    setDefaultCurrency,
-    setLocale,
-    setTheme,
-    setAIMode,
-  } = useSettingsStore()
+  const { theme, aiMode, setTheme, setAIMode } = useSettingsStore()
   const { toast } = useToast()
-
-  const deleteAllTransactions = useDeleteAllTransactions(user?.id)
-  const [deleteAllOpen, setDeleteAllOpen] = useState(false)
-
-  const deleteAllAccountData = useDeleteAllAccountData(user?.id)
-  const [wipeOpen, setWipeOpen] = useState(false)
-  // One background job at a time: a running import or wipe owns the progress indicator.
-  const backgroundBusy = useImportStore((s) => s.active !== null)
-
-  const { data: categories, isLoading: categoriesLoading } = useCategories(user?.id)
-  const customCategoryCount = categories?.filter((c) => !c.isDefault || c.userId !== null).length ?? 0
-  const deleteAllCategories = useDeleteAllCategories(user?.id)
-  const [resetCategoriesOpen, setResetCategoriesOpen] = useState(false)
 
   const [editingProfile, setEditingProfile] = useState(false)
   const [profileDisplayName, setProfileDisplayName] = useState("")
@@ -129,10 +82,6 @@ export function SettingsShell() {
       </div>
     )
   }
-
-  const isOtherCurrency = !MAIN_CURRENCIES.includes(defaultCurrency)
-  const today = new Date()
-  const formatHint = `Dates read ${today.toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" })}; amounts ${new Intl.NumberFormat(locale, { style: "currency", currency: defaultCurrency }).format(1488.93)}.`
 
   const sections = [
     { id: "profile", label: "Profile" },
@@ -216,155 +165,18 @@ export function SettingsShell() {
                 options={themeOptions.map(({ value, label, icon: Icon }) => ({ value, label, icon: <Icon aria-hidden className="size-[15px]" /> }))}
               />
             </SettingsRow>
-            <SettingsRow label="Currency" labelId="currency-label" hint="For totals and new accounts. Each account keeps its own.">
-              <SegmentedButtons
-                aria-labelledby="currency-label"
-                value={isOtherCurrency ? "" : defaultCurrency}
-                onChange={(value) => setDefaultCurrency(value as Currency)}
-                options={MAIN_CURRENCIES.map((c) => ({ value: c as string, label: c, icon: <span aria-hidden>{CURRENCY_SYMBOL[c]}</span> }))}
-                trailing={
-                  <Select value={isOtherCurrency ? defaultCurrency : ""} onValueChange={(value) => setDefaultCurrency(value as Currency)}>
-                    <SelectTrigger
-                      aria-label="Other currency"
-                      className={cn(
-                        "h-auto min-h-[38px] w-auto gap-1 rounded-lg border-0 px-3 py-0 text-[13px] shadow-none pointer-coarse:min-h-11",
-                        isOtherCurrency ? "bg-background font-medium shadow-xs" : "bg-transparent text-subtle-foreground data-[placeholder]:text-subtle-foreground",
-                      )}
-                    >
-                      <SelectValue placeholder="Other" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {currencyOptionsShort
-                        .filter((o) => !MAIN_CURRENCIES.includes(o.value))
-                        .map((o) => (
-                          <SelectItem key={o.value} value={o.value}>
-                            {o.value}
-                          </SelectItem>
-                        ))}
-                    </SelectContent>
-                  </Select>
-                }
-              />
-            </SettingsRow>
-            <SettingsRow label="Language and Format" htmlFor="locale" hint={formatHint}>
-              <Select value={locale} onValueChange={setLocale}>
-                <SelectTrigger id="locale" className="w-full sm:w-56">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {localeOptions.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </SettingsRow>
+            <FinancePreferenceRows />
             <SettingsRow label="AI Features" labelId="ai-label" hint="AI is optional. Everything in the app works without it." stacked>
               <SegmentedButtons aria-labelledby="ai-label" value={aiMode} onChange={setAIMode} options={aiModeOptions} />
             </SettingsRow>
           </SettingsSection>
 
-          <SettingsSection id="sorting" title="Categories & Tags" description="Sort transactions without doing it by hand.">
-            <SettingsRow label="Categories" hint="Rename, recolour and group them on their own page.">
-              <Button variant="outline" size="lg" asChild>
-                <Link href="/categories">
-                  Open Categories
-                  <ArrowRight />
-                </Link>
-              </Button>
-            </SettingsRow>
-            <TagsSection userId={user?.id} />
-            <CategorizationRulesSection userId={user?.id} transactionCount={txLoading ? undefined : transactionCount} />
-          </SettingsSection>
-
-          <SettingsSection id="data" title="Data" description="Take your data with you, or let your own tools read it.">
-            <DataExportSection />
+          <FinanceSettings>
             <ApiKeysSection userId={user?.id} />
             <ConnectorsSection />
-          </SettingsSection>
-
-          <SettingsSection id="danger" title="Danger Zone" description="Each action asks you to confirm, and none can be undone." danger>
-            <SettingsRow
-              label="Delete All Transactions"
-              hint={`Removes all ${txLoading ? "" : `${transactionCount} `}transactions. Accounts, categories, budgets and rules stay.`}
-            >
-              {!txLoading && transactionCount === 0 ? (
-                <StatusPill>Nothing to delete</StatusPill>
-              ) : (
-                <Button variant="outline-destructive" size="lg" disabled={txLoading} onClick={() => setDeleteAllOpen(true)}>
-                  <Trash2 />
-                  Delete All Transactions{txLoading ? "" : ` (${transactionCount})`}
-                </Button>
-              )}
-            </SettingsRow>
-            <SettingsRow
-              label="Start from Zero"
-              hint="Deletes every account and transaction, with recurring rules and balance history. Categories, tags, budgets and rules stay. It runs in the background."
-            >
-              <Button variant="outline-destructive" size="lg" disabled={backgroundBusy} onClick={() => setWipeOpen(true)}>
-                <Trash2 />
-                Delete All Accounts &amp; Transactions
-              </Button>
-            </SettingsRow>
-            <SettingsRow label="Reset Categories" hint="Deletes the categories you made, undoes your edits to the defaults and brings back the default set.">
-              {!categoriesLoading && customCategoryCount === 0 ? (
-                <StatusPill>Nothing to reset</StatusPill>
-              ) : (
-                <Button variant="outline-destructive" size="lg" disabled={categoriesLoading} onClick={() => setResetCategoriesOpen(true)}>
-                  <Trash2 />
-                  Reset Categories to Default{categoriesLoading ? "" : ` (${customCategoryCount})`}
-                </Button>
-              )}
-            </SettingsRow>
-          </SettingsSection>
+          </FinanceSettings>
         </div>
       </div>
-
-      <ConfirmDeleteDialog
-        open={deleteAllOpen}
-        onOpenChange={setDeleteAllOpen}
-        title="Delete All Transactions"
-        description={`Are you sure you want to delete all ${transactionCount} transactions? This action cannot be undone. Account balances will be reset.`}
-        onConfirm={() => {
-          deleteAllTransactions.mutate(undefined, {
-            onSuccess: () => {
-              setDeleteAllOpen(false)
-              toast({ title: "All transactions deleted" })
-            },
-          })
-        }}
-        isPending={deleteAllTransactions.isPending}
-      />
-
-      <ConfirmDeleteDialog
-        open={wipeOpen}
-        onOpenChange={setWipeOpen}
-        title="Delete All Accounts & Transactions"
-        description="Every account, transaction, recurring transaction and balance history entry will be deleted, bringing all balances to zero. This cannot be undone."
-        confirmLabel="Delete everything"
-        onConfirm={() => {
-          setWipeOpen(false)
-          deleteAllAccountData.mutate()
-        }}
-        isPending={false}
-      />
-
-      <ConfirmDeleteDialog
-        open={resetCategoriesOpen}
-        onOpenChange={setResetCategoriesOpen}
-        title="Reset Categories to Default"
-        description={`Are you sure you want to delete all ${customCategoryCount} custom or edited categories? The default categories will remain, as they were before you edited them. Transactions keep their data but lose any custom-category assignment. This cannot be undone.`}
-        onConfirm={() => {
-          deleteAllCategories.mutate(undefined, {
-            onSuccess: () => {
-              setResetCategoriesOpen(false)
-              toast({ title: "Categories reset to default" })
-            },
-          })
-        }}
-        isPending={deleteAllCategories.isPending}
-      />
-  </div>
-)
+    </div>
+  )
 }

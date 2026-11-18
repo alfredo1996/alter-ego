@@ -1,7 +1,6 @@
 "use client"
 
 import { features } from "@alter-ego/finance/lib/features"
-import { useSettingsStore } from "@alter-ego/finance/stores/settings-store"
 import { BrandMark } from "@alter-ego/ui/page/brand-mark"
 import { Avatar, AvatarFallback, AvatarImage } from "@alter-ego/ui/ui/avatar"
 import { Button } from "@alter-ego/ui/ui/button"
@@ -20,6 +19,7 @@ import { NAV_GROUP_LABEL, NavLink, getInitials, useNavGroups } from "@/component
 import { ChatPanel } from "@/components/chat/chat-panel"
 import { useAuth } from "@/hooks/use-auth"
 import { BOTTOM_ITEMS, isOnRoute } from "@/lib/nav"
+import { useSettingsStore } from "@/stores/settings-store"
 
 
 export function MobileNav() {

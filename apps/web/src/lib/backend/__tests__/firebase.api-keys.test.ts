@@ -10,7 +10,7 @@ import { DELETE } from "@/app/api/keys/[id]/route"
 import { POST } from "@/app/api/keys/route"
 import { hashApiKey } from "@/lib/api-auth"
 import { createFirebaseAdapter } from "@/lib/backend/firebase"
-import * as admin from "@/lib/backend/firebase-admin"
+import { firebaseAdmin as admin } from "@/lib/backend/firebase-admin"
 import { getFirebaseAuth } from "@/lib/firebase-client"
 
 afterEach(() => vi.unstubAllGlobals())

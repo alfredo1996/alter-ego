@@ -12,28 +12,31 @@ describe("the finance host seam", () => {
   })
 
   it("throws a named error when finance code runs before the app provides the host", async () => {
-    const { getBackend, useAuth, FinanceHostNotProvidedError } = await freshHost()
-    for (const call of [getBackend, useAuth]) {
+    const { getBackend, useAuth, categorize, FinanceHostNotProvidedError } = await freshHost()
+    for (const call of [getBackend, useAuth, () => categorize("coffee")]) {
       expect(call).toThrow(FinanceHostNotProvidedError)
       expect(call).toThrow(/provideFinanceHost/)
     }
     expect(new FinanceHostNotProvidedError().name).toBe("FinanceHostNotProvidedError")
   })
 
-  it("hands finance code the backend and the auth state the app provided", async () => {
-    const { getBackend, useAuth, provideFinanceHost } = await freshHost()
-    const backend = { db: {}, ai: {} } as ReturnType<typeof getBackend>
+  it("hands finance code the backend, the auth state and the categorizer the app provided", async () => {
+    const { getBackend, useAuth, categorize, provideFinanceHost } = await freshHost()
+    const backend = { db: {} } as ReturnType<typeof getBackend>
+    const suggestion = { categoryId: "food", confidence: 0.9 }
     const auth = { user: { id: "user-1", displayName: "Ada" }, loading: false }
-    provideFinanceHost({ getBackend: () => backend, useAuth: () => auth })
+    provideFinanceHost({ getBackend: () => backend, useAuth: () => auth, categorize: async () => suggestion })
     expect(getBackend()).toBe(backend)
     expect(useAuth()).toBe(auth)
+    await expect(categorize("coffee")).resolves.toBe(suggestion)
   })
 
   it("uses the latest host when the app provides another", async () => {
     const { useAuth, provideFinanceHost } = await freshHost()
-    const backend = { db: {}, ai: {} } as ReturnType<Parameters<typeof provideFinanceHost>[0]["getBackend"]>
-    provideFinanceHost({ getBackend: () => backend, useAuth: () => ({ user: null, loading: true }) })
-    provideFinanceHost({ getBackend: () => backend, useAuth: () => ({ user: null, loading: false }) })
+    const backend = { db: {} } as ReturnType<Parameters<typeof provideFinanceHost>[0]["getBackend"]>
+    const categorize = async () => null
+    provideFinanceHost({ getBackend: () => backend, useAuth: () => ({ user: null, loading: true }), categorize })
+    provideFinanceHost({ getBackend: () => backend, useAuth: () => ({ user: null, loading: false }), categorize })
     expect(useAuth().loading).toBe(false)
   })
 })

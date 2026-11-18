@@ -34,7 +34,7 @@ import { useForm } from "react-hook-form"
 import { defaultKindForType } from "../../lib/net-worth"
 import { accountTypeOptions, currencyOptionsShort as currencyOptions } from "../../lib/options"
 import { createAccountSchema, type AccountFormValues } from "../../schemas"
-import { useSettingsStore } from "../../stores/settings-store"
+import { useFinanceSettingsStore } from "../../stores/finance-settings-store"
 
 import type { Account } from "../../types"
 
@@ -59,7 +59,7 @@ export function AccountFormDialog({
   isPending,
 }: AccountFormDialogProps) {
   const isEditing = !!account
-  const defaultCurrency = useSettingsStore((s) => s.defaultCurrency)
+  const defaultCurrency = useFinanceSettingsStore((s) => s.defaultCurrency)
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(createAccountSchema),
     defaultValues: {

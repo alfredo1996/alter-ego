@@ -16,7 +16,7 @@ import { POST as mcp } from "@/app/api/mcp/route"
 import { POST as approve } from "@/app/api/oauth/authorize/route"
 import { POST as register } from "@/app/api/oauth/register/route"
 import { POST as token } from "@/app/api/oauth/token/route"
-import * as admin from "@/lib/backend/firebase-admin"
+import { firebaseAdmin as admin } from "@/lib/backend/firebase-admin"
 import { getFirebaseAuth } from "@/lib/firebase-client"
 import { s256 } from "@/lib/oauth/pkce"
 
