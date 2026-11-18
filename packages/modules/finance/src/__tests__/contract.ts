@@ -7,8 +7,9 @@
  *
  * Preconditions on a Firebase host: root /categories is seeded with `defaultCategories` from
  * "@alter-ego/finance/lib/categories" before the run (the mock seeds itself), and the host's
- * base.rules carries the root `match /categories` read rule and the finance `isValid*` validators
- * (see scripts/build-firestore-rules.mjs). Without them the category, categorization-rule,
+ * rules splice finance.rules (collections and `isValid*` validators) at the users level and
+ * finance-root.rules (the root `match /categories` read rule) at the top level (see
+ * scripts/build-firestore-rules.mjs). Without them the category, categorization-rule,
  * uncategorized-filter and split-report cases fail.
  */
 import { describe, it, expect, beforeAll } from "vitest"

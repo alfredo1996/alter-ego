@@ -49,7 +49,7 @@ L'API REST e il server MCP richiedono anche credenziali lato server: imposta `FI
 
 ## Regole di Sicurezza
 
-`firestore.rules` è generato da `firestore/base.rules` e `packages/modules/finance/src/finance.rules` con `pnpm rules:build`. Modifica il sorgente, non il file generato; un test fallisce se differiscono. Le regole:
+`firestore.rules` è generato da `firestore/base.rules`, `packages/modules/finance/src/finance.rules` e `finance-root.rules` con `pnpm rules:build`. Modifica il sorgente, non il file generato; un test fallisce se differiscono. Le regole:
 
 - ammettono un solo user id (`isAllowedUser`) e lasciano a quell'utente solo il proprio sottoalbero;
 - danno a ogni collezione uno schema chiuso: una scrittura può contenere solo i campi che l'app scrive, e ogni campo è validato (tipi, limiti, valori ammessi);

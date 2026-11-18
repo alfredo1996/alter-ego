@@ -180,7 +180,7 @@ pnpm test:firebase    # adapter contract + rules + MCP tests (requires the emula
 Test files live in `__tests__/` directories next to the code they test.
 `apps/web/src/lib/__tests__/firestore-rules-build.test.ts` checks that
 `firestore.rules` matches its source: it is **generated** by `pnpm rules:build`
-from `firestore/base.rules` and `packages/modules/finance/src/finance.rules`, so edit those,
+from `firestore/base.rules` and the finance package's `finance.rules` and `finance-root.rules`, so edit those,
 never the output.
 
 The adapter contract suite (`packages/modules/finance/src/__tests__/contract.ts`, exported as

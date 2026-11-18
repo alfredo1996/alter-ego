@@ -1,3 +1,50 @@
+      // Account type is free-form (built-ins + user-created custom types).
+      function isValidAccountType(t) {
+        return t is string && t.size() > 0 && t.size() <= 50;
+      }
+
+      function isValidAccountKind(k) {
+        return k in ['asset', 'liability'];
+      }
+
+      function isValidTransactionType(t) {
+        return t in ['income', 'expense', 'transfer'];
+      }
+
+      // A transfer must name a destination distinct from its source, or the
+      // amount leaves the source account and is credited nowhere. request.resource
+      // .data is the MERGED document on update, so this holds for edits too.
+      function transferHasDestination(d) {
+        return d.type != 'transfer'
+          || (('transferToAccountId' in d)
+              && d.transferToAccountId is string
+              && d.transferToAccountId != d.accountId);
+      }
+
+      function isValidCurrency(c) {
+        return c in ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD', 'CHF', 'MXN', 'BRL', 'ARS'];
+      }
+
+      function isValidBudgetPeriod(p) {
+        return p in ['monthly', 'yearly'];
+      }
+
+      function isValidRolloverMode(m) {
+        return m in ['reset', 'surplus', 'deficit', 'full'];
+      }
+
+      function isValidRecurringFrequency(f) {
+        return f in ['daily', 'weekly', 'monthly', 'yearly'];
+      }
+
+      function isValidCategoryGroup(g) {
+        return g in [
+          'income', 'housing', 'transportation', 'food', 'utilities',
+          'healthcare', 'personal', 'entertainment', 'education',
+          'savings', 'debt', 'other'
+        ];
+      }
+
       // ── Accounts ──────────────────────────────────────────────────────────
 
       match /accounts/{accountId} {

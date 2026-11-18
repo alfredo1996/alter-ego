@@ -2,16 +2,17 @@
 
 ## The Rules File
 
-**`firestore.rules` is generated.** Edit `firestore/base.rules` (the helpers, the
-validators, the system categories and the other users' collections) or
-`packages/modules/finance/src/finance.rules` (finance's collections under
-`match /users/{userId}`) and run `pnpm rules:build`. Editing the output directly loses the
+**`firestore.rules` is generated.** Edit `firestore/base.rules` (the shared helpers and the
+other users' collections), `packages/modules/finance/src/finance.rules` (finance's collections
+and the nine validators they call, inside `match /users/{userId}`) or
+`packages/modules/finance/src/finance-root.rules` (the read-only root `match /categories`) and run `pnpm rules:build`. Editing the output directly loses the
 change on the next build, and `apps/web/src/lib/__tests__/firestore-rules-build.test.ts`
-fails when the two drift. The marker line in `base.rules` is where the fragment is
-spliced in; leave it. The fragment uses `base.rules`' shared helpers plus the nine
-`isValid*`/`transferHasDestination` validators. Those validators and the root `match /categories`
-block stay in `base.rules`, because they sit at the root and the splice lands inside
-`match /users`; a host that vendors the fragment needs both in its own `base.rules`.
+fails when the two drift. The two marker lines in `base.rules` (`@@CRM_COLLECTIONS@@` inside
+`match /users`, `@@ROOT_COLLECTIONS@@` at the top level) are where the fragments are spliced
+in; leave them, and the build fails if a marker or a fragment is missing. The fragments use only
+`base.rules`' shared helpers, so a host that vendors the package splices `finance.rules` at its
+users-level marker and `finance-root.rules` at its top-level marker, and seeds the root
+`categories` collection.
 
 Finance's indexes live in `packages/modules/finance/src/firestore.indexes.json`; the root
 `firestore.indexes.json` (the one `firebase.json` deploys) is a copy, and
