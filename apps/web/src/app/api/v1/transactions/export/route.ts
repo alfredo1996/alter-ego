@@ -1,8 +1,8 @@
+import { buildTransactionsCsv, transactionsCsvFileName } from "@alter-ego/finance/lib/transactions-export"
 import { type NextRequest } from "next/server"
 
 import { apiError, validateApiKey, internalError } from "@/lib/api-auth"
 import { getServerDb } from "@/lib/backend/server-db"
-import { buildTransactionsCsv, transactionsCsvFileName } from "@/lib/transactions-export"
 import { apiTransactionsExportSchema } from "@/types/schemas"
 
 export async function GET(request: NextRequest) {

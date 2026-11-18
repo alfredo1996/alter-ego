@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from "vitest"
 
 const route = vi.hoisted(() => ({ path: "/dashboard" }))
 vi.mock("next/navigation", () => ({ usePathname: () => route.path }))
-vi.mock("@/components/transactions/new-transaction-dialog", () => ({ NewTransactionDialog: () => null }))
+vi.mock("@alter-ego/finance/components/transactions/new-transaction-dialog", () => ({ NewTransactionDialog: () => null }))
 
 import { QuickAddFab } from "../quick-add-fab"
 

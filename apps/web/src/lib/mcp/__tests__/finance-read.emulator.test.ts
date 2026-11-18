@@ -8,6 +8,7 @@
  *
  * Runs under the Firebase emulator (vitest.emulator.ts).
  */
+import { budgetsWithSpending } from "@alter-ego/finance/lib/budgets"
 import { createUserWithEmailAndPassword } from "firebase/auth"
 import { beforeAll, describe, expect, it, vi } from "vitest"
 
@@ -16,7 +17,6 @@ import { POST as approve } from "@/app/api/oauth/authorize/route"
 import { POST as register } from "@/app/api/oauth/register/route"
 import { POST as token } from "@/app/api/oauth/token/route"
 import * as admin from "@/lib/backend/firebase-admin"
-import { budgetsWithSpending } from "@/lib/budgets"
 import { getFirebaseAuth } from "@/lib/firebase-client"
 import { s256 } from "@/lib/oauth/pkce"
 

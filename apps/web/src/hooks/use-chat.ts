@@ -1,9 +1,9 @@
 "use client"
 
+import { useSettingsStore } from "@alter-ego/finance/stores/settings-store"
 import { useState, useCallback } from "react"
 
 import { getBackend } from "@/lib/backend"
-import { useSettingsStore } from "@/stores/settings-store"
 
 export interface ChatMessage {
   role: "user" | "assistant"

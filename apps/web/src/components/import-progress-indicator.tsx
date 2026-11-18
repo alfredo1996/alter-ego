@@ -1,8 +1,8 @@
 "use client"
 
+import { useImportStore } from "@alter-ego/finance/stores/import-store"
 import { Loader2 } from "lucide-react"
 
-import { useImportStore } from "@/stores/import-store"
 
 export function ImportProgressIndicator() {
   const active = useImportStore((s) => s.active)

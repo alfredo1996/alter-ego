@@ -1,6 +1,6 @@
+import { monthKey, monthKeysBetween, totalsFromTransactions } from "@alter-ego/finance/lib/monthly-totals"
 import { beforeEach, describe, expect, it } from "vitest"
 
-import { monthKey, monthKeysBetween, totalsFromTransactions } from "@/lib/monthly-totals"
 
 import type { DatabaseAdapter } from "../types"
 

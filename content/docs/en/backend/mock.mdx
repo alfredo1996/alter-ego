@@ -9,7 +9,7 @@ The mock backend keeps all data in memory. It is the default backend and needs n
 
 ## What It Does
 
-- Seeds the default categories from `@/lib/categories` and nothing else: you start with no accounts and no transactions.
+- Seeds the default categories from `@alter-ego/finance/lib/categories` and nothing else: you start with no accounts and no transactions.
 - Accepts any valid email address and a password of six or more characters at sign-in. The password is not checked.
 - Implements the same `DatabaseAdapter` methods as the Firebase backend, so the contract tests run against both.
 - Forgets everything when the page reloads.

@@ -14,7 +14,7 @@ export default defineConfig({
     // the machine, and the default 5 s then fails green tests. 30 s still fails a real hang.
     testTimeout: 30_000,
     environment: "happy-dom",
-    include: ["src/**/*.test.{ts,tsx}", "../../packages/*/src/**/*.test.{ts,tsx}"],
+    include: ["src/**/*.test.{ts,tsx}", "../../packages/*/src/**/*.test.{ts,tsx}", "../../packages/modules/*/src/**/*.test.{ts,tsx}"],
     // Emulator-only integration tests (run via vitest.emulator.ts, not here).
     exclude: [
       "src/lib/backend/__tests__/firebase.adapter.test.ts",
@@ -29,7 +29,7 @@ export default defineConfig({
       "src/lib/mcp/__tests__/finance-read.emulator.test.ts",
       "src/lib/mcp/__tests__/finance-write.emulator.test.ts",
     ],
-    setupFiles: ["./vitest.setup.ts"],
+    setupFiles: ["./vitest.setup.ts", "./vitest.finance-host.setup.ts"],
     coverage: {
       provider: "v8",
       // the kernel and UI helpers live outside apps/web
@@ -41,12 +41,23 @@ export default defineConfig({
         "../../packages/kernel/src/**/*.ts",
         "../../packages/ui/src/utils.ts",
         "../../packages/ui/src/use-toast.ts",
+        // The finance package: what src/ counted before it moved out
+        "../../packages/modules/*/src/**/*.{ts,tsx}",
       ],
       exclude: [
         "src/**/*.test.{ts,tsx}",
         "src/**/*.d.ts",
         "../../packages/*/src/**/__tests__/**",
         "src/types/**",
+        // Same carve-outs for the packages' modules: types and schemas, UI and pages, hooks and stores
+        "../../packages/modules/*/src/types.ts",
+        "../../packages/modules/*/src/schemas.ts",
+        "../../packages/modules/*/src/adapter.ts",
+        "../../packages/modules/*/src/components/**",
+        "../../packages/modules/*/src/pages/**",
+        "../../packages/modules/*/src/hooks/**",
+        "../../packages/modules/*/src/stores/**",
+        "../../packages/modules/*/src/lib/options.ts",
         // React UI — covered by Playwright E2E tests
         "src/components/**",
         // Pages and layouts; src/app/api/** (the route handlers) counts
@@ -57,13 +68,12 @@ export default defineConfig({
         "src/app/.well-known/**",
         "src/app/api-docs/**",
         "src/app/oauth/**",
-        // State / React hooks — require provider setup; business logic tested via adapters
-        "src/stores/**",
         // Pure Firestore I/O — exercised by the OAuth flow emulator tests
         "src/lib/oauth/store.ts",
         // Firestore I/O tool handlers — exercised by the MCP emulator tests
         "src/lib/mcp/tools/finance-read.ts",
         "src/lib/mcp/tools/finance-write.ts",
+        // React hooks — require provider setup; business logic tested via adapters
         "src/hooks/**",
         // External service adapters — require live connections
         "src/lib/backend/firebase.ts",
@@ -75,8 +85,6 @@ export default defineConfig({
         "src/lib/backend/server-db.ts",
         // Pure TypeScript interface declarations (no executable statements)
         "src/lib/backend/types.ts",
-        // Static data arrays, no logic
-        "src/lib/options.ts",
       ],
       thresholds: {
         lines: 80,

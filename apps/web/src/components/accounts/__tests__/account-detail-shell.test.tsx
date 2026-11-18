@@ -1,10 +1,10 @@
+import { AccountDetailShell } from "@alter-ego/finance/components/accounts/account-detail-shell"
+import { useSettingsStore } from "@alter-ego/finance/stores/settings-store"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { useSettingsStore } from "@/stores/settings-store"
 
-import { AccountDetailShell } from "../account-detail-shell"
 
 import type { Transaction } from "@/types"
 

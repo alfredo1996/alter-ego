@@ -16,18 +16,18 @@ apps/web/                 # the Next.js app (@alter-ego/web)
 │   │   │                 #   budgets, goals, recurring, reports, settings
 │   │   ├── api/          # REST API (v1), MCP server, OAuth, API keys
 │   │   └── [lang]/docs/  # this documentation
-│   ├── components/       # feature components
-│   ├── hooks/            # TanStack Query hooks
+│   ├── components/       # shell and settings components
+│   ├── hooks/            # use-auth, use-api-keys, use-chat
 │   ├── lib/
 │   │   ├── backend/      # the adapter: types, mock, firebase, firebase-admin
 │   │   ├── mcp/          # MCP tools
 │   │   ├── oauth/        # OAuth 2.1 server for the MCP endpoint
-│   │   └── ...           # categories, amortization, CSV import, net worth, ...
-│   ├── stores/           # Zustand stores
-│   └── types/            # shared types and Zod schemas
+│   │   └── ...           # host wiring, CSP, env
+│   └── types/            # barrels over the finance package's types and schemas
 packages/
 ├── kernel/               # @alter-ego/kernel: currency and date helpers
-└── ui/                   # @alter-ego/ui: shadcn/ui primitives, the page kit, cn()
+├── ui/                   # @alter-ego/ui: shadcn/ui primitives, the page kit, cn()
+└── modules/finance/      # @alter-ego/finance: pages, components, hooks, libs, stores, types
 firestore/                # the sources of firestore.rules
 ```
 

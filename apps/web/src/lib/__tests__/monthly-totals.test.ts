@@ -1,9 +1,9 @@
+import { budgetsWithSpending, loadBudgetsWithSpending } from "@alter-ego/finance/lib/budgets"
+import { afterUpdate, totalsDelta, type CountedTransaction } from "@alter-ego/finance/lib/monthly-totals"
 import { describe, expect, it } from "vitest"
 
 import { describeMonthlyTotalPaths } from "@/lib/backend/__tests__/monthly-totals-paths"
 import { createMockAdapter } from "@/lib/backend/mock"
-import { budgetsWithSpending, loadBudgetsWithSpending } from "@/lib/budgets"
-import { afterUpdate, totalsDelta, type CountedTransaction } from "@/lib/monthly-totals"
 
 import type { Transaction } from "@/types"
 

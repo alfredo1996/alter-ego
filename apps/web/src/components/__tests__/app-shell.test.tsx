@@ -12,7 +12,7 @@ vi.mock("@/hooks/use-auth", () => ({
     signOut: vi.fn(),
   }),
 }))
-vi.mock("@/stores/settings-store", () => ({
+vi.mock("@alter-ego/finance/stores/settings-store", () => ({
   useSettingsStore: (pick: (s: { aiMode: string }) => unknown) => pick({ aiMode: "off" }),
 }))
 vi.mock("@/components/chat/chat-panel", () => ({ ChatPanel: () => null }))

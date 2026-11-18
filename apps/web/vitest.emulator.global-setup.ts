@@ -78,6 +78,8 @@ async function adminPost(collection: string, data: Record<string, unknown>): Pro
 // ─── Default category seeds ───────────────────────────────────────────────────
 // globalSetup runs in the main Node process (no Vite). @/ aliases won't work,
 // but relative TypeScript imports are transformed by vitest's esbuild runner.
+import { defaultCategories } from "@alter-ego/finance/lib/categories"
+
 import {
   assertThrowawayEmulator,
   emulatorHosts,
@@ -85,7 +87,6 @@ import {
   TEST_PROJECT_ID as PROJECT_ID,
 } from "./src/lib/backend/__tests__/emulator-hosts"
 import { loadRules, testRules } from "./src/lib/backend/__tests__/rules-source"
-import { defaultCategories } from "./src/lib/categories"
 
 async function seedDefaultCategories(): Promise<void> {
   const now = new Date()

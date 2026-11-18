@@ -1,7 +1,7 @@
+import { useAccountActions } from "@alter-ego/finance/components/accounts/account-actions"
 import { renderHook } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-import { useAccountActions } from "../account-actions"
 
 import type { Account } from "@/types"
 
@@ -9,9 +9,9 @@ const mutate = vi.fn()
 const toast = vi.fn()
 
 vi.mock("@/hooks/use-auth", () => ({ useAuth: () => ({ user: { id: "u1" } }) }))
-vi.mock("@/hooks/use-currency", () => ({ useCurrency: () => ({ format: (n: number) => `€${n.toFixed(2)}` }) }))
+vi.mock("@alter-ego/finance/hooks/use-currency", () => ({ useCurrency: () => ({ format: (n: number) => `€${n.toFixed(2)}` }) }))
 vi.mock("@alter-ego/ui/use-toast", () => ({ useToast: () => ({ toast }) }))
-vi.mock("@/hooks/use-accounts", () => ({
+vi.mock("@alter-ego/finance/hooks/use-accounts", () => ({
   useAccounts: () => ({ data: [] }),
   useCreateAccount: () => ({ mutate: vi.fn() }),
   useUpdateAccount: () => ({ mutate }),

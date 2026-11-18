@@ -2,11 +2,11 @@
  * Deleting a row while another query sits under the ["transactions", userId] prefix (the
  * budget-spending array) must still reach the backend: onMutate only edits pages.
  */
+import { useDeleteTransaction } from "@alter-ego/finance/hooks/use-transactions"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { act, renderHook, waitFor } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 
-import { useDeleteTransaction } from "../use-transactions"
 
 import type { ReactNode } from "react"
 

@@ -1,5 +1,6 @@
 "use client"
 
+import { fetchFullExport, downloadJson, fullExportFileName } from "@alter-ego/finance/lib/full-export"
 import { Button } from "@alter-ego/ui/ui/button"
 import { useToast } from "@alter-ego/ui/use-toast"
 import { Download } from "lucide-react"
@@ -8,7 +9,6 @@ import { useState } from "react"
 import { SettingsRow } from "@/components/settings/settings-section"
 import { useAuth } from "@/hooks/use-auth"
 import { getBackend } from "@/lib/backend"
-import { fetchFullExport, downloadJson, fullExportFileName } from "@/lib/full-export"
 
 export function DataExportSection() {
   const { user } = useAuth()

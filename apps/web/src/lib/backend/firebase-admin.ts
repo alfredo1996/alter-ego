@@ -11,11 +11,9 @@
 
 import { createHash } from "node:crypto"
 
-import { FieldPath, FieldValue, Filter, Timestamp, type DocumentData } from "firebase-admin/firestore"
 
-import { assertArchivable, assertLedgerValid, txBelongsToAccount, balanceEffects, balanceEffectsDiff } from "@/lib/account-ledger"
-import { mergeCategoryCopies } from "@/lib/categories"
-import { getAdminFirestore } from "@/lib/firebase-admin-client"
+import { assertArchivable, assertLedgerValid, txBelongsToAccount, balanceEffects, balanceEffectsDiff } from "@alter-ego/finance/lib/account-ledger"
+import { mergeCategoryCopies } from "@alter-ego/finance/lib/categories"
 import {
   afterCreate,
   afterUpdate,
@@ -24,8 +22,11 @@ import {
   totalsDelta,
   totalsFromTransactions,
   type CountedTransaction,
-} from "@/lib/monthly-totals"
-import { accumulateCategorySpending } from "@/lib/splits"
+} from "@alter-ego/finance/lib/monthly-totals"
+import { accumulateCategorySpending } from "@alter-ego/finance/lib/splits"
+import { FieldPath, FieldValue, Filter, Timestamp, type DocumentData } from "firebase-admin/firestore"
+
+import { getAdminFirestore } from "@/lib/firebase-admin-client"
 
 import type {
   MonthlyTotal,

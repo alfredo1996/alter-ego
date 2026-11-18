@@ -1,6 +1,6 @@
+import { decodeLoanNote } from "@alter-ego/finance/lib/mortgage"
 import { describe, it, expect, beforeAll, afterAll } from "vitest"
 
-import { decodeLoanNote } from "@/lib/mortgage"
 
 import type { DatabaseAdapter } from "../types"
 

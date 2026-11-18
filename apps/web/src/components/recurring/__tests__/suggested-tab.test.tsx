@@ -1,18 +1,18 @@
+import { SuggestedTab } from "@alter-ego/finance/components/recurring/suggested-tab"
 import { fireEvent, render, screen, within } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 
-import { SuggestedTab } from "@/components/recurring/suggested-tab"
 
 import type { SuspectedSubscription, Transaction } from "@/types"
 
 const dismiss = vi.fn()
 const createRule = vi.fn()
 vi.mock("@/hooks/use-auth", () => ({ useAuth: () => ({ user: { id: "u" } }) }))
-vi.mock("@/hooks/use-currency", () => ({ useCurrency: () => ({ format: (n: number) => `€${n.toFixed(2)}`, defaultCurrency: "EUR" }) }))
-vi.mock("@/hooks/use-accounts", () => ({ useAccounts: () => ({ data: [{ id: "a1", name: "Main Checking", isArchived: false }] }) }))
-vi.mock("@/hooks/use-categories", () => ({ useCategories: () => ({ data: [{ id: "c1", name: "Electricity", color: "#009e73", group: "bills" }] }) }))
-vi.mock("@/hooks/use-recurring", () => ({ useCreateRecurring: () => ({ mutate: createRule, isPending: false }) }))
-vi.mock("@/hooks/use-dismissed-subscriptions", () => ({ useCreateDismissedSubscriptionPattern: () => ({ mutate: dismiss, isPending: false }) }))
+vi.mock("@alter-ego/finance/hooks/use-currency", () => ({ useCurrency: () => ({ format: (n: number) => `€${n.toFixed(2)}`, defaultCurrency: "EUR" }) }))
+vi.mock("@alter-ego/finance/hooks/use-accounts", () => ({ useAccounts: () => ({ data: [{ id: "a1", name: "Main Checking", isArchived: false }] }) }))
+vi.mock("@alter-ego/finance/hooks/use-categories", () => ({ useCategories: () => ({ data: [{ id: "c1", name: "Electricity", color: "#009e73", group: "bills" }] }) }))
+vi.mock("@alter-ego/finance/hooks/use-recurring", () => ({ useCreateRecurring: () => ({ mutate: createRule, isPending: false }) }))
+vi.mock("@alter-ego/finance/hooks/use-dismissed-subscriptions", () => ({ useCreateDismissedSubscriptionPattern: () => ({ mutate: dismiss, isPending: false }) }))
 
 const at = (m: number, d: number) => new Date(2026, m, d)
 const sub = (o: Partial<SuspectedSubscription> = {}): SuspectedSubscription => ({

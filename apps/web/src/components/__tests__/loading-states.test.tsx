@@ -11,15 +11,15 @@
  * `reads.hang` holds back just those reads while every other one resolves.
  */
 
+
+import { BudgetsShell } from "@alter-ego/finance/components/budgets/budgets-shell"
+import { DashboardShell } from "@alter-ego/finance/components/dashboard/dashboard-shell"
+import { ReportsShell } from "@alter-ego/finance/components/reports/reports-shell"
+import { SavingsGoalsShell } from "@alter-ego/finance/components/savings-goals/savings-goals-shell"
+import { TransactionsShell } from "@alter-ego/finance/components/transactions/transactions-shell"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { act, render, screen, waitFor } from "@testing-library/react"
 import { beforeEach, describe, expect, it, onTestFinished, vi } from "vitest"
-
-import { BudgetsShell } from "@/components/budgets/budgets-shell"
-import { DashboardShell } from "@/components/dashboard/dashboard-shell"
-import { ReportsShell } from "@/components/reports/reports-shell"
-import { SavingsGoalsShell } from "@/components/savings-goals/savings-goals-shell"
-import { TransactionsShell } from "@/components/transactions/transactions-shell"
 
 import type { ComponentType } from "react"
 

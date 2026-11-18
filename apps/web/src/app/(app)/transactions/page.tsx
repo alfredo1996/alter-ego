@@ -1,7 +1,4 @@
-import { Skeleton } from "@alter-ego/ui/ui/skeleton"
-import { Suspense } from "react"
-
-import { TransactionsShell } from "@/components/transactions/transactions-shell"
+import { TransactionsPage } from "@alter-ego/finance/pages/transactions-page"
 
 import type { Metadata } from "next"
 
@@ -9,10 +6,6 @@ export const metadata: Metadata = {
   title: "Transactions | Alter Ego",
 }
 
-export default function TransactionsPage() {
-  return (
-    <Suspense fallback={<Skeleton className="h-96 w-full rounded-xl" />}>
-      <TransactionsShell />
-    </Suspense>
-  )
+export default function Route() {
+  return <TransactionsPage />
 }

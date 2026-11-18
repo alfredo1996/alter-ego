@@ -1,3 +1,27 @@
+
+import {
+  ACCOUNT_HAS_TRANSACTIONS,
+  assertArchivable,
+  assertLedgerValid,
+  txBelongsToAccount,
+  balanceEffects,
+  balanceEffectsDiff,
+} from "@alter-ego/finance/lib/account-ledger"
+import { calculateMortgage } from "@alter-ego/finance/lib/amortization"
+import { mergeCategoryCopies } from "@alter-ego/finance/lib/categories"
+import { normalizeDescription } from "@alter-ego/finance/lib/merchants"
+import {
+  afterCreate,
+  afterUpdate,
+  monthBounds,
+  monthKeysBetween,
+  totalsDelta,
+  totalsFromTransactions,
+  type CountedTransaction,
+} from "@alter-ego/finance/lib/monthly-totals"
+import { encodeLoanNote } from "@alter-ego/finance/lib/mortgage"
+import { netWorthTotals } from "@alter-ego/finance/lib/net-worth"
+import { accumulateCategorySpending } from "@alter-ego/finance/lib/splits"
 import { advanceDate } from "@alter-ego/kernel/dates"
 import { format, differenceInCalendarMonths } from "date-fns"
 import {
@@ -41,30 +65,7 @@ import {
   type WriteBatch,
 } from "firebase/firestore"
 
-import {
-  ACCOUNT_HAS_TRANSACTIONS,
-  assertArchivable,
-  assertLedgerValid,
-  txBelongsToAccount,
-  balanceEffects,
-  balanceEffectsDiff,
-} from "@/lib/account-ledger"
-import { calculateMortgage } from "@/lib/amortization"
-import { mergeCategoryCopies } from "@/lib/categories"
 import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebase-client"
-import { normalizeDescription } from "@/lib/merchants"
-import {
-  afterCreate,
-  afterUpdate,
-  monthBounds,
-  monthKeysBetween,
-  totalsDelta,
-  totalsFromTransactions,
-  type CountedTransaction,
-} from "@/lib/monthly-totals"
-import { encodeLoanNote } from "@/lib/mortgage"
-import { netWorthTotals } from "@/lib/net-worth"
-import { accumulateCategorySpending } from "@/lib/splits"
 
 import type { BackendAdapter, AuthAdapter, DatabaseAdapter, AIAdapter, } from "./types"
 import type {

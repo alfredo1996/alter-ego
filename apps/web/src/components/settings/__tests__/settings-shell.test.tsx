@@ -1,7 +1,7 @@
+import { useSettingsStore } from "@alter-ego/finance/stores/settings-store"
 import { fireEvent, render, screen, within } from "@testing-library/react"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-import { useSettingsStore } from "@/stores/settings-store"
 
 import { SettingsShell } from "../settings-shell"
 
@@ -9,12 +9,12 @@ vi.mock("@/hooks/use-auth", () => ({
   useAuth: () => ({ user: { id: "u1", email: "a@example.com", displayName: "Dana" }, loading: false, refreshUser: vi.fn() }),
 }))
 const load = vi.hoisted(() => ({ tx: { data: { total: 88 } as { total: number } | undefined, isLoading: false }, cats: { isLoading: false } as { isLoading: boolean; data?: unknown[] } }))
-vi.mock("@/hooks/use-transactions", () => ({
+vi.mock("@alter-ego/finance/hooks/use-transactions", () => ({
   useTransactions: () => load.tx,
   useDeleteAllTransactions: () => ({ mutate: vi.fn(), isPending: false }),
 }))
-vi.mock("@/hooks/use-accounts", () => ({ useDeleteAllAccountData: () => ({ mutate: vi.fn() }) }))
-vi.mock("@/hooks/use-categories", () => ({
+vi.mock("@alter-ego/finance/hooks/use-accounts", () => ({ useDeleteAllAccountData: () => ({ mutate: vi.fn() }) }))
+vi.mock("@alter-ego/finance/hooks/use-categories", () => ({
   useCategories: () => ({ data: [{ id: "c1", name: "Groceries", isDefault: true, userId: null }], ...load.cats }),
   useDeleteAllCategories: () => ({ mutate: vi.fn(), isPending: false }),
 }))

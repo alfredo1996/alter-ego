@@ -8,9 +8,11 @@ build, and `apps/web/src/lib/__tests__/firestore-rules-build.test.ts` fails when
 the two drift. The marker line in `base.rules` is where a deployment that adds
 collections of its own splices them in; leave it.
 
-Two more tests guard the structure: `packages/kernel/src/__tests__/boundary.test.ts`
-(the kernel imports nothing app-side) and `packages/ui/src/__tests__/boundary.test.ts`
-(the UI kit imports only the kernel and its own dependencies).
+Three more tests guard the structure: `packages/kernel/src/__tests__/boundary.test.ts`
+(the kernel imports nothing app-side), `packages/ui/src/__tests__/boundary.test.ts`
+(the UI kit imports only the kernel and its own dependencies) and
+`packages/modules/finance/src/__tests__/boundary.test.ts` (the finance package imports no `@/` path,
+nothing from `apps/web`, only the kernel, the UI kit and its declared dependencies).
 
 ## Core Principle
 
@@ -43,29 +45,36 @@ apps/web/                 # the Next.js app (@alter-ego/web); its own .env.local
 │   │   ├── api/          # REST API (v1), MCP server, OAuth endpoints
 │   │   └── [lang]/docs/  # Fumadocs
 │   ├── components/
-│   │   └── ...           # Feature components
-│   ├── hooks/            # React hooks (use-accounts, use-transactions, etc.)
+│   │   └── ...           # Shell and settings components (the finance ones live in the package)
+│   ├── hooks/            # use-auth, use-api-keys, use-chat
 │   ├── lib/
 │   │   ├── backend/      # Adapter (types, mock, firebase, firebase-admin, server-db)
 │   │   ├── mcp/          # MCP tools: finance-*, context.ts, helpers.ts
-│   │   ├── oauth/        # OAuth 2.1 server for the remote MCP endpoint
-│   │   └── categories.ts # Default category seeds
-│   ├── stores/           # Zustand stores
-│   └── types/            # index.ts, schemas.ts
+│   │   └── oauth/        # OAuth 2.1 server for the remote MCP endpoint
+│   └── types/            # barrels over @alter-ego/finance's types and schemas, plus the app-only ones
 ├── apphosting.yaml       # App Hosting reads it from the backend's root directory (set to apps/web)
 └── e2e/, scripts/, vitest*.ts, playwright*.ts
 packages/
 ├── kernel/               # @alter-ego/kernel: money (currency) and dates.
 │                         # Imports nothing app-side
-└── ui/                   # @alter-ego/ui: ui/ (shadcn primitives; keep their APIs: add a
-                          # variant, never rename one), page/ (the page kit: every page's h1
-                          # is a PageHeader), FiltersSheet, use-toast, cn(), tokens.css.
-                          # Imports only the kernel and its own dependencies
+├── ui/                   # @alter-ego/ui: ui/ (shadcn primitives; keep their APIs: add a
+│                         # variant, never rename one), page/ (the page kit: every page's h1
+│                         # is a PageHeader), FiltersSheet, use-toast, cn(), tokens.css.
+│                         # Imports only the kernel and its own dependencies
+└── modules/finance/      # @alter-ego/finance: the nine pages and their components, hooks, libs,
+                          # stores, types, schemas and the FinanceAdapter interface. Reaches the app
+                          # only through provideFinanceHost({ getBackend, useAuth }) (src/host.ts),
+                          # which the app's providers and the vitest setup call once. The adapter
+                          # implementations, MCP tools and finance settings stay in apps/web for now.
+                          # The app's routes are one-line pages from @alter-ego/finance/pages/*
 firestore/, firestore.rules, firebase.json, docker/   # stay at the root
 ```
 
 Import the packages as `@alter-ego/ui/ui/button`, `@alter-ego/ui/page/page-header`,
-`@alter-ego/ui/utils` (`cn`), `@alter-ego/kernel/currency`, `@alter-ego/kernel/dates`.
+`@alter-ego/ui/utils` (`cn`), `@alter-ego/kernel/currency`, `@alter-ego/kernel/dates`,
+`@alter-ego/finance/hooks/use-accounts`. Finance code inside the package imports `getBackend` and
+`useAuth` from its own `host`, never from the app. `@/types` and `@/types/schemas` in the app
+re-export the package's, so those imports did not change.
 Each package has a boundary test (`packages/*/src/__tests__/boundary.test.ts`) that
 fails on a forbidden import. Type-check everything with `pnpm typecheck`.
 
@@ -85,7 +94,8 @@ The adapter is selected by `NEXT_PUBLIC_BACKEND` env var (`mock` | `firebase`).
 
 Interfaces in `lib/backend/types.ts`:
 
-- `AccountingAdapter` — the database surface; `DatabaseAdapter` is its alias
+- `AccountingAdapter` — the database surface: `FinanceAdapter` (from
+  `@alter-ego/finance/adapter`) plus `ApiKeysAdapter`; `DatabaseAdapter` is its alias
 - `AuthAdapter`, `AIAdapter`, `BackendAdapter`
 - `AuditAdapter` — **server-only**, deliberately off
   `DatabaseAdapter`: `mcp_audit` is `allow read, write: if false`, so the
@@ -99,11 +109,12 @@ This rule is enforced, not just stated: the MCP tools once imported
 
 - **File naming**: kebab-case (`use-accounts.ts`, `transaction-list.tsx`)
 - **Exports**: Named exports only (no default exports except pages)
-- **Imports**: Use `@/*` path alias
+- **Imports**: Use `@/*` path alias in the app; inside `packages/modules/finance` imports are
+  relative (ESLint forbids `@/*` there) and `getBackend`/`useAuth` come from its `host`
 - **Styling**: Use `cn()` utility for conditional Tailwind classes
 - **Validation**: Zod schemas for all external data boundaries
 - **Components**: forwardRef pattern, displayName for all UI components
-- **Types**: Colocate with usage or in `apps/web/src/types/` for shared types
+- **Types**: Colocate with usage or in `apps/web/src/types/` for shared types (finance types: `packages/modules/finance/src/types.ts`)
 - **Language**: the whole app is English: UI copy, zod
   messages, errors, and every MCP title, description and reply. Plain English
   literals, no i18n layer. Title Case for buttons, dialog titles and headings

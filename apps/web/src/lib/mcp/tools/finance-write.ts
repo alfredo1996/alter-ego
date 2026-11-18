@@ -1,7 +1,8 @@
 
+import { ARCHIVE_REFUSAL, assertArchivable, assertLedgerValid, closedTarget } from "@alter-ego/finance/lib/account-ledger"
+import { accountKind } from "@alter-ego/finance/lib/net-worth"
 import { isoDate } from "@alter-ego/kernel/dates"
 
-import { ARCHIVE_REFUSAL, assertArchivable, assertLedgerValid, closedTarget } from "@/lib/account-ledger"
 import { getServerDb } from "@/lib/backend/server-db"
 import { money, toolError, userIdOf } from "@/lib/mcp/tools/context"
 import {
@@ -11,7 +12,6 @@ import {
   round2,
   ToolInputError,
 } from "@/lib/mcp/tools/helpers"
-import { accountKind } from "@/lib/net-worth"
 import { z } from "@/lib/zod"
 
 import type { Account, Category, Currency, Transaction, TransactionType } from "@/types"

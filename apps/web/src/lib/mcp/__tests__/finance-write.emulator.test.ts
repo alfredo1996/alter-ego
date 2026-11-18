@@ -8,6 +8,7 @@
  *
  * Runs under the Firebase emulator (vitest.emulator.ts).
  */
+import { ARCHIVE_REFUSAL } from "@alter-ego/finance/lib/account-ledger"
 import { createUserWithEmailAndPassword } from "firebase/auth"
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest"
 
@@ -15,7 +16,6 @@ import { POST as mcp } from "@/app/api/mcp/route"
 import { POST as approve } from "@/app/api/oauth/authorize/route"
 import { POST as register } from "@/app/api/oauth/register/route"
 import { POST as token } from "@/app/api/oauth/token/route"
-import { ARCHIVE_REFUSAL } from "@/lib/account-ledger"
 import * as admin from "@/lib/backend/firebase-admin"
 import { getAdminFirestore } from "@/lib/firebase-admin-client"
 import { getFirebaseAuth } from "@/lib/firebase-client"

@@ -1,9 +1,10 @@
 
+import { byUrgency, getBudgetStatus, loadBudgetsWithSpending, periodStartFor } from "@alter-ego/finance/lib/budgets"
+import { loanBuckets } from "@alter-ego/finance/lib/loan-buckets"
+import { accountKind, netWorthTotals } from "@alter-ego/finance/lib/net-worth"
 import { isoDate } from "@alter-ego/kernel/dates"
 
 import { getServerDb } from "@/lib/backend/server-db"
-import { byUrgency, getBudgetStatus, loadBudgetsWithSpending, periodStartFor } from "@/lib/budgets"
-import { loanBuckets } from "@/lib/loan-buckets"
 import {
   normalizeMonth,
   ok,
@@ -13,7 +14,6 @@ import {
   round2,
   ToolInputError,
 } from "@/lib/mcp/tools/helpers"
-import { accountKind, netWorthTotals } from "@/lib/net-worth"
 import { z } from "@/lib/zod"
 
 import { mixedNote, money, moneyIn, monthInput, toolError, userIdOf } from "./context"

@@ -1,6 +1,6 @@
 "use client"
 
-
+import { useSettingsStore } from "@alter-ego/finance/stores/settings-store"
 import { Toaster } from "@alter-ego/ui/ui/toaster"
 import { TooltipProvider } from "@alter-ego/ui/ui/tooltip"
 import { toast } from "@alter-ego/ui/use-toast"
@@ -9,7 +9,8 @@ import { useState, useEffect } from "react"
 
 import { getBackend } from "@/lib/backend"
 import { env } from "@/lib/env"
-import { useSettingsStore } from "@/stores/settings-store"
+// Hands finance its backend and auth hook before any of its components render.
+import "@/lib/finance-host"
 
 // TanStack refetches stale queries on visibilitychange only, so clicking back into
 // a window that never went hidden (a second monitor, side by side with Claude

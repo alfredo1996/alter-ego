@@ -10,6 +10,7 @@ import { describe, expect, it } from "vitest"
 
 const SRC = join(__dirname, "../..")
 const UI = join(__dirname, "../../../../../packages/ui/src")
+const FINANCE = join(__dirname, "../../../../../packages/modules/finance/src")
 const V3_VARIABLE = /-\[--[\w-]+\]/g
 
 function sources(dir: string): string[] {
@@ -22,7 +23,7 @@ function sources(dir: string): string[] {
 
 describe("Tailwind v4 variable syntax", () => {
   it("no class uses the v3 -[--var] form", () => {
-    const hits = [...sources(SRC), ...sources(UI)].flatMap((file) =>
+    const hits = [...sources(SRC), ...sources(UI), ...sources(FINANCE)].flatMap((file) =>
       (readFileSync(file, "utf8").match(V3_VARIABLE) ?? []).map((m) => `${relative(join(SRC, "../../.."), file)}: ${m}`),
     )
     expect(hits).toEqual([])

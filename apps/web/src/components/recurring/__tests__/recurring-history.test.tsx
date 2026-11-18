@@ -1,14 +1,14 @@
+import { RecurringHistory } from "@alter-ego/finance/components/recurring/recurring-history"
 import { render, screen } from "@testing-library/react"
 import { describe, expect, it, vi } from "vitest"
 
-import { RecurringHistory } from "@/components/recurring/recurring-history"
 
 import type { RecurringTransaction } from "@/types"
 
 vi.mock("@/hooks/use-auth", () => ({ useAuth: () => ({ user: { id: "u" } }) }))
-vi.mock("@/hooks/use-accounts", () => ({ useAccounts: () => ({ data: [{ id: "a1", name: "Main Checking" }] }) }))
+vi.mock("@alter-ego/finance/hooks/use-accounts", () => ({ useAccounts: () => ({ data: [{ id: "a1", name: "Main Checking" }] }) }))
 const history = vi.fn()
-vi.mock("@/hooks/use-recurring-history", () => ({ useRecurringHistory: () => history() }))
+vi.mock("@alter-ego/finance/hooks/use-recurring-history", () => ({ useRecurringHistory: () => history() }))
 
 const format = (n: number) => `€${n.toFixed(2)}`
 const tx = (id: string, type: "income" | "expense", m: number) =>
