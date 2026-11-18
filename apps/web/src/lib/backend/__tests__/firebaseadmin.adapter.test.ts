@@ -1,14 +1,15 @@
 /**
  * firebase-admin (server / REST API) adapter — emulator integration tests.
  *
- * The admin module is a *partial* adapter (no createAccount / categories / etc.,
- * see server-db.ts ServerDb), so it can't run the full describeAdapterContract.
+ * The admin module is a *partial* adapter (see server-db.ts ServerDb), so it can't run the full
+ * contract; it runs the package's describeFinanceAdminContract round trip instead.
  * This focuses on the methods that actually had bugs:
  *   - getTransactions must include incoming transfers (#95)
  *   - create / update / delete must maintain account balances atomically (#92)
  *
  * Runs under the Firebase emulator (see vitest.emulator.ts).
  */
+import { describeFinanceAdminContract } from "@alter-ego/finance/contract"
 import { afterEach, describe, it, expect } from "vitest"
 
 import { firebaseAdmin as admin } from "@/lib/backend/firebase-admin"
@@ -55,6 +56,9 @@ afterEach(async () => {
     await Promise.all(snap.docs.map((d) => d.ref.delete()))
   }
 })
+
+// The finance package's own cases, over the surface the Admin SDK implements.
+describeFinanceAdminContract(() => ({ db: admin, userId }))
 
 describe("firebase-admin adapter (emulator)", () => {
   // The Admin SDK bypasses the rules, so the #219 close guard has to hold here too.

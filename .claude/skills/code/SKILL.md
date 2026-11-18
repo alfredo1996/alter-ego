@@ -17,7 +17,7 @@ allowed-tools: Read, Write, Edit, MultiEdit, Agent, SendMessage, Bash(pnpm *), B
 1. **Issue:** read it with `gh issue view <N> --repo alfredo1996/alter-ego --json title,body,labels,comments`. Owner decisions live in the comments, each opening `**Decision (owner, YYYY-MM-DD, where):**`. See `github-workflow` for the read forms that work here; act as `alfredo1996` (`gh auth switch --user alfredo1996`).
 2. **Drill (minimal):** does it need to exist; is the helper, type or pattern already in the codebase; root cause or symptom (grep every caller and fix once, where they all route). Offer extras in one line instead of building them.
 3. **Existing PR:** read its conversation with `gh pr view <N> --repo alfredo1996/alter-ego --json comments,reviews`, plus its inline comments with `gh api repos/alfredo1996/alter-ego/pulls/<N>/comments`.
-4. **The rules:** `firestore.rules` is generated from `firestore/base.rules` by `pnpm rules:build`; the firestore-rules-build test fails when they drift.
+4. **The rules:** `firestore.rules` is generated from `firestore/base.rules` and `packages/modules/finance/src/finance.rules` by `pnpm rules:build`; the firestore-rules-build test fails when they drift.
 5. **A planned PR** (a redesign step, say) means the owner approved its design and said go. Build what the plan section and its boards show; a decision the plan did not take goes to the owner as a question, not into the diff.
 
 ## Who implements

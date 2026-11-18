@@ -132,7 +132,7 @@ large datasets, or unattended uptime.
 If it outgrows that, the adapter boundary is the seam to replace: implement
 `AccountingAdapter` against
 whatever store you prefer, and add it to `NEXT_PUBLIC_BACKEND` in `apps/web/src/lib/env.ts`.
-The shared contract in `apps/web/src/lib/backend/__tests__/adapter-contract.ts` is what a
+The shared contract in `packages/modules/finance/src/__tests__/contract.ts` (`@alter-ego/finance/contract`) is what a
 new backend has to satisfy.
 
 ## Why this is separate from the test emulator

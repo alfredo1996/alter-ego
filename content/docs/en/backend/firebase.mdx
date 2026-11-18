@@ -49,7 +49,7 @@ The REST API and the MCP server also need server credentials: set `FIREBASE_SERV
 
 ## Security Rules
 
-`firestore.rules` is generated from `firestore/base.rules` by `pnpm rules:build`. Edit the source, not the output; a test fails when they differ. The rules:
+`firestore.rules` is generated from `firestore/base.rules` and `packages/modules/finance/src/finance.rules` by `pnpm rules:build`. Edit the source, not the output; a test fails when they differ. The rules:
 
 - admit one user id (`isAllowedUser`) and let that user reach only their own subtree;
 - give every collection a closed schema: a write may carry only the fields the app writes, and each field is validated (types, bounds, allowed values);

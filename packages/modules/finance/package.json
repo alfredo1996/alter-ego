@@ -13,6 +13,7 @@
     "./nav": "./src/nav.ts",
     "./settings": "./src/settings.tsx",
     "./overlays": "./src/overlays.tsx",
+    "./contract": "./src/__tests__/contract.ts",
     "./types": "./src/types.ts",
     "./schemas": "./src/schemas.ts",
     "./pages/*": "./src/pages/*.tsx",

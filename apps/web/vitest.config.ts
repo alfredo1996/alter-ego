@@ -48,6 +48,9 @@ export default defineConfig({
         "src/**/*.test.{ts,tsx}",
         "src/**/*.d.ts",
         "**/packages/*/src/**/__tests__/**",
+        // The finance package's tests, the contract included: test infrastructure that a host app runs
+        // against its own adapter (describeFinanceAdminContract only ever runs in the emulator suite)
+        "**/packages/modules/*/src/__tests__/**",
         "src/types/**",
         // Same carve-outs for the packages' modules: types and schemas, UI and pages, hooks and stores
         "**/packages/modules/*/src/types.ts",
