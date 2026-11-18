@@ -11,7 +11,7 @@
  */
 import { afterEach, describe, it, expect } from "vitest"
 
-import * as admin from "@/lib/backend/firebase-admin"
+import { firebaseAdmin as admin } from "@/lib/backend/firebase-admin"
 import { getAdminFirestore } from "@/lib/firebase-admin-client"
 
 import { describeMonthlyTotalPaths, type PathsDb } from "./monthly-totals-paths"

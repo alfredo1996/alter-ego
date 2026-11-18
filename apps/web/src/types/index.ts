@@ -19,17 +19,5 @@ export interface ApiKey {
   createdAt: Date
 }
 
-/**
- * One recorded MCP tool call. An LLM writes real business data through these
- * tools, so every attempt leaves a trace — successes and failures alike.
- */
-export interface McpAuditEntry {
-  tool: string
-  params: unknown
-  result: "ok" | "error"
-  errorMessage?: string
-  documentIds?: string[]
-  clientId: string
-  /** A preview-then-confirm tool called without confirm: it wrote nothing. */
-  preview?: boolean
-}
+// The MCP audit trail entry is defined with the tools that write it.
+export type { McpAuditEntry } from "@alter-ego/finance/mcp"

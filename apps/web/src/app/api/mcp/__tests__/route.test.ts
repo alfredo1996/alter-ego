@@ -1,3 +1,4 @@
+import { FINANCE_WRITE_TOOLS } from "@alter-ego/finance/mcp"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 const authenticate = vi.hoisted(() => vi.fn())
@@ -19,7 +20,6 @@ vi.mock("mcp-handler", async (orig) => {
   }
 })
 
-import { FINANCE_WRITE_TOOLS } from "@/lib/mcp/tools/finance-write"
 
 import { POST } from "../route"
 

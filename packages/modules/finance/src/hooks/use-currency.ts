@@ -3,13 +3,13 @@
 import { formatCompactCurrency, formatCurrency } from "@alter-ego/kernel/currency"
 import { useCallback } from "react"
 
-import { useSettingsStore } from "../stores/settings-store"
+import { useFinanceSettingsStore } from "../stores/finance-settings-store"
 
 import type { Currency } from "../types"
 
 export function useCurrency() {
-  const defaultCurrency = useSettingsStore((s) => s.defaultCurrency)
-  const locale = useSettingsStore((s) => s.locale)
+  const defaultCurrency = useFinanceSettingsStore((s) => s.defaultCurrency)
+  const locale = useFinanceSettingsStore((s) => s.locale)
 
   const format = useCallback(
     (amount: number, currency?: Currency) => {

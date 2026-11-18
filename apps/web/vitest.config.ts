@@ -47,17 +47,20 @@ export default defineConfig({
       exclude: [
         "src/**/*.test.{ts,tsx}",
         "src/**/*.d.ts",
-        "../../packages/*/src/**/__tests__/**",
+        "**/packages/*/src/**/__tests__/**",
         "src/types/**",
         // Same carve-outs for the packages' modules: types and schemas, UI and pages, hooks and stores
-        "../../packages/modules/*/src/types.ts",
-        "../../packages/modules/*/src/schemas.ts",
-        "../../packages/modules/*/src/adapter.ts",
-        "../../packages/modules/*/src/components/**",
-        "../../packages/modules/*/src/pages/**",
-        "../../packages/modules/*/src/hooks/**",
-        "../../packages/modules/*/src/stores/**",
-        "../../packages/modules/*/src/lib/options.ts",
+        "**/packages/modules/*/src/types.ts",
+        "**/packages/modules/*/src/schemas.ts",
+        "**/packages/modules/*/src/adapter.ts",
+        "**/packages/modules/*/src/components/**",
+        "**/packages/modules/*/src/pages/**",
+        "**/packages/modules/*/src/hooks/**",
+        "**/packages/modules/*/src/stores/**",
+        "**/packages/modules/*/src/lib/options.ts",
+        // The settings sections and the floating buttons are UI too
+        "**/packages/modules/*/src/settings.tsx",
+        "**/packages/modules/*/src/overlays.tsx",
         // React UI — covered by Playwright E2E tests
         "src/components/**",
         // Pages and layouts; src/app/api/** (the route handlers) counts
@@ -71,13 +74,15 @@ export default defineConfig({
         // Pure Firestore I/O — exercised by the OAuth flow emulator tests
         "src/lib/oauth/store.ts",
         // Firestore I/O tool handlers — exercised by the MCP emulator tests
-        "src/lib/mcp/tools/finance-read.ts",
-        "src/lib/mcp/tools/finance-write.ts",
+        "**/packages/modules/*/src/mcp/finance-read.ts",
+        "**/packages/modules/*/src/mcp/finance-write.ts",
         // React hooks — require provider setup; business logic tested via adapters
         "src/hooks/**",
         // External service adapters — require live connections
         "src/lib/backend/firebase.ts",
         "src/lib/backend/firebase-admin.ts",
+        "**/packages/modules/*/src/adapter-firebase.ts",
+        "**/packages/modules/*/src/adapter-admin.ts",
         "src/lib/firebase-admin-client.ts",
         // Runtime-only: env validation and adapter selector singleton
         "src/lib/env.ts",

@@ -9,17 +9,8 @@
  */
 
 import { features } from "@alter-ego/finance/lib/features"
-import {
-  LayoutDashboard,
-  Wallet,
-  ArrowLeftRight,
-  Tags,
-  BarChart3,
-  PiggyBank,
-  CalendarClock,
-  Target,
-  Settings,
-} from "lucide-react"
+import { FINANCE_NAV } from "@alter-ego/finance/nav"
+import { Settings } from "lucide-react"
 
 
 import type { LucideIcon } from "lucide-react"
@@ -37,21 +28,7 @@ export interface NavGroup {
   items: NavItem[]
 }
 
-const NAV_GROUPS: NavGroup[] = [
-  {
-    label: "Personal",
-    items: [
-      { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-      { label: "Accounts", href: "/accounts", icon: Wallet },
-      { label: "Transactions", href: "/transactions", icon: ArrowLeftRight },
-      { label: "Categories", href: "/categories", icon: Tags },
-      { label: "Budgets", href: "/budgets", icon: PiggyBank, featureFlag: "budgets" },
-      { label: "Goals", href: "/goals", icon: Target, featureFlag: "savingsGoals" },
-      { label: "Recurring", href: "/recurring", icon: CalendarClock, featureFlag: "recurring" },
-      { label: "Reports", href: "/reports", icon: BarChart3 },
-    ],
-  },
-]
+const NAV_GROUPS: NavGroup[] = [FINANCE_NAV]
 
 function isGroupEnabled(group: NavGroup): boolean {
   return !group.featureFlag || features[group.featureFlag]

@@ -1,10 +1,9 @@
+import { FINANCE_WRITE_TOOLS, registerFinanceReadTools, registerFinanceWriteTools } from "@alter-ego/finance/mcp"
 import { createMcpHandler, type McpHandlerOptions } from "mcp-handler"
 
-
+import { getServerDb } from "@/lib/backend/server-db"
 import { authenticate, insufficientScope, unauthorized } from "@/lib/mcp/auth"
 import { MCP_VERSION } from "@/lib/mcp/config"
-import { registerFinanceReadTools } from "@/lib/mcp/tools/finance-read"
-import { FINANCE_WRITE_TOOLS, registerFinanceWriteTools } from "@/lib/mcp/tools/finance-write"
 import { hasScopes, SCOPE_WRITE } from "@/lib/oauth/tokens"
 import { z } from "@/lib/zod"
 
@@ -47,8 +46,8 @@ const handler = createMcpHandler(
       })
     )
 
-    registerFinanceReadTools(server)
-    registerFinanceWriteTools(server)
+    registerFinanceReadTools(server, { db: getServerDb })
+    registerFinanceWriteTools(server, { db: getServerDb })
   },
   handlerOptions
 )

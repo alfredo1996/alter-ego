@@ -50,7 +50,7 @@ await backend.db.getAccounts(userId)
 
 Gli stessi dati sono disponibili fuori dal browser:
 
-- **Server MCP** su `/api/mcp`, via HTTP con OAuth 2.1 e PKCE (il server di autorizzazione è in `lib/oauth`), oppure via stdio con `pnpm mcp:stdio`. Gli strumenti sono in `lib/mcp/tools`.
+- **Server MCP** su `/api/mcp`, via HTTP con OAuth 2.1 e PKCE (il server di autorizzazione è in `lib/oauth`), oppure via stdio con `pnpm mcp:stdio`. Gli strumenti sono in `packages/modules/finance/src/mcp`; la route e lo script stdio li registrano con il database lato server.
 - **API REST** sotto `/api/v1`, autenticata con una chiave API dalle Impostazioni. Il suo documento OpenAPI è servito su `/api/openapi` e copre solo gli endpoint delle transazioni.
 
 Entrambi raggiungono il database tramite l'adapter lato server, non con l'SDK del browser. [docs/SELF-HOSTING.md](https://github.com/alfredo1996/alter-ego/blob/main/docs/SELF-HOSTING.md) elenca gli strumenti.
@@ -58,7 +58,7 @@ Entrambi raggiungono il database tramite l'adapter lato server, non con l'SDK de
 ## Gestione dello Stato
 
 - **Stato server**: TanStack Query, con hook come `useAccounts` e `useTransactions`.
-- **Stato client**: Zustand (`useSettingsStore`) per impostazioni come valuta, locale, tema e `aiMode`.
+- **Stato client**: Zustand (`useSettingsStore` per tema e `aiMode`, `useFinanceSettingsStore` per valuta e locale) per le impostazioni client.
 - **Form**: React Hook Form con schemi Zod.
 
 ## AI

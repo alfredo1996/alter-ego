@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 
-import { getBackend } from "../host"
-import { useSettingsStore } from "../stores/settings-store"
+import { categorize, getBackend } from "../host"
 
 import type { Category } from "../types"
 
@@ -17,7 +16,6 @@ export function useCategorySuggestion(
   categories: Category[],
   userId: string | undefined,
 ) {
-  const aiMode = useSettingsStore((s) => s.aiMode)
   const [suggestedCategoryId, setSuggestedCategoryId] = useState<string | null>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -37,12 +35,10 @@ export function useCategorySuggestion(
           setSuggestedCategoryId(ruleResult)
           return
         }
-        if (aiMode !== "off") {
-          const aiResult = await getBackend().ai.categorize(description)
-          if (aiResult && categories.some((c) => c.id === aiResult.categoryId)) {
-            setSuggestedCategoryId(aiResult.categoryId)
-            return
-          }
+        const aiResult = await categorize(description)
+        if (aiResult && categories.some((c) => c.id === aiResult.categoryId)) {
+          setSuggestedCategoryId(aiResult.categoryId)
+          return
         }
         setSuggestedCategoryId(null)
       } catch {
@@ -53,7 +49,7 @@ export function useCategorySuggestion(
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
-  }, [description, shouldSkip, aiMode, categories, userId])
+  }, [description, shouldSkip, categories, userId])
 
   // Derive the effective suggestion: null when we should skip
   const effectiveId = shouldSkip ? null : suggestedCategoryId

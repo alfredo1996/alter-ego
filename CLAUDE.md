@@ -48,8 +48,8 @@ apps/web/                 # the Next.js app (@alter-ego/web); its own .env.local
 │   │   └── ...           # Shell and settings components (the finance ones live in the package)
 │   ├── hooks/            # use-auth, use-api-keys, use-chat
 │   ├── lib/
-│   │   ├── backend/      # Adapter (types, mock, firebase, firebase-admin, server-db)
-│   │   ├── mcp/          # MCP tools: finance-*, context.ts, helpers.ts
+│   │   ├── backend/      # The shell's adapter: auth, API keys, AI, audit; spreads finance's slices
+│   │   ├── mcp/          # MCP auth and config; the tools live in @alter-ego/finance
 │   │   └── oauth/        # OAuth 2.1 server for the remote MCP endpoint
 │   └── types/            # barrels over @alter-ego/finance's types and schemas, plus the app-only ones
 ├── apphosting.yaml       # App Hosting reads it from the backend's root directory (set to apps/web)
@@ -64,9 +64,12 @@ packages/
 └── modules/finance/      # @alter-ego/finance: the nine pages and their components, hooks, libs,
                           # stores, types, schemas and the FinanceAdapter interface. Reaches the app
                           # only through provideFinanceHost({ getBackend, useAuth }) (src/host.ts),
-                          # which the app's providers and the vitest setup call once. The adapter
-                          # implementations, MCP tools and finance settings stay in apps/web for now.
-                          # The app's routes are one-line pages from @alter-ego/finance/pages/*
+                          # which the app's providers and the vitest setup call once. It also holds the
+                          # adapter slices (adapter-mock, adapter-firebase, adapter-admin: the app passes
+                          # in the Firestore instances), the MCP tools (mcp/: register*(server, { db })),
+                          # FINANCE_NAV, <FinanceSettings/>, <FinanceOverlays/> and the finance settings
+                          # store (currency and locale). The app's routes are one-line pages from
+                          # @alter-ego/finance/pages/*
 firestore/, firestore.rules, firebase.json, docker/   # stay at the root
 ```
 
@@ -103,7 +106,9 @@ Interfaces in `lib/backend/types.ts`:
 
 This rule is enforced, not just stated: the MCP tools once imported
 `firebase-admin` directly, which silently made the whole MCP server Firebase-only.
-`apps/web/src/lib/mcp/__tests__/adapter-boundary.test.ts` fails if that returns.
+`apps/web/src/lib/mcp/__tests__/adapter-boundary.test.ts` (the route and the stdio server) and the
+package's `src/__tests__/boundary.test.ts` (only `adapter-firebase.ts` and `adapter-admin.ts` may import
+a Firebase SDK; `src/mcp/` may not reach them) fail if that returns.
 
 ## Coding Conventions
 
