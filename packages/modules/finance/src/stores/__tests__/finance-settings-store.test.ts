@@ -26,6 +26,12 @@ describe("the finance settings store", () => {
     expect({ defaultCurrency, locale }).toEqual({ defaultCurrency: "EUR", locale: "it-IT" })
   })
 
+  it("copies the legacy value to its own key on that first read, so it never reads the old one again", async () => {
+    localStorage.setItem(LEGACY, JSON.stringify({ state: { defaultCurrency: "EUR", locale: "it-IT" }, version: 0 }))
+    await freshStore()
+    expect(JSON.parse(localStorage.getItem(OWN) as string).state).toEqual({ defaultCurrency: "EUR", locale: "it-IT" })
+  })
+
   it("prefers its own key once it exists, and writes there, leaving the old value alone", async () => {
     const legacy = JSON.stringify({ state: { defaultCurrency: "EUR", locale: "it-IT" }, version: 0 })
     localStorage.setItem(LEGACY, legacy)

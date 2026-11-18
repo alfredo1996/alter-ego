@@ -106,7 +106,9 @@ Interfaces in `lib/backend/types.ts`:
 
 This rule is enforced, not just stated: the MCP tools once imported
 `firebase-admin` directly, which silently made the whole MCP server Firebase-only.
-`apps/web/src/lib/mcp/__tests__/adapter-boundary.test.ts` fails if that returns.
+`apps/web/src/lib/mcp/__tests__/adapter-boundary.test.ts` (the route and the stdio server) and the
+package's `src/__tests__/boundary.test.ts` (only `adapter-firebase.ts` and `adapter-admin.ts` may import
+a Firebase SDK; `src/mcp/` may not reach them) fail if that returns.
 
 ## Coding Conventions
 

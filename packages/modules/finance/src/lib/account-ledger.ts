@@ -130,7 +130,7 @@ export function balanceEffectsDiff(oldTx: LedgerTx, newTx: LedgerTx): BalanceEff
  * The first closed (archived) account among `ids` that a new write may not
  * touch, or undefined. `own` are a transaction's existing accounts: an edit
  * keeps them even when closed (#219). One rule for the REST API
- * and the MCP write tools (assertOpenAccount in lib/mcp/tools/finance-write.ts).
+ * and the MCP write tools (assertOpenAccount in mcp/finance-write.ts).
  */
 export function closedTarget(
   accounts: Account[],

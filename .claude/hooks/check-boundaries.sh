@@ -16,10 +16,10 @@ esac
 
 case "$rel" in
   # MCP code must stay adapter-neutral (see adapter-boundary.test.ts)
-  apps/web/src/lib/mcp/tools/*|apps/web/src/app/api/mcp/*)
-    pattern="['\"](@?firebase|firebase-admin|@/lib/backend/firebase(-admin)?|@/lib/firebase(-admin)?-client)([/'\"])" ;;
-  # places that own the Firebase SDK, and the emulator tests that exercise it
-  apps/web/src/lib/backend/*|apps/web/src/lib/firebase-client.ts|apps/web/src/lib/firebase-admin-client.ts|apps/web/scripts/*|*.emulator.test.ts) exit 0 ;;
+  packages/modules/*/src/mcp/*|apps/web/src/app/api/mcp/*|apps/web/scripts/mcp-stdio.ts)
+    pattern="['\"](@?firebase|firebase-admin|@/lib/backend/firebase(-admin)?|@/lib/firebase(-admin)?-client|(\\.\\./)+adapter-(firebase|admin))([/'\"])" ;;
+  # places that own the Firebase SDK (a module's two adapter slices included), and the emulator tests that exercise it
+  apps/web/src/lib/backend/*|apps/web/src/lib/firebase-client.ts|apps/web/src/lib/firebase-admin-client.ts|apps/web/scripts/*|packages/modules/*/src/adapter-firebase.ts|packages/modules/*/src/adapter-admin.ts|*.emulator.test.ts) exit 0 ;;
   *.ts|*.tsx) pattern="['\"](@?firebase|firebase-admin)([/'\"])" ;;
   *) exit 0 ;;
 esac

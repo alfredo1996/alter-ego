@@ -132,8 +132,8 @@ apps/web/src/   (kernel: packages/kernel; UI kit: packages/ui; personal finance:
 ├── components/              # Shell and settings components (finance ones: packages/modules/finance)
 ├── hooks/                   # use-auth, use-api-keys, use-chat
 ├── lib/
-│   ├── backend/             # Adapter: types.ts, mock.ts, firebase.ts
-│   ├── mcp/                 # MCP tools (finance-*, shared helpers)
+│   ├── backend/             # Adapter shell: types.ts, mock.ts, firebase.ts (finance slices: packages/modules/finance)
+│   ├── mcp/                 # MCP auth and config (the finance tools: packages/modules/finance/src/mcp)
 │   ├── oauth/               # OAuth 2.1 authorization server for the MCP endpoint
 │   └── …                    # Host wiring, CSP, env
 └── types/                   # Barrels over the finance package's types + schemas
@@ -158,7 +158,7 @@ Firebase with a single env var change.
 
 ### State Management
 
-- **Zustand** (`useSettingsStore`) for client-only settings: currency, locale, theme and the `aiMode` setting
+- **Zustand** (`useSettingsStore`: theme and the `aiMode` setting; `useFinanceSettingsStore`: currency and locale) for client-only settings
 - **TanStack Query** for all server state: accounts, transactions, budgets, etc.
 
 ### AI

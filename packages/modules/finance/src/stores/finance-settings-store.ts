@@ -26,7 +26,10 @@ const storage = createJSONStorage<Pick<FinanceSettingsState, "defaultCurrency" |
     const legacy = localStorage.getItem(LEGACY_KEY)
     if (legacy === null) return null
     const { state } = JSON.parse(legacy) as { state?: Partial<FinanceSettingsState> }
-    return JSON.stringify({ state: { defaultCurrency: state?.defaultCurrency, locale: state?.locale }, version: 0 })
+    const copy = JSON.stringify({ state: { defaultCurrency: state?.defaultCurrency, locale: state?.locale }, version: 0 })
+    // persist writes nothing until a setter runs, so copy it now: this is the only time the legacy key is read
+    localStorage.setItem(name, copy)
+    return copy
   },
   setItem: (name, value) => localStorage.setItem(name, value),
   removeItem: (name) => localStorage.removeItem(name),

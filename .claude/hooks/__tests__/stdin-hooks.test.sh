@@ -11,7 +11,7 @@ trap 'rm -rf "$TMP"' EXIT
 git -C "$TMP" init -q -b feat/x
 mkdir -p "$TMP/apps/web/src/components" "$TMP/apps/web/src/lib/backend"
 # a stand-in node_modules/.bin that borrows the real prettier (a symlinked node_modules would leave the repo)
-mkdir -p "$TMP/node_modules/.bin" "$TMP/apps/web/src/lib/mcp/tools" "$TMP/apps/web/src/lib/mcp/__tests__" "$TMP/functions" "$TMP/scripts"
+mkdir -p "$TMP/node_modules/.bin" "$TMP/packages/modules/finance/src/mcp" "$TMP/apps/web/src/lib/mcp/__tests__" "$TMP/functions" "$TMP/scripts"
 printf '#!/bin/sh\nexec "%s/node_modules/.bin/prettier" "$@"\n' "$REPO" > "$TMP/node_modules/.bin/prettier"
 chmod +x "$TMP/node_modules/.bin/prettier"
 # a worktree of the repo, and a second repo to run the hooks from (the session's cwd)
@@ -56,12 +56,20 @@ run check-boundaries.sh "$TMP/apps/web/src/components/good.tsx";  expect "bounda
 # emulator tests and SDK init may use firebase; MCP tools may not reach the adapters
 printf 'import { getDoc } from "firebase/firestore";\n' > "$TMP/apps/web/src/lib/mcp/__tests__/x.emulator.test.ts"
 printf 'import { getDoc } from "firebase/firestore";\n' > "$TMP/apps/web/src/lib/firebase-client.ts"
-printf 'import * as admin from "@/lib/backend/firebase-admin";\n' > "$TMP/apps/web/src/lib/mcp/tools/tool-x.ts"
-printf 'import { getBackend } from "@/lib/backend";\n' > "$TMP/apps/web/src/lib/mcp/tools/ok.ts"
+printf 'import * as admin from "@/lib/backend/firebase-admin";\n' > "$TMP/packages/modules/finance/src/mcp/tool-x.ts"
+printf 'import { createFinanceAdmin } from "../adapter-admin";\n' > "$TMP/packages/modules/finance/src/mcp/tool-y.ts"
+printf 'import { getBackend } from "@/lib/backend";\n' > "$TMP/packages/modules/finance/src/mcp/ok.ts"
+printf 'import { getDoc } from "firebase/firestore";\n' > "$TMP/packages/modules/finance/src/adapter-firebase.ts"
+printf 'import { getFirestore } from "firebase-admin/firestore";\n' > "$TMP/packages/modules/finance/src/adapter-admin.ts"
+printf 'import { getDoc } from "firebase/firestore";\n' > "$TMP/packages/modules/finance/src/mcp/tool-z.ts"
 run check-boundaries.sh "$TMP/apps/web/src/lib/mcp/__tests__/x.emulator.test.ts"; expect "boundary: emulator test may import firebase" 0 $?
 run check-boundaries.sh "$TMP/apps/web/src/lib/firebase-client.ts";                expect "boundary: SDK init module may import firebase" 0 $?
-run check-boundaries.sh "$TMP/apps/web/src/lib/mcp/tools/tool-x.ts";                expect "boundary: MCP tool importing the admin adapter" 2 $?
-run check-boundaries.sh "$TMP/apps/web/src/lib/mcp/tools/ok.ts";                   expect "boundary: MCP tool using getBackend" 0 $?
+run check-boundaries.sh "$TMP/packages/modules/finance/src/mcp/tool-x.ts";         expect "boundary: MCP tool importing the admin adapter" 2 $?
+run check-boundaries.sh "$TMP/packages/modules/finance/src/mcp/tool-y.ts";         expect "boundary: MCP tool importing the package's admin slice" 2 $?
+run check-boundaries.sh "$TMP/packages/modules/finance/src/mcp/tool-z.ts";         expect "boundary: MCP tool importing firebase" 2 $?
+run check-boundaries.sh "$TMP/packages/modules/finance/src/mcp/ok.ts";            expect "boundary: MCP tool using getBackend" 0 $?
+run check-boundaries.sh "$TMP/packages/modules/finance/src/adapter-firebase.ts";   expect "boundary: the package's Firebase slice may import firebase" 0 $?
+run check-boundaries.sh "$TMP/packages/modules/finance/src/adapter-admin.ts";      expect "boundary: the package's admin slice may import firebase-admin" 0 $?
 
 # run from another repo (the session's checkout) on a path in the worktree and in nested dirs
 CWD=$ELSEWHERE

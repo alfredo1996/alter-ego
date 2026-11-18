@@ -10,8 +10,8 @@ import { readFileSync } from "node:fs"
 
 import { describe, expect, it } from "vitest"
 
-// The tools themselves live in @alter-ego/finance, which has its own boundary test (no "@/" import at
-// all, so no firebase-admin); what is left here is the two places that register them.
+// The tools themselves live in @alter-ego/finance; its boundary test keeps every Firebase SDK out of
+// src/mcp/ (only its two adapter files may import one). What is left here is the two places that register them.
 const sourceFiles = ["src/app/api/mcp/route.ts", "scripts/mcp-stdio.ts"]
 
 describe("MCP tools reach the database through the adapter", () => {

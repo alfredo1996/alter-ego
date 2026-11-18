@@ -50,6 +50,23 @@ describe("the finance package imports only the kernel, the UI kit and its declar
     expect(specifiers(f).filter((spec) => (spec.match(/^(?:\.\.\/)+/)?.[0].length ?? 0) / 3 > depth)).toEqual([])
   })
 
+  // firebase and firebase-admin are declared peers (the adapters take their instances), but only the two
+  // adapter files may import them: feature code and the MCP tools go through the adapter.
+  const inSdk = (spec: string, sdk: string) => spec === sdk || spec.startsWith(sdk + "/")
+  it.each(files.filter((f) => !isTest(f)).map((f) => [rel(f), f]))("%s imports the Firebase SDKs only if it is an adapter", (name, f) => {
+    const bad = specifiers(f).filter(
+      (spec) => (inSdk(spec, "firebase") && name !== "adapter-firebase.ts") || (inSdk(spec, "firebase-admin") && name !== "adapter-admin.ts"),
+    )
+    expect(bad).toEqual([])
+  })
+
+  it.each(files.filter((f) => rel(f).startsWith("mcp/") && !isTest(f)).map((f) => [rel(f), f]))(
+    "%s does not reach the Firebase adapters",
+    (_name, f) => {
+      expect(specifiers(f).filter((spec) => /(^|\/)adapter-(firebase|admin)$/.test(spec))).toEqual([])
+    },
+  )
+
   it("declares the workspace packages it imports as workspace dependencies", () => {
     expect([pkg.dependencies["@alter-ego/kernel"], pkg.dependencies["@alter-ego/ui"]]).toEqual(["workspace:*", "workspace:*"])
   })
