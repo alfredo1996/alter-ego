@@ -3,9 +3,7 @@
  *
  * The admin module is a *partial* adapter (see server-db.ts ServerDb), so it can't run the full
  * contract; it runs the package's describeFinanceAdminContract round trip instead.
- * This focuses on the methods that actually had bugs:
- *   - getTransactions must include incoming transfers (#95)
- *   - create / update / delete must maintain account balances atomically (#92)
+ * The transfer, balance and incoming-transfer cases (#92, #95) live in that round trip.
  *
  * Runs under the Firebase emulator (see vitest.emulator.ts).
  */
@@ -24,7 +22,7 @@ const userId = "admin-contract-user"
 const accountsCol = () => getAdminFirestore().collection("users").doc(userId).collection("accounts")
 const txCol = () => getAdminFirestore().collection("users").doc(userId).collection("transactions")
 
-// Admin has no createAccount — seed account docs directly.
+// Seeds a doc directly to set a balance without a transaction.
 async function seedAccount(name: string, balance = 0): Promise<string> {
   const ref = await accountsCol().add({
     userId,
@@ -41,11 +39,6 @@ async function seedAccount(name: string, balance = 0): Promise<string> {
     updatedAt: new Date(),
   })
   return ref.id
-}
-
-async function balanceOf(accountId: string): Promise<number> {
-  const accounts = await admin.getAccounts(userId)
-  return accounts.find((a) => a.id === accountId)!.balance
 }
 
 const userSub = (name: string) => getAdminFirestore().collection("users").doc(userId).collection(name)
@@ -124,92 +117,6 @@ describe("firebase-admin adapter (emulator)", () => {
     const recurring = await admin.getRecurringTransactions(userId)
     expect(recurring).toHaveLength(1)
     expect(recurring[0]).toMatchObject({ description: "Netflix", amount: 9.99, interval: 1, isActive: true })
-  })
-
-  it("getTransactions includes incoming transfers (#95)", async () => {
-    const a = await seedAccount("A", 100)
-    const b = await seedAccount("B", 0)
-
-    await admin.createTransaction(userId, {
-      accountId: a, type: "transfer", amount: 30, currency: "USD",
-      description: "move", date: new Date("2026-06-01"), transferToAccountId: b,
-    })
-
-    // B is the destination — the transfer must show up in B's ledger.
-    const bTxs = await admin.getTransactions(userId, { accountId: b })
-    expect(bTxs.data).toHaveLength(1)
-    expect(bTxs.data[0].transferToAccountId).toBe(b)
-
-    // …and in A's (the source).
-    const aTxs = await admin.getTransactions(userId, { accountId: a })
-    expect(aTxs.data).toHaveLength(1)
-  })
-
-  it("create / update / delete maintain balances atomically (#92)", async () => {
-    const a = await seedAccount("A", 100)
-    const b = await seedAccount("B", 0)
-
-    const income = await admin.createTransaction(userId, {
-      accountId: a, type: "income", amount: 50, currency: "USD",
-      description: "pay", date: new Date("2026-06-01"),
-    })
-    expect(await balanceOf(a)).toBe(150)
-
-    const transfer = await admin.createTransaction(userId, {
-      accountId: a, type: "transfer", amount: 30, currency: "USD",
-      description: "move", date: new Date("2026-06-02"), transferToAccountId: b,
-    })
-    expect(await balanceOf(a)).toBe(120)
-    expect(await balanceOf(b)).toBe(30)
-
-    // edit income 50 → 80 → A = 180 - 30 = 150
-    await admin.updateTransaction(userId, income.id, { amount: 80 })
-    expect(await balanceOf(a)).toBe(150)
-
-    // delete the transfer → A = 180, B = 0
-    await admin.deleteTransaction(userId, transfer.id)
-    expect(await balanceOf(a)).toBe(180)
-    expect(await balanceOf(b)).toBe(0)
-  })
-
-  it("refuses a destinationless or self-directed transfer, balance untouched", async () => {
-    // The admin adapter is the one MCP writes through, and it bypasses
-    // firestore.rules entirely — so this guard is the only thing standing
-    // between a malformed transfer and money leaving the ledger.
-    const a = await seedAccount("Orphan", 100)
-
-    await expect(
-      admin.createTransaction(userId, {
-        accountId: a, type: "transfer", amount: 30, currency: "USD",
-        description: "nowhere", date: new Date("2026-06-01"),
-      })
-    ).rejects.toThrow(/destination/i)
-
-    await expect(
-      admin.createTransaction(userId, {
-        accountId: a, type: "transfer", amount: 30, currency: "USD",
-        description: "myself", date: new Date("2026-06-01"), transferToAccountId: a,
-      })
-    ).rejects.toThrow(/same source and destination/i)
-
-    expect(await balanceOf(a)).toBe(100)
-  })
-
-  it("refuses an edit into a destinationless transfer without writing the doc", async () => {
-    const a = await seedAccount("EditOrphan", 100)
-    const expense = await admin.createTransaction(userId, {
-      accountId: a, type: "expense", amount: 40, currency: "USD",
-      description: "spend", date: new Date("2026-06-01"),
-    })
-    expect(await balanceOf(a)).toBe(60)
-
-    await expect(
-      admin.updateTransaction(userId, expense.id, { type: "transfer" })
-    ).rejects.toThrow(/destination/i)
-
-    // Validation runs before ref.update(), so neither the row nor the balance moved.
-    expect((await admin.getTransaction(userId, expense.id))!.type).toBe("expense")
-    expect(await balanceOf(a)).toBe(60)
   })
 })
 

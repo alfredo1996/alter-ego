@@ -4,6 +4,12 @@
  * its own composed adapter (the mock, the client SDK through the emulator), and
  * describeFinanceAdminContract against the server-side surface (the Admin SDK).
  * apps/web/.../adapter-contract.ts is the wrapper that supplies the adapter.
+ *
+ * Preconditions on a Firebase host: root /categories is seeded with `defaultCategories` from
+ * "@alter-ego/finance/lib/categories" before the run (the mock seeds itself), and the host's
+ * base.rules carries the root `match /categories` read rule and the finance `isValid*` validators
+ * (see scripts/build-firestore-rules.mjs). Without them the category, categorization-rule,
+ * uncategorized-filter and split-report cases fail.
  */
 import { describe, it, expect, beforeAll } from "vitest"
 
@@ -1697,37 +1703,75 @@ export function describeFinanceContract(get: () => FinanceContractDeps) {
  */
 export type FinanceAdminDb = Pick<
   FinanceAdapter,
-  "createAccount" | "getAccount" | "createTransaction" | "updateTransaction" | "deleteTransaction"
+  "createAccount" | "getAccount" | "createTransaction" | "updateTransaction" | "deleteTransaction" | "getTransaction"
 > & {
   // No paging: the server reads the whole page it asks for.
   getTransactions(userId: string, filters?: TransactionFilters): Promise<{ data: Transaction[]; total: number }>
 }
 
-/** One round trip over the Admin surface: the balances it keeps while transactions come and go. */
+/**
+ * The Admin surface bypasses firestore.rules, so the guards a transfer needs hold here or nowhere.
+ * `get` is read in each case; the host cleans its data between cases.
+ */
 export function describeFinanceAdminContract(get: () => { db: FinanceAdminDb; userId: string }) {
   describe("finance (server-side)", () => {
-    it("keeps balances correct through create, edit and delete of an expense and a transfer", async () => {
+    async function twoAccounts(openingA = 100) {
       const { db, userId } = get()
-      const a = await db.createAccount(userId, { name: "Server A", type: "checking", currency: "USD", balance: 100 })
+      const a = await db.createAccount(userId, { name: "Server A", type: "checking", currency: "USD", balance: openingA })
       const b = await db.createAccount(userId, { name: "Server B", type: "savings", currency: "USD", balance: 0 })
       const balance = async (id: string) => (await db.getAccount(userId, id))!.balance
+      return { db, userId, a, b, balance }
+    }
+    const move = (accountId: string, extra: object = {}) => ({
+      accountId, type: "transfer" as const, amount: 30, currency: "USD" as const, description: "move", date: new Date("2026-06-02"), ...extra,
+    })
 
-      const expense = await db.createTransaction(userId, {
-        accountId: a.id, type: "expense", amount: 20, currency: "USD", description: "buy", date: new Date("2026-06-02"),
-      })
-      const transfer = await db.createTransaction(userId, {
-        accountId: a.id, type: "transfer", amount: 30, currency: "USD", description: "move",
-        date: new Date("2026-06-03"), transferToAccountId: b.id,
-      })
-      expect([await balance(a.id), await balance(b.id)]).toEqual([50, 30])
-      expect((await db.getTransactions(userId, { accountId: b.id })).data.map((t) => t.id)).toEqual([transfer.id])
+    it("getTransactions includes incoming transfers (#95)", async () => {
+      const { db, userId, a, b } = await twoAccounts()
+      await db.createTransaction(userId, move(a.id, { transferToAccountId: b.id }))
 
-      await db.updateTransaction(userId, expense.id, { amount: 25 })
-      expect(await balance(a.id)).toBe(45)
+      const bTxs = await db.getTransactions(userId, { accountId: b.id })
+      expect(bTxs.data).toHaveLength(1)
+      expect(bTxs.data[0].transferToAccountId).toBe(b.id)
+      expect((await db.getTransactions(userId, { accountId: a.id })).data).toHaveLength(1)
+    })
+
+    it("create / update / delete maintain balances atomically (#92)", async () => {
+      const { db, userId, a, b, balance } = await twoAccounts()
+      const income = await db.createTransaction(userId, {
+        accountId: a.id, type: "income", amount: 50, currency: "USD", description: "pay", date: new Date("2026-06-01"),
+      })
+      expect(await balance(a.id)).toBe(150)
+
+      const transfer = await db.createTransaction(userId, move(a.id, { transferToAccountId: b.id }))
+      expect([await balance(a.id), await balance(b.id)]).toEqual([120, 30])
+
+      await db.updateTransaction(userId, income.id, { amount: 80 })
+      expect(await balance(a.id)).toBe(150)
 
       await db.deleteTransaction(userId, transfer.id)
-      await db.deleteTransaction(userId, expense.id)
-      expect([await balance(a.id), await balance(b.id)]).toEqual([100, 0])
+      expect([await balance(a.id), await balance(b.id)]).toEqual([180, 0])
+    })
+
+    it("refuses a destinationless or self-directed transfer, balance untouched", async () => {
+      const { db, userId, a, balance } = await twoAccounts()
+      await expect(db.createTransaction(userId, move(a.id))).rejects.toThrow(/destination/i)
+      await expect(db.createTransaction(userId, move(a.id, { transferToAccountId: a.id }))).rejects.toThrow(
+        /same source and destination/i
+      )
+      expect(await balance(a.id)).toBe(100)
+    })
+
+    it("refuses an edit into a destinationless transfer without writing the doc", async () => {
+      const { db, userId, a, balance } = await twoAccounts()
+      const expense = await db.createTransaction(userId, {
+        accountId: a.id, type: "expense", amount: 40, currency: "USD", description: "spend", date: new Date("2026-06-01"),
+      })
+      expect(await balance(a.id)).toBe(60)
+
+      await expect(db.updateTransaction(userId, expense.id, { type: "transfer" })).rejects.toThrow(/destination/i)
+      expect((await db.getTransaction(userId, expense.id))!.type).toBe("expense")
+      expect(await balance(a.id)).toBe(60)
     })
   })
 }

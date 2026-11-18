@@ -8,9 +8,10 @@ validators, the system categories and the other users' collections) or
 `match /users/{userId}`) and run `pnpm rules:build`. Editing the output directly loses the
 change on the next build, and `apps/web/src/lib/__tests__/firestore-rules-build.test.ts`
 fails when the two drift. The marker line in `base.rules` is where the fragment is
-spliced in; leave it. The fragment uses only `base.rules` helpers, so a host app can
-vendor it. The system categories and the `isValid*` finance validators stay in
-`base.rules`: they sit at the root, and the splice lands inside `match /users`.
+spliced in; leave it. The fragment uses `base.rules`' shared helpers plus the nine
+`isValid*`/`transferHasDestination` validators. Those validators and the root `match /categories`
+block stay in `base.rules`, because they sit at the root and the splice lands inside
+`match /users`; a host that vendors the fragment needs both in its own `base.rules`.
 
 Finance's indexes live in `packages/modules/finance/src/firestore.indexes.json`; the root
 `firestore.indexes.json` (the one `firebase.json` deploys) is a copy, and
@@ -166,11 +167,11 @@ pnpm mcp:stdio             # MCP server over stdio (needs ALTER_EGO_USER_ID)
 Changes under `apps/web/src/lib/backend/`, `apps/web/src/lib/mcp/` or the rules need the emulator
 suite as well as the unit tests — CI runs it on those paths.
 
-A write path needs a case in `packages/modules/finance/src/__tests__/contract.ts` (the package
+A finance write path needs a case in `packages/modules/finance/src/__tests__/contract.ts` (the package
 exports it as `@alter-ego/finance/contract`; `apps/web/.../adapter-contract.ts` runs it against the
-mock and the client SDK, and `describeFinanceAdminContract` runs the Admin round trip in
+mock and the client SDK, and `describeFinanceAdminContract` runs the Admin cases in
 `firebaseadmin.adapter.test.ts`), so it runs against the emulator, because tests that only run
-the mock miss Firestore-only failures.
+the mock miss Firestore-only failures. A write path that is not finance's goes in `adapter-contract.ts`.
 
 ## Git Conventions
 

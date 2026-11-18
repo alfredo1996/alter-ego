@@ -18,8 +18,8 @@ export interface ContractSetup {
 
 /**
  * Every case is finance's, so every case lives in the package (packages/modules/finance/src/__tests__/
- * contract.ts) and runs here against this app's composed adapter. A case for something that is not
- * finance's goes here.
+ * contract.ts) and runs here against this app's composed adapter. A case for a write path that is
+ * not finance's goes here.
  */
 export function describeAdapterContract(name: string, setup: ContractSetup) {
   describe(`${name} — adapter contract`, () => {
