@@ -14,7 +14,7 @@ This page covers the Firebase side. The deployment steps themselves (App Hosting
 
 ## Security Rules
 
-Do not write your own rules. `firestore.rules` is generated from `firestore/base.rules`, and it carries the field validation and the single-user allowlist the app relies on.
+Do not write your own rules. `firestore.rules` is generated from `firestore/base.rules`, `packages/modules/finance/src/finance.rules` and `finance-root.rules`, and it carries the field validation and the single-user allowlist the app relies on.
 
 ```bash
 pnpm rules:build

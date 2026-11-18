@@ -160,7 +160,7 @@ pnpm test:e2e              # Playwright E2E tests
 pnpm shots                 # Every page and tab, sign-in, empty dashboard; desktop + phone, light + dark (mock server; --base, --out, --prefix, paths)
 pnpm seed:demo             # Demo user with sample data in the local emulator; credentials in scripts/seed-demo.mjs
 pnpm test:firebase:docker  # Emulator suite (Docker)
-pnpm rules:build           # Regenerate firestore.rules from firestore/base.rules + the finance fragment
+pnpm rules:build           # Regenerate firestore.rules from firestore/base.rules + finance.rules + finance-root.rules
 pnpm local:start           # Persistent emulator (docs/SELF-HOSTING.md)
 pnpm mcp:stdio             # MCP server over stdio (needs ALTER_EGO_USER_ID)
 ```
