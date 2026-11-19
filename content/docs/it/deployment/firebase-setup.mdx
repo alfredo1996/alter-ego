@@ -14,14 +14,14 @@ Questa pagina riguarda il lato Firebase. I passaggi di distribuzione (App Hostin
 
 ## Regole di Sicurezza
 
-Non scrivere regole tue. `firestore.rules` è generato da `firestore/base.rules` e contiene la validazione dei campi e la lista di accesso a un solo utente su cui l'app si basa.
+Non scrivere regole tue. `firestore.rules` è generato da `firestore/base.rules`, `packages/modules/finance/src/finance.rules` e `finance-root.rules`, e contiene la validazione dei campi e la lista di accesso a un solo utente su cui l'app si basa.
 
 ```bash
 pnpm rules:build
 firebase deploy --only firestore:rules,firestore:indexes --project YOUR_PROJECT_ID
 ```
 
-Per cambiare qualcosa modifica `firestore/base.rules`, mai il file generato.
+Per cambiare qualcosa modifica `firestore/base.rules`, `packages/modules/finance/src/finance.rules` o `finance-root.rules`, mai il file generato.
 
 ## Chi Può Accedere
 

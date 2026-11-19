@@ -2,11 +2,21 @@
 
 ## The Rules File
 
-**`firestore.rules` is generated.** Edit `firestore/base.rules` and run
-`pnpm rules:build`. Editing the output directly loses the change on the next
-build, and `apps/web/src/lib/__tests__/firestore-rules-build.test.ts` fails when
-the two drift. The marker line in `base.rules` is where a deployment that adds
-collections of its own splices them in; leave it.
+**`firestore.rules` is generated.** Edit `firestore/base.rules` (the shared helpers and the
+other users' collections), `packages/modules/finance/src/finance.rules` (finance's collections
+and the nine validators they call, inside `match /users/{userId}`) or
+`packages/modules/finance/src/finance-root.rules` (the read-only root `match /categories`) and run `pnpm rules:build`. Editing the output directly loses the
+change on the next build, and `apps/web/src/lib/__tests__/firestore-rules-build.test.ts`
+fails when the two drift. The two marker lines in `base.rules` (`@@CRM_COLLECTIONS@@` inside
+`match /users`, `@@ROOT_COLLECTIONS@@` at the top level) are where the fragments are spliced
+in; leave them, and the build fails if a marker or a fragment is missing. The fragments use only
+`base.rules`' shared helpers, so a host that vendors the package splices `finance.rules` at its
+users-level marker and `finance-root.rules` at its top-level marker, and seeds the root
+`categories` collection.
+
+Finance's indexes live in `packages/modules/finance/src/firestore.indexes.json`; the root
+`firestore.indexes.json` (the one `firebase.json` deploys) is a copy, and
+`apps/web/src/lib/__tests__/firestore-indexes.test.ts` fails when they differ.
 
 Three more tests guard the structure: `packages/kernel/src/__tests__/boundary.test.ts`
 (the kernel imports nothing app-side), `packages/ui/src/__tests__/boundary.test.ts`
@@ -150,7 +160,7 @@ pnpm test:e2e              # Playwright E2E tests
 pnpm shots                 # Every page and tab, sign-in, empty dashboard; desktop + phone, light + dark (mock server; --base, --out, --prefix, paths)
 pnpm seed:demo             # Demo user with sample data in the local emulator; credentials in scripts/seed-demo.mjs
 pnpm test:firebase:docker  # Emulator suite (Docker)
-pnpm rules:build           # Regenerate firestore.rules from firestore/base.rules
+pnpm rules:build           # Regenerate firestore.rules from firestore/base.rules + finance.rules + finance-root.rules
 pnpm local:start           # Persistent emulator (docs/SELF-HOSTING.md)
 pnpm mcp:stdio             # MCP server over stdio (needs ALTER_EGO_USER_ID)
 ```
@@ -158,9 +168,11 @@ pnpm mcp:stdio             # MCP server over stdio (needs ALTER_EGO_USER_ID)
 Changes under `apps/web/src/lib/backend/`, `apps/web/src/lib/mcp/` or the rules need the emulator
 suite as well as the unit tests — CI runs it on those paths.
 
-A write path needs a case in `apps/web/src/lib/backend/__tests__/adapter-contract.ts`, so
-it runs against the emulator, because tests that only run the mock miss
-Firestore-only failures.
+A finance write path needs a case in `packages/modules/finance/src/__tests__/contract.ts` (the package
+exports it as `@alter-ego/finance/contract`; `apps/web/.../adapter-contract.ts` runs it against the
+mock and the client SDK, and `describeFinanceAdminContract` runs the Admin cases in
+`firebaseadmin.adapter.test.ts`), so it runs against the emulator, because tests that only run
+the mock miss Firestore-only failures. A write path that is not finance's goes in `adapter-contract.ts`.
 
 ## Git Conventions
 

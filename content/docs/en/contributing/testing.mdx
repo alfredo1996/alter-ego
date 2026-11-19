@@ -26,7 +26,7 @@ packages/modules/finance/src/lib/__tests__/
   ├── amortization.test.ts
   └── ...
 apps/web/src/lib/backend/__tests__/
-  ├── adapter-contract.ts      # shared contract tests
+  ├── adapter-contract.ts      # runs the finance package's contract
   ├── mock.test.ts
   ├── mock.adapter.test.ts
   └── firebase.adapter.test.ts
@@ -47,7 +47,7 @@ beforeEach(() => {
 
 ### Contract Tests
 
-`adapter-contract.ts` holds the tests any backend adapter must pass. They run against the mock on every `pnpm test`, and against Firebase when the emulator is up (`pnpm test:firebase:docker`). A new write path needs a case there.
+The finance tests any backend adapter must pass live in `packages/modules/finance/src/__tests__/contract.ts` (exported as `@alter-ego/finance/contract`). `adapter-contract.ts` is the app's wrapper: it runs them against the mock on every `pnpm test`, and against Firebase when the emulator is up (`pnpm test:firebase:docker`). A new finance write path needs a case in the package's `contract.ts`.
 
 ### Documentation Check
 

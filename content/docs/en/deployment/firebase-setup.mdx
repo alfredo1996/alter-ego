@@ -14,14 +14,14 @@ This page covers the Firebase side. The deployment steps themselves (App Hosting
 
 ## Security Rules
 
-Do not write your own rules. `firestore.rules` is generated from `firestore/base.rules`, and it carries the field validation and the single-user allowlist the app relies on.
+Do not write your own rules. `firestore.rules` is generated from `firestore/base.rules`, `packages/modules/finance/src/finance.rules` and `finance-root.rules`, and it carries the field validation and the single-user allowlist the app relies on.
 
 ```bash
 pnpm rules:build
 firebase deploy --only firestore:rules,firestore:indexes --project YOUR_PROJECT_ID
 ```
 
-Edit `firestore/base.rules` when you need to change something, never the generated file.
+Edit `firestore/base.rules`, `packages/modules/finance/src/finance.rules` or `finance-root.rules` when you need to change something, never the generated file.
 
 ## Who Can Sign In
 
